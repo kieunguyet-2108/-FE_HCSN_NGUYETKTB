@@ -1,0 +1,63 @@
+form {
+    background-color: #fff;
+    width: 1000px;
+    font-family: MISA Font;
+  }
+  .form__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 16px;
+  }
+  form .form__header .form__title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  form .form__content {
+    padding: 0px 16px 16px 20px;
+  }
+  
+  .form__content--item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 16px;
+    height: 90px;
+  }
+  .form__group--element {
+    display: flex;
+    gap: 16px;
+    flex: 2;
+  }
+  
+  .form__content--item:first-child .form__group:nth-child(2),
+  .form__content--item:nth-child(2) .form__group:nth-child(2),
+  .form__content--item:nth-child(3) .form__group:nth-child(2) {
+    flex: 2;
+  }
+  
+  .form__content--item .form__group:first-child {
+    flex: 1;
+  }
+  .form__content--item .form__group:nth-child(2) {
+    flex: 1;
+  }
+  .form__content--item .input__field {
+    width: 100%;
+  }
+  .form__footer {
+    height: 52px;
+    padding: 8px 16px 8px 16px;
+    background-color: #f5f5f5;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .form__content--item .form__group:first-child {
+    flex: 1;
+  }
+  form {
+    border-radius: 4px;
+  }
+  .form__footer {
+    border-radius: 0px 0px 4px 4px;
+  }

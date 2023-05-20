@@ -1,0 +1,47 @@
+
+.checkbox {
+    /* color: #090f39; */
+    width: 14px;
+    height: 14px;
+}
+/* css style cho label chèn vào trước phần tử có class checkox */
+.checkbox+label::before {
+    /* border: 2px solid #090f39; */
+    content: "";
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    background: url('../../assets/icon/qlts-icon.svg') no-repeat -113px -377px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: bottom;
+}
+/* khi checkbox checked thì chèn phần tử label vào trước  */
+.checkbox:checked+label::before {
+    /* border: 2px solid #50b83c; */
+    width: 14px;
+    height: 14px;
+    background: url('../../assets/icon/qlts-icon.svg') no-repeat -157px -377px;
+    cursor: pointer;
+    border-style: none;
+}
+.checkbox {
+    position: absolute;
+    opacity: 0;
+}
+/* khi hover vào checkbox thì viền border sẽ nổi lên (checkbox đang ở trạng thái defaut) */
+.checkbox:hover+label::before {
+    border: 3px solid #c4e3ec8c;
+    border-radius: 2px;
+    transition: 0.5s;
+    transform: scale(1.1);
+    background-color: #FFFFFF;
+}
+/* khi hover vào checkbox thì viền border sẽ nổi lên (checkbox đang ở trạng thái checked) */
+.checkbox:checked:hover+label::before {
+    border: 3px solid #c4e3ec8c;
+    border-radius: 2px;
+    transition: 0.1s;
+    transform: scale(1.1);
+}
+

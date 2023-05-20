@@ -1,0 +1,45 @@
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .input-group__content:has(.input__field:focus),
+  .input-group__content:hover {
+    border: 1px solid #77b3c4;
+  }
+  .filter .input-group__content {
+    outline: none;
+    border: unset;
+  }
+  .input-group__content {
+    display: flex;
+    border-radius: 4px;
+    border: 1px solid #afafaf;
+  }
+  /* common style cho input field */
+  .input__field {
+    height: 36px;
+    max-height: 36px;
+    border-radius: 4px;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+    border: unset;
+    padding: 0px 12px;
+  }
+  
+  /* khi input active thì placeholder sẽ ...  */
+  .input__field:active::placeholder {
+    color: #090f39;
+  }
+  /* khi input field có class là italic */
+  .input__field.italic::placeholder {
+    font-style: italic;
+  }
+  .error-message {
+    font-size: 13px;
+    color: #ff0000;
+  }
+  .input-group:has(.error-message) .input-group__content {
+    border: 1px solid #ff0000;
+  }

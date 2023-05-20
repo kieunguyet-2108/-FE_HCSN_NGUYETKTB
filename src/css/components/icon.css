@@ -1,0 +1,144 @@
+/* khai báo background là file icon được cung cấp sẵn */
+.ms-icon {
+    background: url('../../assets/icon/qlts-icon.svg') no-repeat;
+    cursor: pointer;
+}
+/* file icon bổ sung (vì có mấy icon ở ms-icon thiếu) */
+.ms-icon-2 {
+    background: url('../../assets/icon/qlts-icon-2.svg') no-repeat;
+    cursor: pointer;
+}
+
+/* style for icon in here */
+.ms-icon-logo {
+    background-position: -20px -680px;
+}
+
+.ms-icon-computer {
+    background-position: -21px -153px;
+}
+
+.ms-icon-arrow-down {
+    background-position: -152px -283px;
+}
+
+.ms-icon-car {
+    background-position: -65px -153px;
+}
+
+.ms-icon-road {
+    background-position: -110px -153px;
+}
+.ms-icon-plus-black{
+    background-position: -467px -423px;
+}
+
+.ms-icon-tool {
+    background-position: -153px -153px;
+}
+
+
+.ms-icon-category {
+    background-position: -197px -153px;
+}
+
+
+.ms-icon-search-gray {
+    background-position: -241px -153px;
+}
+
+.ms-icon-calendar {
+    background-position: -287px -67px;
+}
+.ms-icon-search-black {
+    background-position: -243px -23px;
+}
+
+.ms-icon-report {
+    background-position: -329px -153px;
+}
+
+.ms-icon-arrow-left-border {
+    background-position: -285px -417px;
+}
+
+.ms-icon-arrow-right-border {
+    background-position: -285px -417px;
+    transform: rotate(180deg);
+}
+
+.ms-icon-arrow-left {
+    background-position:-29px -246px;
+}
+
+.ms-icon-arrow-right {
+    background-position: -29px -246px;
+    transform: rotate(180deg);
+}
+
+.ms-icon-arrow-up-bold {
+    background-position: -27px -338px;
+}
+
+.ms-icon-arrow-down-bold {
+    background-position: -28px -338px;
+    transform: rotate(180deg);
+}
+
+.ms-icon-bell {
+    background-position: -332px -109px;
+}
+
+.ms-icon-four-square {
+    background-position: -199px -23px;
+}
+
+.ms-icon-ask {
+    background-position: -67px -67px;
+}
+
+.ms-icon-user {
+    background-position: -23px -23px;
+}
+
+.ms-icon-filter {
+    background-position: -243px -68px;
+}
+
+.ms-icon-plus {
+    background-position: -204px -424px;
+}
+
+.ms-icon-excel {
+    background-position: -284px -107px;
+}
+
+.ms-icon-trash-red {
+    background-position: -459px -108px;
+}
+
+.ms-icon-pencil {
+    background-position: -156px -68px;
+}
+
+.ms-icon-view {
+    background-position: -244px -112px;
+}
+
+.ms-icon-date-picker {
+    background-position: -287px -67px;
+}
+
+.ms-icon-arrow-close {
+    background-position: -375px -287px;
+}
+
+.ms-icon-warning {
+    background-position: -470px -28px;
+}
+.ms-icon-check-green{
+    background-position: -464px -292px;
+}
+.ms-icon-check-blue{
+    background-position: -160px -424px;
+}

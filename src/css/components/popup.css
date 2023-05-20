@@ -1,0 +1,26 @@
+/* common style for popup
+ban đầu popup se ẩn đi
+*/
+.popup{
+    font-size: 13px;
+    background-color: #ffffff;
+    min-width: 400px;
+    max-width: 600px;
+    width: 400px;
+    padding: 10px 20px;
+    position: fixed;
+    top: 10px;
+    right: -26px;
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .16);
+    opacity: 1;
+}
+
+/* 
+khi popup có class show -> hiển thị popup cho người dùng
+*/
+.popup.show{
+    opacity: 1;
+    transition: all 0.3s;
+    transform: translateX(-50px);
+}

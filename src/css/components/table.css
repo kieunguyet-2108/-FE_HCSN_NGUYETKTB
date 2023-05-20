@@ -1,0 +1,245 @@
+#table-data {
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #afafaf;
+    border-radius: 4px;
+    border-style: hidden;
+    /* box-shadow: 0 3px 10px rgba(0, 0, 0, .16); */
+    width: 100%;
+    max-height: calc(100vh - 44px - 14px - 50px - 14px);
+    box-sizing: border-box;
+    flex: 1;
+    white-space: nowrap;
+    position: absolute;
+}
+.table-content {
+    background-color: #fff;
+    position: relative;
+    flex: 1;
+    box-sizing: border-box;
+    overflow: auto;
+    overflow-x: hidden;
+    border-radius: 4px;
+    border: 1px solid #afafaf70;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .16);
+}
+.message-no-data-table {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #a29d9d;
+    font-weight: 500;
+    margin-top: 10rem;
+  }
+
+
+table thead th,
+table tbody tr td,
+tfoot tr td {
+    padding: 0px 10px;
+}
+
+
+/* style for tfoot */
+table tfoot {
+    position: sticky;
+    bottom: 0;
+    z-index: 9;
+    background-color: #fff;
+    height: 40px;
+}
+/* table tfoot tr{
+    border-top: 1px solid #afafaf;
+} */
+
+/* style for thead */
+table thead {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: whitesmoke;
+    z-index: 2;
+}
+
+thead th {
+    height: 38px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.373);
+    padding: 0;
+}
+
+tbody tr td {
+    height: 40px;
+    padding: 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.373);
+}
+ tbody tr td:first-child,
+td:nth-child(2) {
+    min-width: 50px;
+    max-width: 50px;
+    width: 50px;
+}
+/* điều chỉnh độ rộng cho các cột */
+
+/*
+tbody tr td:nth-child(3) {
+    min-width: 150px;
+    max-width: 150px;
+    width: 150px;
+}
+
+tbody tr td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6) {
+    min-width: 150px;
+    max-width: 150px;
+    width: 150px;
+}
+
+tbody tr td:nth-child(7),
+tfoot tr td:nth-child(2) {
+    min-width: 100px;
+    max-width: 100px;
+    width: 100px;
+}
+
+tbody tr td:nth-child(8),
+td:nth-child(9),
+td:nth-child(10),
+td:nth-child(11) {
+    min-width: 120px;
+    max-width: 120px;
+    width: 120px;
+} */
+
+tbody .checkbox-element {
+    text-align: center;
+}
+
+table tbody tr:hover {
+    background-color: #D1EDF4;
+    cursor: pointer;
+}
+
+/* content của phần chức năng đầu tiên sẽ ẩn */
+table tbody tr td:last-child .cell-content {
+    display: none;
+}
+table tbody tr:hover td:last-child .cell-content {
+    display: flex;
+}
+
+table tbody tr:hover td:last-child .cell-content .ms-icon {
+    position: relative;
+}
+
+/* thead tr th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: whitesmoke;
+}
+
+tbody tr td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: whitesmoke;
+}
+
+thead tr th:nth-child(2) {
+    position: sticky;
+    left: 200px;
+    background-color: whitesmoke;
+}
+
+tbody tr td:nth-child(2) {
+    position: sticky;
+    left: 200px;
+    background-color: whitesmoke;
+} */
+
+tfoot tr td:first-child {
+    position: sticky;
+    left: 0;
+}
+
+/* style for action row */
+
+.row-action {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.row-action .ms-24 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+tbody tr td:last-child .cell-content .ms-16:first-child {
+    margin-right: 5px;
+}
+
+.record-per-page {
+    display: flex;
+    flex-direction: row;
+    background-color: #ffffff;
+    border-radius: 2.625px;
+    border: 1px solid #afafaf;
+    width: 60px;
+    height: 25px;
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 13px;
+}
+
+.total-record {
+    width: 150px;
+    margin-left: 16px;
+}
+
+.record-per-page .record-select,
+.record-per-page .record-number {
+    display: flex;
+    height: 25px;
+    font-size: 13px;
+    color: #1aa4c8;
+    font-weight: 500;
+    justify-content: c;
+    cursor: pointer;
+}
+
+.record-select .ms-icon {
+    margin-top: 5px;
+}
+
+.table-footer-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+tfoot td:not(:first-child) {
+    font-size: 13px;
+    font-weight: 700;
+}
+.pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-left: 16px;
+}
+.pagination .ms-20{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

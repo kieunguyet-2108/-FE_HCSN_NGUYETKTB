@@ -1,0 +1,49 @@
+.number-picker-group:has(input:focus) {
+    border: 1px solid #77b3c4;
+  }
+  .number-picker-group:hover {
+    border: 1px solid #77b3c4;
+  }
+  .number__picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .number-picker-group {
+    display: flex;
+    /* height: 36px; */
+    border: 1px solid #afafaf;
+    border-radius: 4px;
+  }
+  .number-picker-group .input__field {
+    padding: 0px 12px;
+    text-align: end;
+    height: 36px;
+    max-height: 36px;
+    border-radius: 4px;
+    border: 1px solid #afafaf;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+    border: unset;
+  }
+  .number-picker-icon {
+    background-color: #fff;
+    border-radius: 4px;
+    height: 36px;
+    width: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .error-message {
+    color: red;
+    font-size: 13px;
+  }
+  .number__picker:has(.error-message) .number-picker-group {
+    border: 1px solid red;
+  }
+  .ms-icon {
+    cursor: pointer;
+  }
