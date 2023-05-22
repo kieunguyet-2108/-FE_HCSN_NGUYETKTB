@@ -12,6 +12,14 @@ import msDialog from "@/js/dialog.js";
 import api from "@/api/api.js";
 const app = createApp(App);
 
+String.prototype.format = function() {
+    let formatted = this;
+    for (let i = 0; i < arguments.length; i++) {
+      let regexp = new RegExp('\\{'+i+'\\}', 'gi');
+      formatted = formatted.replace(regexp, arguments[i]);
+    }
+    return formatted;
+  };
 // Register a global component called <the-side-bar>
 app.component("TheSideBar", TheSideBar);
 app.component("TheHeader", TheHeader);

@@ -11,7 +11,7 @@
             placeholder="Tìm kiếm tài sản"
             className="input__field text-style-italic"
             :isValidate="false"
-            v-model="filterInfor.searchValue"
+            v-model="filter[0].value"
           ></MISAInput>
         </div>
         <MISACombobox
@@ -23,7 +23,7 @@
           id="department_code-filter"
           name="department_code-filter"
           primaryKey="fixed_asset_category_id"
-          v-model="filterInfor.fixedAssetCategoryId"
+          v-model="filter[2].value"
           :data="fixedAssetCategories"
           :column="fixedAssetCategoryColumns"
           @clickIcon="handleData"
@@ -35,7 +35,7 @@
           inputClass="input__field"
           inputPlaceholder="Bộ phận sử dụng"
           primary-key="department_id"
-          v-model="filterInfor.departmentId"
+          v-model="filter[1].value"
           :data="departments"
           :column="departmentColumns"
           @clickIcon="handleData"
@@ -79,7 +79,7 @@
         @dblClick="handleDblClickRow"
         @edit="handleEditRow"
       ></MISATable>
-      <MISAPagination></MISAPagination>
+      <MISAPagination @changePaging="getFixedAssetByPaging"></MISAPagination>
     </div>
     <router-view
       :departmentColumns="departmentColumns"
@@ -165,17 +165,29 @@ export default {
         popupMessage: "",
         popupType: "",
       },
-      pagination :{
+      pagination: {
         page: 1,
         pageSize: 15,
         totalRecord: 0,
         totalPage: 0,
       },
-      filterInfor:{
-        departmentId: "",
-        fixedAssetCategoryId: "",
-        searchValue: "",
-      }
+      filter: [
+        {
+          field: "fixed_asset_name",
+          value: "",
+          operator: this.$msEnum.MS_FILTER_OPERATOR.Like,
+        },
+        {
+          field: "department_id",
+          value: "",
+          operator: this.$msEnum.MS_FILTER_OPERATOR.Equal,
+        },
+        {
+          field: "fixed_asset_category_id",
+          value: "",
+          operator: this.$msEnum.MS_FILTER_OPERATOR.Equal,
+        },
+      ],
     };
   },
   mounted() {
@@ -208,13 +220,30 @@ export default {
      * @description:
      * @param: {any}
      * @return: {any}
+     * @author: NguyetKTB 21/05/2023
+     */
+    async getFixedAssetByPaging(pageNumber, pageSize) {
+      const me = this;
+      // duyệt qua các phần tử trong  filterInfor để lấy ra các tham số cần thiết
+      try {
+        const rs = await this.$msApi.fixed_asset.getListByPagination(
+          pageNumber,
+          pageSize,
+          me.filter
+        );
+      } catch (error) {}
+    },
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
     async getFixedAssetList() {
       const me = this;
       try {
         const result = await this.$msApi.fixed_asset.getFixedAssets();
-        if(result.status == this.$msEnum.MS_CODE.SUCCESS){
+        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
           me.fixedAssets = result.data;
         }
       } catch (error) {
@@ -223,16 +252,16 @@ export default {
     },
 
     /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
+     * @description:
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
-    async getDepartmentList(){
+    async getDepartmentList() {
       const me = this;
       try {
         const result = await this.$msApi.department.getDepartments();
-        if(result.status == this.$msEnum.MS_CODE.SUCCESS){
+        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
           me.departments = result.data;
         }
       } catch (error) {
@@ -240,17 +269,18 @@ export default {
       }
     },
     /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
+     * @description:
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
-    async getFixedAssetCategoryList(){
+    async getFixedAssetCategoryList() {
       const me = this;
       try {
-        const result = await this.$msApi.fixed_asset_category.getFixedAssetCategories();
-        if(result.status == this.$msEnum.MS_CODE.SUCCESS){
-         me.fixedAssetCategories = result.data;
+        const result =
+          await this.$msApi.fixed_asset_category.getFixedAssetCategories();
+        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
+          me.fixedAssetCategories = result.data;
         }
       } catch (error) {
         console.log(error);
@@ -260,15 +290,32 @@ export default {
      * @description: 
      * @param: {any} 
      * @return: {any} 
+     * @author: NguyetKTB 22/05/2023
+     */
+    async deleteFixedAsset() {
+      const me = this;
+      try {
+        const result = await this.$msApi.fixed_asset.deleteFixedAsset(
+          me.selectedItems
+        );
+        console.log(result);
+      } catch (error) {
+        
+      }
+    },
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
     handleDblClickRow(dataRow) {
       this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
     },
     /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
+     * @description:
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
     handleEditRow(dataRow) {
@@ -389,6 +436,8 @@ export default {
      * @author: NguyetKTB 05/05/2023
      */
     async onClickDelete(event) {
+      let formatted = "Hello {0}! Welcome to {1}.".format("John", "New York");
+      console.log(formatted);
       // kiểm tra trường hợp chưa chọn bản ghi nào
       if (this.selectedItems.length == 0) {
         event.preventDefault();
@@ -402,13 +451,10 @@ export default {
             {
               field: "message",
               content:
-                "<p>Bạn có muốn xóa tài sản" +
-                "<strong class='ml-4'>" +
-                item.fixed_asset_code +
-                " - " +
-                item.fixed_asset_name +
-                "</strong>" +
-                "?</p>",
+                `<div>${this.$msEnum.MS_MESSAGE_DELETE.ONE_RECORD}</div>`.format(
+                  `<strong>${item.fixed_asset_code}</strong>`,
+                  `<strong>${item.fixed_asset_name}</strong>`
+                ),
               style: "",
             },
           ],
@@ -418,32 +464,11 @@ export default {
               buttonClass: "button button__main",
               isFocus: true,
               onclick: async () => {
+                // gọi api xóa dữ liệu
+                
                 this.dialogInformation.isShowDialog = false;
                 this.selectedItems = [];
-                await this.$msAxios
-                  .delete(
-                    "http://localhost:8080/api/v1/FixedAsset/" +
-                      item.fixed_asset_id
-                  )
-                  .then((res) => {})
-                  .catch((err) => {
-                    console.log(err);
-                  });
-                await this.$msAxios({
-                  method: "get",
-                  url: "http://localhost:8080/api/v1/FixedAsset/fixed-assets",
-                })
-                  .then((response) => {
-                    this.fixedAssets = response.data;
-                    this.isLoading = true;
-                    setTimeout(() => {
-                      this.isLoading = false;
-                      this.showPopup("Xóa tài sản thành công", "success");
-                    }, 1000);
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
+                this.showPopup("Xóa dữ liệu thành công", "success");
               },
             },
             {
@@ -463,13 +488,9 @@ export default {
             {
               field: "message",
               content:
-                "<div>" +
-                "<strong>" +
-                this.selectedItems.length +
-                "</strong>" +
-                " tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?" +
-                "</div>" +
-                "<br>",
+                `<div>${this.$msEnum.MS_MESSAGE_DELETE.MULTI_RECORD}</div>`.format(
+                  `<strong>${this.selectedItems.length}</strong>`
+                ),
               style: "display: flex; flex-direction: row; ",
             },
           ],
@@ -479,15 +500,7 @@ export default {
               buttonClass: "button button__main",
               isFocus: true,
               onclick: async () => {
-                await this.$msAxios
-                  .delete(
-                    "http://localhost:8080/api/v1/FixedAsset/" +
-                      this.selectedItems
-                  )
-                  .then((res) => {})
-                  .catch((err) => {
-                    console.log(err);
-                  });
+                this.deleteFixedAsset();
                 this.dialogInformation.isShowDialog = false;
                 this.selectedItems = [];
                 this.showPopup("Xóa tài sản thành công", "success");
@@ -506,13 +519,13 @@ export default {
     },
     /**
      * @description: Thực hiện xử lí dữ liệu filter và paging trước khi gọi api
-     * @param: {any} 
-     * @return: {any} 
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 20/05/2023
      */
-    handleData(){
+    handleData() {
       console.log(this.filterInfor);
-    }
+    },
   },
 };
 </script>

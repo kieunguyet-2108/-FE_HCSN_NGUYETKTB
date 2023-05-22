@@ -34,19 +34,36 @@ const Enum = {
     Button: "button",
     Link: "link",
   },
-  MS_CODE :{
+  MS_CODE: {
     SUCCESS: 200,
     CREATED: 201,
     NO_CONTENT: 204,
     BAD_REQUEST: 400,
     ERROR: 500,
   },
-  MS_VALIDATE_MSG :{
-    REQUIRED: "Trường này không được để trống",
-    MAX_LENGTH: "Trường này không được vượt quá {0} ký tự",
-    DUPLICATE: "Trường này đã tồn tại",
-    INVALID: "Trường này không hợp lệ",
-  }
+  MS_VALIDATE_MSG: {
+    REQUIRED: "{0} không được để trống",
+    MAX_LENGTH: "{0} không được vượt quá {1} ký tự",
+    DUPLICATE: "{0} đã tồn tại",
+    INVALID: "{0} không hợp lệ",
+  },
+  MS_MESSAGE_DELETE:{
+    ONE_RECORD: "Bạn có muốn xóa {0} - {1}?",
+    MULTI_RECORD: "{0} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?",
+    WARNING: "Không thể xóa tài sản này vì đã có chứng từ phát sinh",
+    SUCCESS: "Xóa tài sản thành công",
+    ERROR: "Xóa tài sản thất bại",
+  },
+  MS_FILTER_OPERATOR: {
+    Equal: 0,
+    NotEqual: 1,
+    IsNull: 2,
+    NotIsNull: 3,
+    Like: 4,
+    NotLike: 5,
+    StartsWith: 6,
+    EndsWith: 7,
+  },
 };
 
 export default Enum;

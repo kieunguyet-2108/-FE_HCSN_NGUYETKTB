@@ -84,6 +84,11 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      if (this.modelValue) {
+        this.date = moment(this.modelValue, "DD/MM/YYYY").toDate();
+      } else {
+        this.date = moment(this.getCurrentDate(), "DD/MM/YYYY").toDate();
+      }
       let datepickerElement = this.$refs[this.name].$el;
       datepickerElement.querySelectorAll("button").forEach((input) => {
         input.setAttribute("tabindex", "-1");

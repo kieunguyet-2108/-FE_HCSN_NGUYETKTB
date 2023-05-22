@@ -120,13 +120,15 @@ export default {
             me.$emit("update:modelValue", inputValue);
           } else if (inputValue == "") {
             me.isError = true;
-            me.errorMessage = "Thông tin này không được phép để trống";
+            me.errorMessage = me.$msEnum.MS_VALIDATE_MSG.REQUIRED.format(
+              me.label
+            );
           } else {
             me.isError = true;
-            me.errorMessage =
-              "Độ dài của " +
-              event.target.placeholder.toLowerCase() +
-              " không hợp lệ";
+            me.errorMessage = me.$msEnum.MS_VALIDATE_MSG.MAX_LENGTH.format(
+              me.label,
+              me.maxLength
+            );
           }
         }
       } catch (error) {

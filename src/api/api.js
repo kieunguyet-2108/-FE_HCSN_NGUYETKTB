@@ -3,7 +3,7 @@ import department from './department';
 import fixed_asset_category from './fixed_asset_category';
 import ax from 'axios';
 const axios = ax.create({
-    baseURL: 'https://localhost:5401/',
+    baseURL: 'https://localhost:7081/',
     Headers: {
         'Content-Type': 'application/json',
     },

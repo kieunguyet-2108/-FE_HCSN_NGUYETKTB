@@ -163,6 +163,7 @@ tfoot tr td:first-child {
 /* style for action row */
 
 .row-action {
+    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -182,7 +183,7 @@ tbody tr td:last-child .cell-content .ms-16:first-child {
     margin-right: 5px;
 }
 
-.record-per-page {
+/* .record-per-page {
     display: flex;
     flex-direction: row;
     background-color: #ffffff;
@@ -242,4 +243,4 @@ tfoot td:not(:first-child) {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-}
+} */

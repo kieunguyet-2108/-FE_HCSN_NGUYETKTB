@@ -6,7 +6,7 @@
           <th
             v-for="(item, index) in listColumn"
             :key="index"
-            :style="{ width: item.columnWidth }"
+            :style="{ width: item.columnWidth , 'min-width': item.minColumnWidth , 'max-width': item.maxColumnWidth } "
           >
             <div
               class="checkbox-element"
@@ -59,7 +59,7 @@
           <td
             v-for="(item, index) in listColumn"
             :key="index"
-            :style="{ width: item.columnWidth }"
+            :style="{ width: item.columnWidth , 'min-width': item.minColumnWidth , 'max-width': item.maxColumnWidth  }"
           >
             <!-- CHECK BOX -->
             <div
@@ -124,6 +124,7 @@
 
 <script>
 /* eslint-disable */
+import { max } from "moment";
 import MISATooltip from "./MISATooltip.vue";
 export default {
   name: "MISATable",
@@ -200,6 +201,8 @@ export default {
         case me.$msEnum.ColumnType.Currency:
           return "end";
         case me.$msEnum.ColumnType.Checkbox:
+          return "center";
+        case me.$msEnum.ColumnType.Action:
           return "center";
         default:
           return "start";

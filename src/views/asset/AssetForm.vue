@@ -300,18 +300,18 @@ export default {
     if (this.asset_id) {
       this.formMode = this.$msEnum.FormMode.Edit;
       this.title = "Sửa tài sản";
-      this.getFixedAssetById(this.asset_id);
+      this.assetItem = await this.getFixedAssetById(this.asset_id);
     } else {
       this.formMode = this.$msEnum.FormMode.Add;
       this.title = "Thêm mới tài sản";
       // // set năm hiện tại cho trường năm theo dõi
-      // this.assetItem.tracked_year = new Date().getFullYear();
+      this.assetItem.tracked_year = new Date().getFullYear();
       // // get current date
-      // let date = new Date();
+      let date = new Date();
       // // set ngày mua cho trường ngày mua
-      // this.assetItem.purchase_date = date;
+      this.assetItem.purchase_date = date;
       // // set ngày bắt đầu sử dụng cho trường ngày bắt đầu sử dụng
-      // this.assetItem.start_using_date = date;
+      this.assetItem.start_using_date = date;
     }
   },
   computed: {
@@ -431,7 +431,7 @@ export default {
       try {
         const result = await this.$msApi.fixed_asset.getFixedAssetById(id);
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.assetItem = result.data;
+          return result.data;
         }
       } catch (error) {
         console.log(error);
@@ -585,126 +585,7 @@ export default {
      */
     async submitForm() {
       var item = this.assetItem;
-      this.dialogInformation.messages = [];
-      this.messages = [];
-      // validate mã tài sản
-      if (item.fixed_asset_code == null || item.fixed_asset_code == "") {
-        this.messages.push({
-          field: "fixed_asset_code",
-          content: "<p>Mã tài sản không được để trống</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      } else if (!validation.isValidLength(item.fixed_asset_code, 0, 100)) {
-        this.messages.push({
-          field: "fixed_asset_code",
-          content: "<p>Mã tài sản không được quá 100 ký tự</p>",
-          style: "padding:  0px 0px 4px 0px;",
-        });
-      }
-      // Trường hợp form là form add thì phải kiểm tra mã tài sản có trùng hay không
-      if (Enum.FormMode.Add) {
-        // kiểm tra mã tài sản trùng hay không
-        if (form.getFixedAsset(item.fixed_asset_code) != null) {
-          this.messages.push({
-            field: "fixed_asset_code",
-            content: "<p>Mã tài sản đã tồn tại</p>",
-            style: "padding:  0px 0px 4px 0px;",
-          });
-        }
-      } else if (Enum.FormMode.Edit) {
-        if (form.getFixedAsset(item.fixed_asset_code) != null) {
-          this.messages.push({
-            field: "fixed_asset_code",
-            content: "<p>Không được phép sửa mã trùng với mã tài sản khác</p>",
-            style: "padding:  0px 0px 4px 0px;",
-          });
-        }
-      }
-      // validate tên tài sản
-      if (item.fixed_asset_name == null || item.fixed_asset_name == "") {
-        this.messages.push({
-          field: "fixed_asset_name",
-          content: "<p>Tên tài sản không được để trống</p>",
-          style: "padding:  0px 0px 4px 0px;",
-        });
-      } else if (!validation.isValidLength(item.fixed_asset_name, 0, 255)) {
-        this.messages.push({
-          field: "fixed_asset_name",
-          content: "<p>Tên tài sản không được quá 255 ký tự</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      }
-
-      // validate mã bộ phận
-      let departmentItem = this.departments.find(
-        (x) => x.department_code == item.department_code
-      );
-      if (departmentItem == null) {
-        this.messages.push({
-          field: "department_code",
-          content: "<p>Mã bộ phận không tồn tại</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      } else {
-        if (departmentItem.department_name != item.department_name) {
-          this.messages.push({
-            field: "department_name",
-            content: "<p>Tên bộ phận không đúng với mã bộ phận</p>",
-            style: "padding: 0px 0px 4px 0px;",
-          });
-        }
-      }
-
-      // //validate mã loại tài sản
-      let fixedAssetCategoryItem = this.fixedAssetCategories.find(
-        (x) => x.fixed_asset_category_code == item.fixed_asset_category_code
-      );
-      if (fixedAssetCategoryItem == null) {
-        this.messages.push({
-          field: "fixed_asset_category_code",
-          content: "<p>Mã loại tài sản không tồn tại</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      } else {
-        if (
-          fixedAssetCategoryItem.fixed_asset_category_name !=
-          item.fixed_asset_category_name
-        ) {
-          this.messages.push({
-            field: "fixed_asset_category_name",
-            content: "<p>Tên loại tài sản không đúng với mã loại tài sản</p>",
-            style: "padding: 0px 0px 4px 0px;",
-          });
-        }
-      }
-
-      // validate quantity ( chưa có rule gì do format hết r)
-
-      // nguyên giá ( chưa có rule gì do format hết r)
-
-      // số năm sử dụng ( chưa có rule gì do format hết r)
-
-      // tỉ lệ hao mòn (tỉ lệ HM / 100 = 1/ số năm sử dụng)
-      if (item.depreciation_rate / 100 != 1 / item.life_time) {
-        this.messages.push({
-          field: "depreciation_rate",
-          content: "<p>Tỉ lệ hao mòn phải bằng 1 / số năm sử dụng</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      }
-      // giá trị hao mòn năm ( = tỉ lệ HM / 100 * nguyên giá)
-      if (
-        (item.depreciation_rate / 100) * item.cost !=
-        item.depreciation_year
-      ) {
-        this.messages.push({
-          field: "depreciation_year_value",
-          content:
-            "<p>Giá trị hao mòn năm phải bằng tỉ lệ HM / 100 * nguyên giá</p>",
-          style: "padding: 0px 0px 4px 0px;",
-        });
-      }
-
+      this.messages = await this.handleData(item);
       // validate ngày mua và ngày bắt đầu sử dụng
       if (this.messages.length > 0) {
         this.dialogInformation = {
@@ -716,16 +597,7 @@ export default {
               text: "Đóng",
               buttonClass: "button button__main",
               isFocus: true,
-              onclick: () => {
-                this.dialogInformation.isShowDialog = false;
-                //CHƯA FOCUS ĐƯỢC Ô ĐẦU TIÊN
-                document.querySelector(`#${this.messages[0].field}`).focus();
-                for (let index = 0; index < this.messages.length; index++) {
-                  this.$refs[this.messages[index].field].isError = true;
-                  this.$refs[this.messages[index].field].errorMessage =
-                    this.messages[index].content;
-                }
-              },
+              onclick: () => {},
             },
           ],
         };
@@ -733,27 +605,9 @@ export default {
       } else {
         // show popup trong 500ms
         this.closeModal();
-        if (Enum.FormMode.Add) {
-          console.log("add");
-          //create new guid
-          this.assetItem.fixed_asset_id =
-            "7b01963d-2bc0-5b15-82c3-d3ede7a72094";
-
-          var res = await this.$msAxios.post(
-            "http://localhost:8080/api/v1/FixedAsset",
-            this.assetItem
-          );
-          console.log(res);
-          this.isLoading = true;
-          setTimeout(async () => {
-            this.fixedAssets = await this.$msAxios.get(
-              "http://localhost:8080/api/v1/FixedAsset/fixed-assets"
-            );
-            this.isLoading = false;
-            this.$emit("show-popup", "Lưu dữ liệu thành công", "success");
-          }, 1000);
-        } else if (Enum.FormMode.Edit) {
-          console.log("edit");
+        if (this.formMode == Enum.FormMode.Add) {
+          this.$emit("show-popup", "Thêm dữ liệu thành công", "success");
+        } else if (this.formMode == Enum.FormMode.Edit) {
           // call api chỉnh sửa dữ liệu
           this.$emit("show-popup", "Chỉnh sửa dữ liệu thành công", "success");
         }
@@ -844,6 +698,118 @@ export default {
         };
         this.$emit("show-dialog", this.dialogInformation);
       }
+    },
+    /**
+     * @description: Thực hiện validate các dữ liệu trong form khi submit
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 22/05/2023
+     */
+    async handleData(item) {
+      const me = this;
+      let isDuplicate = false;
+      var errors = [];
+      // validate trùng mã tài sản 
+      // validate fixassetcode
+      if (item.fixed_asset_code == "") {
+        // nếu mã tài sản rỗng
+        errors.push({
+          field: "fixed_asset_code",
+          content: me.$msEnum.MS_VALIDATE_MSG.REQUIRED.format("Mã tài sản"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      } else if (item.fixed_asset_code.length > 100) {
+        // nếu mã tài sản dài hơn 100 ký tự
+        errors.push({
+          field: "fixed_asset_code",
+          content: me.$msEnum.MS_VALIDATE_MSG.MAX_LENGTH.format(
+            "Mã tài sản",
+            100
+          ),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+
+      // validate tên tài sản
+      if (item.fixed_asset_name == "") {
+        // nếu tên tài sản rỗng
+        errors.push({
+          field: "fixed_asset_name",
+          content: me.$msEnum.MS_VALIDATE_MSG.REQUIRED.format("Tên tài sản"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      } else if (item.fixed_asset_name.length > 255) {
+        // nếu tên tài sản dài hơn 100 ký tự
+        errors.push({
+          field: "fixed_asset_name",
+          content: me.$msEnum.MS_VALIDATE_MSG.MAX_LENGTH.format(
+            "Tên tài sản",
+            255
+          ),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+
+      // validate loại tài sản
+      let departmentItem = me.departments.find(
+        (department) => department.department_id == item.department_id
+      );
+      if (departmentItem == null) {
+        errors.push({
+          field: "department_id",
+          content: me.$msEnum.MS_VALIDATE_MSG.INVALID.format("Mã bộ phận"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      } else if (departmentItem.department_name != item.department_name) {
+        errors.push({
+          field: "department_id",
+          content: me.$msEnum.MS_VALIDATE_MSG.INVALID.format("Tên bộ phận"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+
+      // validate phòng ban
+      let categoryItem = me.fixedAssetCategories.find(
+        (category) =>
+          category.fixed_asset_category_id == item.fixed_asset_category_id
+      );
+      if (categoryItem == null) {
+        errors.push({
+          field: "fixed_asset_category_id",
+          content: me.$msEnum.MS_VALIDATE_MSG.INVALID.format("Mã loại tài sản"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      } else if (
+        categoryItem.fixed_asset_category_name != item.fixed_asset_category_name
+      ) {
+        errors.push({
+          field: "fixed_asset_category_id",
+          content:
+            me.$msEnum.MS_VALIDATE_MSG.INVALID.format("Tên loại tài sản"),
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+      // validate tỉ lệ HM = 1 / số năm sử dụng
+      if (item.depreciation_rate / 100 != 1 / item.life_time) {
+        errors.push({
+          field: "depreciation_rate",
+          content: "<p>Tỉ lệ hao mòn phải bằng 1 / số năm sử dụng</p>",
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+      // giá trị hao mòn năm ( = tỉ lệ HM / 100 * nguyên giá)
+      if (
+        (item.depreciation_rate / 100) * item.cost !=
+        item.depreciation_year
+      ) {
+        errors.push({
+          field: "depreciation_year_value",
+          content:
+            "<p>Giá trị hao mòn năm phải bằng tỉ lệ HM / 100 * nguyên giá</p>",
+          style: "padding: 0px 0px 4px 0px;",
+        });
+      }
+      return errors;
     },
   },
 };
