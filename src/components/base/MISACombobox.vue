@@ -4,6 +4,7 @@
     ref="comboboxData"
     @keydown="onHandleSelectItem"
     v-clickOutside="hideComboboxData"
+    :class="{ 'validate-error': errorMessage }"
   >
     <div class="combobox__label" v-if="label">
       <label for="">
@@ -13,7 +14,7 @@
     </div>
     <div class="combobox-group">
       <div class="combobox-content">
-        <div class="combobox__icon" v-if="iconLeft" tabindex="-1" @click="onClickIcon">
+        <div class="combobox__icon" v-if="iconLeft" tabindex="-1">
           <div class="ms-icon" :class="iconLeft"></div>
         </div>
         <input
@@ -173,6 +174,7 @@ export default {
       dataFilter: [],
       keyAllowSearch: [],
       indexItemFocus: 0,
+      eventAction: false,
     };
   },
   watch: {
@@ -201,12 +203,17 @@ export default {
         const me = this;
         if (newValue !== oldValue) {
           var findValue = {};
-          if (me.modelValue) {
-            for (let i = 0; i < me.dataFilter.length; i++) {
-              if (me.dataFilter[i][me.primaryKey] === me.modelValue) {
-                findValue = me.dataFilter[i];
-                me.indexItemFocus = i;
-                break;
+          if (me.eventAction) {
+            me.eventAction = false;
+            findValue = me.selectedItem;
+          } else {
+            if (me.modelValue) {
+              for (let i = 0; i < me.dataFilter.length; i++) {
+                if (me.dataFilter[i][me.primaryKey] === me.modelValue) {
+                  findValue = me.dataFilter[i];
+                  me.indexItemFocus = i;
+                  break;
+                }
               }
             }
           }
@@ -214,7 +221,16 @@ export default {
             let valueBinding = me.column.find((item) => item.isBinding);
             if (valueBinding) {
               me.keyValueBinding = valueBinding["valueBinding"];
-              me.inputValue = findValue[me.keyValueBinding];
+              let keyBinding = findValue[me.keyValueBinding];
+              if (keyBinding != undefined) {
+                me.inputValue = keyBinding;
+              } else {
+                // if (this.required && this.label) {
+                //   this.isError = true;
+                //   this.errorMessage = this.label + " không tồn tại";
+                // }
+                me.indexItemFocus = 0;
+              }
             }
             me.keyAllowSearch = me.column.filter((item) => item.isSearching); // danh sách các cột cho phép tìm kiếm
           });
@@ -260,7 +276,7 @@ export default {
           return;
         }
 
-        if (me.isShowComboboxData) {
+        if (me.isShowComboboxData && me.dataFilter.length > 0) {
           // th4: nếu list đang hiển thị thì xử lí các phím lên xuống có scroll
           if (keyCodePress == me.$msEnum.KeyCode.ArrowUp) {
             event.preventDefault();
@@ -297,7 +313,9 @@ export default {
         }
 
         // th4: nếu list đang hiển thị thì xử lí các phím lên xuống có scroll
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     /**
@@ -315,7 +333,9 @@ export default {
             block: "center",
             inline: "nearest",
           });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * @description: Hàm hiển thị combobox
@@ -326,9 +346,12 @@ export default {
     showComboboxData() {
       const me = this;
       try {
-        this.isShowComboboxData = !this.isShowComboboxData;
-        this.$nextTick(() => {
-          let parent = this.$el.querySelector(".combobox-data");
+        if (!me.inputValue && me.dataFilter.length == 0) {
+          me.dataFilter = me.data;
+        }
+        me.isShowComboboxData = true;
+        me.$nextTick(() => {
+          let parent = me.$el.querySelector(".combobox-data");
           if (parent) {
             let comboboxElement = parent.querySelectorAll(".combobox-item");
             for (let index = 0; index < comboboxElement.length; index++) {
@@ -347,7 +370,9 @@ export default {
             }
           }
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * @description: Hàm ẩn combobox
@@ -370,6 +395,7 @@ export default {
       this.indexItemFocus = index;
       this.inputValue = item[this.keyValueBinding];
       this.$emit("update:modelValue", item[this.primaryKey]);
+      this.eventAction = true;
       this.$emit("selectedItem", item);
       this.hideComboboxData();
     },
@@ -380,27 +406,32 @@ export default {
      * @author: NguyetKTB 02/05/2023
      */
     onInputCombobox: _.debounce(function (value) {
-      this.inputValue = value;
-      this.removeError();
+      const me = this;
+      me.inputValue = value;
+      me.removeError();
       if (value) {
-        this.dataFilter = this.data.filter((item) =>
-          this.keyAllowSearch.some((key) =>
+        me.dataFilter = me.data.filter((item) =>
+          me.keyAllowSearch.some((key) =>
             item[key.key].toLowerCase().includes(value.toLowerCase())
           )
         );
       } else {
-        this.dataFilter = this.data;
+        me.dataFilter = me.data;
       }
-      if (value == "" || this.dataFilter.length == 0) {
-        this.$emit("selectedItem", {});
+      if (value == "" || me.dataFilter.length == 0) {
+        me.$emit("selectedItem", {});
       }
       if (value == "") {
-        this.$emit("update:modelValue", {});
+        me.$emit("update:modelValue", {});
       }
-      this.showComboboxData();
+
+      if (!me.isShowComboboxData) {
+        me.showComboboxData();
+      }
     }, 100),
+
     /**
-     * @description:
+     * @description: Hàm xử lí khi blur khỏi ô input combobox
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 11/05/2023
@@ -409,25 +440,18 @@ export default {
       if (this.isValidate) {
         if (this.selectedItem == {}) {
           this.isError = true;
-          this.errorMessage = "Thông tin bạn nhập không hợp lệ";
+          this.errorMessage = this.$msEnum.MS_VALIDATE_MSG.INVALID.format(
+            this.label
+          );
         } else if (value == "") {
           this.isError = true;
-          this.errorMessage = "Thông tin này không được để trống";
+          this.errorMessage = this.$msEnum.MS_VALIDATE_MSG.REQUIRED.format(
+            this.label
+          );
+        } else if (!this.modelValue && value != "") {
+          this.inputValue = "";
         }
       }
-    },
-
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 02/05/2023
-     */
-    isValidData(value) {
-      // if (this.valueNotExist) {
-      //   this.$emit("update:modelValue", "");
-      //   this.$emit("selectedItem", {});
-      // }
     },
 
     /**
@@ -440,15 +464,6 @@ export default {
       this.isError = false;
       this.errorMessage = "";
     },
-    /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
-     * @author: NguyetKTB 20/05/2023
-     */
-     onClickIcon() {
-      this.$emit("clickIcon");
-     }
   },
 };
 </script>

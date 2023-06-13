@@ -1,5 +1,5 @@
 <template>
-  <div class="date-picker-group">
+  <div class="date-picker-group" :class="{ 'validate-error': errorMessage }">
     <div class="date-picker-label">
       <label :for="name"
         >{{ label }}
@@ -13,14 +13,14 @@
         :name="name"
         v-model="date"
         :typeable="true"
-        :inputFormat="'dd/MM/yyyy'"
-        placeholder="dd/mm/yyyy"
+        :inputFormat="format"
+        :placeholder="format"
         @blur="handleClosed"
         @update:modelValue="handleDate"
         autocomplete="off"
       >
       </datepicker>
-      <div class="ms-36 date__picker--icon" @click="handleOpen" tabindex="-1">
+      <div class="ms-36 date__picker--icon" @click="handleOpen">
         <div class="ms-icon ms-18 ms-icon-calendar"></div>
       </div>
     </div>
@@ -55,6 +55,12 @@ export default {
       type: String,
       default: "",
     },
+    // MM/dd/yyyy
+    // dd/MM/yyyy
+    format: {
+      type: String,
+      default: "",
+    },
     name: {
       type: String,
       default: "",
@@ -78,27 +84,29 @@ export default {
   watch: {
     modelValue: function (newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.date = moment(new Date(newVal), "DD/MM/YYYY").toDate();
+        this.date = moment(new Date(newVal), this.format).toDate();
       }
     },
   },
   mounted() {
     this.$nextTick(() => {
       if (this.modelValue) {
-        this.date = moment(this.modelValue, "DD/MM/YYYY").toDate();
+        this.date = moment(this.modelValue, this.format).toDate();
       } else {
-        this.date = moment(this.getCurrentDate(), "DD/MM/YYYY").toDate();
+        this.date = moment(this.getCurrentDate(), this.format).toDate();
       }
-      let datepickerElement = this.$refs[this.name].$el;
-      datepickerElement.querySelectorAll("button").forEach((input) => {
-        input.setAttribute("tabindex", "-1");
+      this.$refs[this.name].inputRef.addEventListener("keydown", (e) => {
+        if (e.keyCode === 9) {
+          this.$refs[this.name].inputRef.blur();
+        }
       });
-      // if (!this.modelValue) {
-      //   this.date = moment(this.getCurrentDate(), "DD/MM/YYYY").toDate();
-      // } else {
-      //   console.log(this.modelValue);
-      //   this.date = moment(this.modelValue, "DD/MM/YYYY").toDate();
-      // }
+    });
+  },
+  beforeUnmount() {
+    this.$refs[this.name].inputRef.removeEventListener("keydown", (e) => {
+      if (e.keyCode === 9) {
+        this.$refs[this.name].inputRef.blur();
+      }
     });
   },
   methods: {
@@ -148,7 +156,10 @@ export default {
       if (this.isFormatDate(this.date.toLocaleDateString("en-GB"))) {
         this.isError = false;
         this.errorMessage = "";
-        this.$emit("update:modelValue", this.date.toLocaleDateString("en-GB"));
+        this.$emit(
+          "update:modelValue",
+          moment(this.date, this.format).toDate()
+        );
       }
     },
 

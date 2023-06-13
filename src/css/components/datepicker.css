@@ -1,46 +1,53 @@
 .date__picker:has(input:focus) {
-    border: 1px solid #77b3c4;
-  }
-  .date__picker:hover {
-    border: 1px solid #77b3c4;
-  }
-  
-  .date-picker-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .date__picker {
-    display: flex;
-    align-items: center;
-    border: 1px solid #afafaf;
-    border-radius: 4px;
-  }
-  .v3dp__datepicker {
-    width: 100%;
-  }
-  
-  .v3dp__datepicker input {
-    height: 36px;
-    max-height: 36px;
-    border-radius: 4px;
-    font-size: 13px;
-    box-sizing: border-box;
-    outline: none;
-    border: unset;
-    padding: 0px 12px;
-    width: 100%;
-  }
-  .date__picker--icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .v3dp__popout {
-    top: -220px;
-    right: -80px;
-  }
-  .error-message {
-    color: red;
-    font-size: 13px;
-  }
+  border: 1px solid #408ea3;
+  box-shadow: 0 0 0 4px #edeff3;
+}
+
+.date__picker:hover {
+  border: 1px solid #408ea3;
+}
+
+.date-picker-group {
+  display: flex;
+  flex-direction: column;
+}
+.date-picker-group .date-picker-label {
+  margin-bottom: 8px;
+}
+.date-picker-group .date__picker{
+  margin-bottom: 2px;
+}
+
+.date__picker {
+  display: flex;
+  align-items: center;
+  border: 1px solid #afafaf;
+  border-radius: 4px;
+}
+
+.v3dp__datepicker {
+  width: 100%;
+}
+
+.v3dp__datepicker input {
+  height: 36px;
+  max-height: 36px;
+  border-radius: 4px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  border: unset;
+  padding: 0px 12px;
+  width: 100%;
+}
+
+.date__picker--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.v3dp__popout {
+  top: -220px;
+  right: -80px;
+}

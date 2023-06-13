@@ -12,19 +12,26 @@
           <div class="ms-icon w-8 h-5 ms-icon-arrow-down-bold"></div>
         </div>
       </div>
-      <div class="ms-24 header-icon tooltip">
-        <div class="ms-icon ms-20 ms-icon-bell"></div>
-        <MISATooltip text="Thông báo" class="tooltip-element" style="left:-60px;margin-top: 60px;width: 100px;" ></MISATooltip>
-      </div>
-      <div class="ms-24 header-icon">
-        <div class="ms-icon ms-18 ms-icon-four-square"></div>
-      </div>
-      <div class="ms-24 header-icon">
-        <div class="ms-icon ms-18 ms-icon-ask"></div>
-      </div>
-      <div class="ms-24 header-icon">
-        <div class="ms-icon ms-18 ms-icon-user"></div>
-      </div>
+      <MISATooltipV1 content="Thông báo">
+        <div class="ms-24 header-icon">
+          <div class="ms-icon ms-20 ms-icon-bell"></div>
+        </div>
+      </MISATooltipV1>
+      <MISATooltipV1 content="Tính năng">
+        <div class="ms-24 header-icon">
+          <div class="ms-icon ms-18 ms-icon-four-square"></div>
+        </div>
+      </MISATooltipV1>
+      <MISATooltipV1 content="Trợ giúp">
+        <div class="ms-24 header-icon">
+          <div class="ms-icon ms-18 ms-icon-ask"></div>
+        </div>
+      </MISATooltipV1>
+      <MISATooltipV1 content="Người dùng">
+        <div class="ms-24 header-icon">
+          <div class="ms-icon ms-18 ms-icon-user"></div>
+        </div>
+      </MISATooltipV1>
       <div class="ms-24 header-icon">
         <div class="ms-icon ms-8 ms-icon-arrow-down-bold"></div>
       </div>
@@ -33,15 +40,20 @@
 </template>
 
 <script>
-import MISATooltip from '@/components/base/MISATooltip.vue';
+import MISATooltipV1 from "@/components/base/MISATooltipV1.vue";
 export default {
   name: "TheHeader",
-    components: {
-      MISATooltip,
-    },
+  components: {
+    MISATooltipV1,
+  },
 };
 </script>
 
 <style scoped>
+/* .header-item {
+  display: flex;
+  align-items: center;
+  margin-left: 14px;
+} */
 @import url(@/css/layouts/header/header.css);
 </style>

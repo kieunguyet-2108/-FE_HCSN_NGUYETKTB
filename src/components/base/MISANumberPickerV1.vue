@@ -1,5 +1,9 @@
 <template>
-  <div class="number__picker" @keydown="onKeydownNumberPicker($event)">
+  <div
+    class="number__picker"
+    @keydown="onKeydownNumberPicker($event)"
+    :class="{ 'validate-error': errorMessage }"
+  >
     <div class="number__picker--label" v-if="label">
       <label :for="name">
         {{ label }}
@@ -217,7 +221,7 @@ export default {
             return;
           }
         }
-        self.$emit("update:modelValue", originNumber);
+        self.$emit("update:modelValue", Number(originNumber));
       } catch (error) {
         console.log(error);
       }
@@ -255,7 +259,6 @@ export default {
           return;
         }
       }
-
       this.$emit("update:modelValue", newVal);
     },
 

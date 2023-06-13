@@ -9,9 +9,9 @@
           <MISAInput
             type="text"
             placeholder="Tìm kiếm tài sản"
-            className="input__field text-style-italic"
+            className="input__field text-style-italic box-shadow-none"
             :isValidate="false"
-            v-model="filter[0].value"
+            v-model="filterObj.textSearchFilter"
           ></MISAInput>
         </div>
         <MISACombobox
@@ -23,10 +23,10 @@
           id="department_code-filter"
           name="department_code-filter"
           primaryKey="fixed_asset_category_id"
-          v-model="filter[2].value"
+          v-model="filterObj.categoryFilter"
           :data="fixedAssetCategories"
           :column="fixedAssetCategoryColumns"
-          @clickIcon="handleData"
+          @selectedItem="handleCategoryFilterItem"
         ></MISACombobox>
         <MISACombobox
           iconLeft="ms-18 ms-icon-filter"
@@ -35,12 +35,11 @@
           inputClass="input__field"
           inputPlaceholder="Bộ phận sử dụng"
           primary-key="department_id"
-          v-model="filter[1].value"
+          v-model="filterObj.departmentFilter"
           :data="departments"
           :column="departmentColumns"
-          @clickIcon="handleData"
+          @selectedItem="handleDepartmentFilterItem"
         ></MISACombobox>
-        <!-- <MISANumberPicker inputType="text" inputPlaceholder="Số lượng" inputClass="input__field"></MISANumberPicker> -->
       </div>
       <div class="data-action">
         <MISAButton
@@ -50,11 +49,11 @@
           @click="showFormModal"
         ></MISAButton>
         <div class="action-item flex column tooltip">
-          <MISATooltipV1 content="Xuất">
+          <MISATooltipV1 content="Nhập">
             <MISAButton
               class="button__icon ms-36"
               icon="ms-icon-excel ms-24"
-              @click="onClickExport"
+              @click="onClickImport"
             ></MISAButton>
           </MISATooltipV1>
         </div>
@@ -76,19 +75,29 @@
         :listData="fixedAssets"
         :listColumn="tableColumns"
         v-model="selectedItems"
-        @dblClick="handleDblClickRow"
         @edit="handleEditRow"
+        @duplicate="handleDuplicateRow"
+        @changePaging="changePaging"
+        @changeDropdown="changeDropdown"
+        :pagingOptions="pagingOptions"
+        :summary="summary"
+        :totalRecord="totalRecord"
+        :pageNumber="pageNumber"
+        :pageSize="pageSize"
+        @selectMenuItem="selectMenuItem"
       ></MISATable>
-      <MISAPagination @changePaging="getFixedAssetByPaging"></MISAPagination>
     </div>
     <router-view
       :departmentColumns="departmentColumns"
       :fixedAssetCategoryColumns="fixedAssetCategoryColumns"
-      @show-dialog="showDialog"
       @show-popup="showPopup"
+      @insertAsset="insertAsset"
+      @updateAsset="updateAsset"
+      @importAsset="importAsset"
     ></router-view>
     <MISAPopup
       :popupMessage="popupInformation.popupMessage"
+      :popupMode="popupInformation.popupMode"
       v-if="popupInformation.isShowPopup"
     ></MISAPopup>
     <MISADialog
@@ -96,30 +105,28 @@
       v-if="dialogInformation.isShowDialog"
       :dialogMessages="dialogInformation.messages"
       :buttonList="dialogInformation.buttonList"
+      :styleIcon="dialogInformation.styleIcon"
     ></MISADialog>
-    <ShortcutGuide :isShowShortcutGuide="isShowShortcutGuide"></ShortcutGuide>
+    <ShortcutGuide :isShowShortcutGuide="isShowShortCut"></ShortcutGuide>
     <MISALoading v-if="isLoading"></MISALoading>
   </div>
 </template>
 <script>
 /* eslint-disable */
 // script file
-import dialog from "@/js/dialog.js";
 import Enum from "@/js/enum.js";
 import column from "@/js/column.js";
-// import form from "@/js/form.js";
 import MISADialog from "@/components/base/MISADialog.vue";
-import dataExample from "@/js/data.js";
 
 // component
-import MISAPagination from "@/components/base/MISAPagination.vue";
-import MISALoading from "@/components/base/MISALoading.vue";
 import MISAPopup from "@/components/base/MISAPopup.vue";
 import MISAButton from "@/components/base/MISAButton.vue";
 import MISATooltip from "@/components/base/MISATooltip.vue";
 import MISAInput from "@/components/base/MISAInput.vue";
 import MISACombobox from "@/components/base/MISACombobox.vue";
 import MISATable from "@/components/base/MISATable.vue";
+import ShortcutGuide from "../ShortcutGuide.vue";
+import _ from "lodash";
 export default {
   name: "AssetHome",
   components: {
@@ -127,114 +134,244 @@ export default {
     MISATooltip,
     MISAInput,
     MISACombobox,
-    MISATable,
     MISAPopup,
     MISADialog,
-    MISALoading,
-    MISAPagination,
+    MISATable,
+    ShortcutGuide,
   },
   created() {
-    this.getFixedAssetList();
+    this.loadData();
     this.getDepartmentList();
     this.getFixedAssetCategoryList();
-    this.loadData();
     this.fixedAssetCategoryColumns = column.fixedAssetCategoryColumns;
     this.departmentColumns = column.departmentColumns;
     this.tableColumns = column.tableColumns;
   },
+  mounted() {
+    window.addEventListener("keydown", this.handleEvent);
+  },
   data() {
     return {
-      selectedDepartment: {},
-      selectedFixedAssetCategory: {},
-      isShowShortcutGuide: false,
-      isLoading: false,
-      selectedItems: [],
-      fixedAssets: [],
-      departments: [],
-      fixedAssetCategories: [],
-      departmentColumns: [],
-      fixedAssetCategoryColumns: [],
-      tableColumns: [],
-      dialogInformation: {
-        isShowDialog: false,
-        messages: [{}],
-        buttonList: [{}],
+      formMode: null,
+      isShowShortCut: false,
+      activeItem: null,
+      filterObj: {
+        // thông tin lọc
+        departmentFilter: null,
+        categoryFilter: null,
+        textSearchFilter: null,
       },
-      popupInformation: {
-        isShowPopup: false,
-        popupMessage: "",
-        popupType: "",
-      },
-      pagination: {
-        page: 1,
-        pageSize: 15,
-        totalRecord: 0,
-        totalPage: 0,
-      },
-      filter: [
+      isLoading: false, // trạng thái loading
+      selectedItems: [], // danh sách asset được selected
+      fixedAssets: [], // danh sách asset
+      departments: [], // danh sách department
+      fixedAssetCategories: [], // danh sách category
+      departmentColumns: [], // danh sách cột department sẽ hiển thị trên combobox
+      fixedAssetCategoryColumns: [], // danh sách cột category sẽ hiển thị trên combobox
+      tableColumns: [], // danh sách cột sẽ hiển thị trên table
+      dialogInformation: {}, // thông tin dialog
+      popupInformation: {}, // thông tin popup
+      pageNumber: 1,
+      pageSize: 10,
+      totalRecord: 0,
+      pagingOptions: [
+        { key: 10, value: 10 },
+        { key: 20, value: 20 },
+        { key: 50, value: 50 },
+        { key: 100, value: 100 },
+      ],
+      summary: [
         {
-          field: "fixed_asset_name",
-          value: "",
-          operator: this.$msEnum.MS_FILTER_OPERATOR.Like,
+          field: "quantity",
+          value: 0,
+          width: "80px",
         },
         {
-          field: "department_id",
-          value: "",
-          operator: this.$msEnum.MS_FILTER_OPERATOR.Equal,
+          field: "cost",
+          value: 0,
+          width: "100px",
         },
         {
-          field: "fixed_asset_category_id",
-          value: "",
-          operator: this.$msEnum.MS_FILTER_OPERATOR.Equal,
+          field: "",
+          value: 0,
+          width: "100px",
+        },
+        {
+          field: "",
+          value: 0,
+          width: "100px",
         },
       ],
     };
   },
-  mounted() {
-    //focus vào content
-    this.listSelected = [
-      {
-        fixed_asset_id: "2",
-        fixed_asset_code: "TS00002",
-        fixed_asset_name: "Máy in HP",
-        fixed_asset_category_id: "3",
-        fixed_asset_category_code: "MS3",
-        fixed_asset_category_name: "Máy in",
-        department_id: "2",
-        department_code: "PB002",
-        department_name: "Phòng nhân sự",
-        quantity: "1",
-        cost: "10.000.000",
-        depreciation_rate: "20",
-        remaining_amount: "8.800.000",
-        depreciation_year: "1.200.000",
-        life_time: "6",
-        tracked_year: "2023",
-        purchased_date: "18/04/2023",
-        depreciation_start_date: "18/04/2023",
-      },
-    ];
+  computed: {
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any} totalRecord
+     * @author: NguyetKTB 25/05/2023
+     */
+    filter() {
+      let tmpFilter = [];
+      if (!_.isEmpty(this.filterObj.departmentFilter)) {
+        tmpFilter.push({
+          field: "department_id",
+          value: this.filterObj.departmentFilter,
+          condition: this.$msEnum.MS_FILTER_CONDITION.Equal,
+          operators: this.$msEnum.MS_FILTER_OPERATOR.And,
+        });
+      }
+      if (!_.isEmpty(this.filterObj.categoryFilter)) {
+        tmpFilter.push({
+          field: "fixed_asset_category_id",
+          value: this.filterObj.categoryFilter,
+          condition: this.$msEnum.MS_FILTER_CONDITION.Equal,
+          operators: this.$msEnum.MS_FILTER_OPERATOR.And,
+        });
+      }
+      if (this.filterObj.textSearchFilter) {
+        tmpFilter.push({
+          field: "fixed_asset_name",
+          value: this.filterObj.textSearchFilter,
+          condition: this.$msEnum.MS_FILTER_CONDITION.Like,
+          operators: this.$msEnum.MS_FILTER_OPERATOR.Or,
+        });
+        tmpFilter.push({
+          field: "fixed_asset_code",
+          value: this.filterObj.textSearchFilter,
+          condition: this.$msEnum.MS_FILTER_CONDITION.Like,
+        });
+      }
+      return tmpFilter;
+    },
+  },
+  watch: {
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any} totalRecord
+     * @author: NguyetKTB 25/05/2023
+     */
+    "filterObj.textSearchFilter": _.debounce(function () {
+      this.pageNumber = 1;
+      this.getFixedAssetByPaging(this.pageNumber, this.pageSize);
+    }, 500),
+    "filterObj.departmentFilter": function () {
+      this.pageNumber = 1;
+      this.getFixedAssetByPaging(this.pageNumber, this.pageSize);
+    },
+    "filterObj.categoryFilter": function () {
+      this.pageNumber = 1;
+      this.getFixedAssetByPaging(this.pageNumber, this.pageSize);
+    },
   },
   methods: {
     /**
-     * @description:
+     * @description: Thực hiện xử lí phím tắt trên trang chủ
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 10/06/2023
+     */
+    handleEvent(event) {
+      const me = this;
+      if (event.keyCode == this.$msEnum.KeyCode.F1) {
+        event.preventDefault();
+        this.isShowShortCut = true;
+      }
+      if (this.isShowShortCut && event.keyCode == this.$msEnum.KeyCode.Escape) {
+        event.preventDefault();
+        this.isShowShortCut = false;
+      }
+      // kiểm tra nếu chỉ có ctrl được dữ
+      if (event.ctrlKey) {
+        switch (event.keyCode) {
+          case me.$msEnum.KeyCode.R: // reload data : Ctrl + R
+            event.preventDefault();
+            me.getFixedAssetByPaging(me.pageNumber, me.pageSize);
+            break;
+          case me.$msEnum.KeyCode.D: // xóa: Ctrl + D
+            event.preventDefault();
+            me.onClickDelete();
+            break;
+          default:
+            break;
+        }
+      }
+      // kiểm tra nếu ctrl và alt cùng được dữ
+      if (event.ctrlKey && event.shiftKey) {
+        switch (event.keyCode) {
+          case me.$msEnum.KeyCode.A: // thêm mới: Ctrl + Alt + A
+            event.preventDefault();
+            me.showFormModal();
+            break;
+          default:
+            break;
+        }
+      }
+    },
+    /**
+     * @description: Thực hiện load lại data khi người dùng click paging dưới table
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 25/05/2023
+     */
+    changePaging(pageNumber) {
+      this.pageNumber = pageNumber;
+      this.loadData();
+    },
+    /**
+     * @description: thực hiện load lại data khi người dùng thay đổi dropdown trên filter
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 25/05/2023
+     */
+    changeDropdown(value) {
+      this.pageSize = value.key;
+      this.pageNumber = 1;
+      this.loadData();
+    },
+
+    /**
+     * @description: Hàm thực hiện xử lí gọi api lấy dữ liệu theo paging và filter
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 21/05/2023
      */
     async getFixedAssetByPaging(pageNumber, pageSize) {
       const me = this;
+      var filters = [];
+      me.filter.forEach((filter) => {
+        if (filter.value != "") {
+          filters.push(filter);
+        }
+      });
       // duyệt qua các phần tử trong  filterInfor để lấy ra các tham số cần thiết
       try {
-        const rs = await this.$msApi.fixed_asset.getListByPagination(
+        me.isLoading = true;
+        const rs = await me.$msApi.fixed_asset.getListByPagination(
           pageNumber,
           pageSize,
-          me.filter
+          filters
         );
-      } catch (error) {}
+        if (rs.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          me.fixedAssets = rs.data.data.data;
+          me.totalRecord = rs.data.data.totalRecord;
+          me.summary.find((x) => x.field == "quantity").value =
+            rs.data.data.summary.totalQuantity;
+          me.summary.find((x) => x.field == "cost").value =
+            rs.data.data.summary.totalOfCost;
+          // me.selectedItems = [];
+          me.isLoading = false;
+        } else {
+          me.isLoading = false;
+          // CO THONG BAO LOI
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
-     * @description:
+     * @description: Hàm thực hiện gọi api lấy ra tất cả dữ liệu bảng tài sản
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 19/05/2023
@@ -242,9 +379,9 @@ export default {
     async getFixedAssetList() {
       const me = this;
       try {
-        const result = await this.$msApi.fixed_asset.getFixedAssets();
-        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.fixedAssets = result.data;
+        const result = await me.$msApi.fixed_asset.getFixedAssets();
+        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          me.fixedAssets = result.data.data;
         }
       } catch (error) {
         console.log(error);
@@ -252,7 +389,7 @@ export default {
     },
 
     /**
-     * @description:
+     * @description: Hàm thực hiện gọi api lấy ra tất cả dữ liệu bảng phòng ban
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 19/05/2023
@@ -260,16 +397,16 @@ export default {
     async getDepartmentList() {
       const me = this;
       try {
-        const result = await this.$msApi.department.getDepartments();
-        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.departments = result.data;
+        const result = await me.$msApi.department.getDepartments();
+        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          me.departments = result.data.data;
         }
       } catch (error) {
         console.log(error);
       }
     },
     /**
-     * @description:
+     * @description: Hàm thực hiện gọi api lấy ra tất cả dữ liệu bảng loại tài sản
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 19/05/2023
@@ -278,61 +415,45 @@ export default {
       const me = this;
       try {
         const result =
-          await this.$msApi.fixed_asset_category.getFixedAssetCategories();
-        if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.fixedAssetCategories = result.data;
+          await me.$msApi.fixed_asset_category.getFixedAssetCategories();
+        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          me.fixedAssetCategories = result.data.data;
         }
       } catch (error) {
         console.log(error);
       }
     },
     /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
-     * @author: NguyetKTB 22/05/2023
-     */
-    async deleteFixedAsset() {
-      const me = this;
-      try {
-        const result = await this.$msApi.fixed_asset.deleteFixedAsset(
-          me.selectedItems
-        );
-        console.log(result);
-      } catch (error) {
-        
-      }
-    },
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 19/05/2023
-     */
-    handleDblClickRow(dataRow) {
-      this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
-    },
-    /**
-     * @description:
+     * @description: Hàm xử lí sự kiện click vào 1 dòng trong table
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 19/05/2023
      */
     handleEditRow(dataRow) {
+      this.formMode = this.$msEnum.FormMode.Edit;
       this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
     },
     /**
      * @description:
      * @param: {any}
      * @return: {any}
+     * @author: NguyetKTB 28/05/2023
+     */
+    handleDuplicateRow(dataRow) {
+      this.formMode = this.$msEnum.FormMode.Duplicate;
+      this.$router.push(`/asset/add/${dataRow.fixed_asset_id}`);
+    },
+    /**
+     * @description: Hàm thực hiện gọi api lấy dữ liệu theo paging và filter
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 05/05/2023
      */
-    loadData() {
+    async loadData() {
       this.isLoading = true;
       // set time out 1s để tắt loading
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 1000);
+      await this.getFixedAssetByPaging(this.pageNumber, this.pageSize);
+      this.isLoading = false;
     },
     /**
      * @description: Thực hiện show form thêm mới tài sản
@@ -341,77 +462,18 @@ export default {
      * @author: NguyetKTB 04/05/2023
      */
     showFormModal() {
+      this.formMode = this.$msEnum.FormMode.Add;
       this.$router.push("/asset/add");
     },
-
     /**
-     * @description:
+     * @description: Thực hiện xử lí khi click button xuất
      * @param: {any}
      * @return: {any}
-     * @author: NguyetKTB 05/05/2023
+     * @author: NguyetKTB 26/05/2023
      */
-    hideModal() {
-      this.$router.push("/asset");
-    },
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 05/05/2023
-     */
-    showDialog(dialogInformation) {
-      this.dialogInformation = dialogInformation;
-    },
-
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 05/05/2023
-     */
-    buttonMainOnclick() {
-      if (Enum.FormMode == 1) {
-        this.dialogInformation.isShowDialog = false;
-        this.$refs.dialog.showDialog({});
-        this.hideModal();
-      } else if (Enum.FormMode == 2) {
-        this.dialogInformation.isShowDialog = false;
-        this.hideModal();
-        this.showPopup("Chỉnh sửa dữ liệu thành công", "success");
-      }
-    },
-
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 05/05/2023
-     */
-    buttonOutlineOnClick() {
-      if (Enum.FormMode == 1) {
-        this.dialogInformation.isShowDialog = false;
-      } else if (Enum.FormMode == 2) {
-        this.dialogInformation.isShowDialog = false;
-      }
-    },
-    /**
-     * @description:
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 05/05/2023
-     */
-    buttonSubOnclick() {
-      if (Enum.FormMode == 2) {
-        this.dialogInformation.isShowDialog = false;
-        this.hideModal();
-      }
-    },
-    async onClickExport() {
-      this.$msDialog.dialogOneButton(
-        "Xuất dữ liệu",
-        "Xuất dữ liệu thành công",
-        "success"
-      );
+    async onClickImport() {
+      const me = this;
+      this.$router.push("/asset/import");
     },
 
     /**
@@ -420,42 +482,39 @@ export default {
      * @return: {any}
      * @author: NguyetKTB 04/05/2023
      */
-    showPopup(message, popupType) {
+    async showPopup(message, popupMode) {
+      // load data xong show popup
       this.popupInformation.isShowPopup = true;
       this.popupInformation.popupMessage = message;
-      this.popupInformation.popupType = popupType;
+      this.popupInformation.popupMode = popupMode;
       setTimeout(() => {
         this.popupInformation.isShowPopup = false;
-      }, 2000);
+      }, 3000);
     },
-
     /**
-     * @description:
+     * @description: Thực hiện xử lí sự kiện click vào button xóa
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 05/05/2023
      */
     async onClickDelete(event) {
-      let formatted = "Hello {0}! Welcome to {1}.".format("John", "New York");
-      console.log(formatted);
+      const me = this;
       // kiểm tra trường hợp chưa chọn bản ghi nào
-      if (this.selectedItems.length == 0) {
-        event.preventDefault();
+      if (me.selectedItems.length == 0) {
         // disable button xóa
-      } else if (this.selectedItems.length == 1) {
-        let item = this.selectedItems[0];
-        this.dialogInformation = {
-          ...this.dialogInformation,
+      } else if (me.selectedItems.length == 1) {
+        let item = me.selectedItems[0];
+        me.dialogInformation = {
           isShowDialog: true,
           messages: [
             {
               field: "message",
               content:
-                `<div>${this.$msEnum.MS_MESSAGE_DELETE.ONE_RECORD}</div>`.format(
+                `<div>${me.$msEnum.MS_MESSAGE_DELETE.ONE_RECORD}</div>`.format(
                   `<strong>${item.fixed_asset_code}</strong>`,
                   `<strong>${item.fixed_asset_name}</strong>`
                 ),
-              style: "",
+              style: "display: flex; flex-direction: column;"
             },
           ],
           buttonList: [
@@ -464,34 +523,31 @@ export default {
               buttonClass: "button button__main",
               isFocus: true,
               onclick: async () => {
-                // gọi api xóa dữ liệu
-                
-                this.dialogInformation.isShowDialog = false;
-                this.selectedItems = [];
-                this.showPopup("Xóa dữ liệu thành công", "success");
+                me.deleteFixedAsset(me.selectedItems);
+                // kiểm tra lại nếu list item = 0
+                console.log(me.fixedAssets);
               },
             },
             {
               text: "Không",
               buttonClass: "button button__outline",
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
+                me.dialogInformation.isShowDialog = false;
               },
             },
           ],
         };
       } else {
-        this.dialogInformation = {
-          ...this.dialogInformation,
+        me.dialogInformation = {
           isShowDialog: true,
           messages: [
             {
               field: "message",
               content:
-                `<div>${this.$msEnum.MS_MESSAGE_DELETE.MULTI_RECORD}</div>`.format(
-                  `<strong>${this.selectedItems.length}</strong>`
+                `<div>${me.$msEnum.MS_MESSAGE_DELETE.MULTI_RECORD}</div>`.format(
+                  `<strong>${me.selectedItems.length}</strong>`
                 ),
-              style: "display: flex; flex-direction: row; ",
+              style: "display: flex; flex-direction: column;"
             },
           ],
           buttonList: [
@@ -500,17 +556,14 @@ export default {
               buttonClass: "button button__main",
               isFocus: true,
               onclick: async () => {
-                this.deleteFixedAsset();
-                this.dialogInformation.isShowDialog = false;
-                this.selectedItems = [];
-                this.showPopup("Xóa tài sản thành công", "success");
+                me.deleteFixedAsset(me.selectedItems);
               },
             },
             {
               text: "Không",
               buttonClass: "button button__outline",
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
+                me.dialogInformation.isShowDialog = false;
               },
             },
           ],
@@ -518,13 +571,126 @@ export default {
       }
     },
     /**
-     * @description: Thực hiện xử lí dữ liệu filter và paging trước khi gọi api
+     * @description: Thực hiện gọi api xóa dữ liệu
      * @param: {any}
      * @return: {any}
-     * @author: NguyetKTB 20/05/2023
+     * @author: NguyetKTB 25/05/2023
      */
-    handleData() {
-      console.log(this.filterInfor);
+    async deleteFixedAsset(items) {
+      const me = this;
+      var selectedList = [];
+      items.forEach((item) => {
+        selectedList.push(item.fixed_asset_id);
+      });
+      try {
+        const result = await me.$msApi.fixed_asset.deleteFixedAsset(
+          selectedList
+        );
+        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          if (items.length == me.fixedAssets.length) {
+            if (me.pageNumber > 1) {
+              me.pageNumber = me.pageNumber - 1;
+            }
+          }
+          me.dialogInformation.isShowDialog = false;
+          me.selectedItems = [];
+          me.showPopup(result.data.userMsg, me.$msEnum.MS_POPUP_MODE.Success);
+          me.loadData();
+        } else {
+          me.dialogInformation.isShowDialog = false;
+          me.showPopup(result.data.userMsg, me.$msEnum.MS_POPUP_MODE.Error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 11/06/2023
+     */
+    hideModal() {
+      this.$router.push("/asset");
+    },
+    /**
+     * @description: Thực hiện xử lí thông tin sau khi thêm mới và hiện thông báo cho người dùng
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 25/05/2023
+     */
+    insertAsset(asset) {
+      // nên load luôn dữ liệu mới nhất từ api về
+      const me = this;
+      if (asset) {
+        me.hideModal();
+        // me.loadData();
+        me.fixedAssets.unshift(asset);
+        me.totalRecord += 1;
+        me.summary.find((x) => x.field == "quantity").value += asset.quantity;
+        me.summary.find((x) => x.field == "cost").value += asset.cost;
+        me.showPopup(
+          me.$msEnum.MS_MESSAGE.MS_MSG_ADD_SUCCESS,
+          me.$msEnum.MS_POPUP_MODE.Success
+        );
+      } else {
+        me.hideModal();
+        me.showPopup(
+          me.$msEnum.MS_MESSAGE.MS_MSG_ADD_FAILED,
+          me.$msEnum.MS_POPUP_MODE.Error
+        );
+      }
+    },
+    /**
+     * @description: Thực hiện xử lí thông tin sau khi sửa và hiện thông báo cho người dùng
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 26/05/2023
+     */
+    updateAsset(message, popupMode, item) {
+      const me = this;
+      me.hideModal();
+      me.loadData();
+      me.showPopup(message, popupMode);
+    },
+    /**
+     * @description: 
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 12/06/2023
+     */
+     importAsset(items){
+      // const me = this;
+      // // unshift là thêm vào đầu mảng
+      // me.fixedAssets.unshift(...items);
+      // me.totalRecord += items.length;
+      // me.summary.find((x) => x.field == "quantity").value += items.reduce((sum, item) => sum + item.quantity, 0);
+     },
+    /**
+     * @description: Hàm thực hiện xử lí khi người dùng chọn menu item
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 02/06/2023
+     */
+    selectMenuItem(action, item) {
+      const me = this;
+      switch (action) {
+        case me.$msEnum.MS_ACTION.Add:
+          me.showFormModal();
+          break;
+        case me.$msEnum.MS_ACTION.Edit:
+          me.handleEditRow(item);
+          break;
+        case me.$msEnum.MS_ACTION.Delete:
+          me.selectedItems = [item];
+          me.onClickDelete();
+          break;
+        case me.$msEnum.MS_ACTION.Duplicate:
+          me.handleDuplicateRow(item);
+          break;
+        default:
+          break;
+      }
     },
   },
 };

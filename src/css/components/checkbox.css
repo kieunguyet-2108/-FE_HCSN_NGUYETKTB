@@ -31,17 +31,19 @@
 }
 /* khi hover vào checkbox thì viền border sẽ nổi lên (checkbox đang ở trạng thái defaut) */
 .checkbox:hover+label::before {
-    border: 3px solid #c4e3ec8c;
+    /* border: 3px solid #c4e3ec8c; */
     border-radius: 2px;
-    transition: 0.5s;
-    transform: scale(1.1);
+    /* transition: 0.5s;
+    transform: scale(1.1); */
     background-color: #FFFFFF;
+    box-shadow: 0 0 0 2px #a7d0dc;
 }
 /* khi hover vào checkbox thì viền border sẽ nổi lên (checkbox đang ở trạng thái checked) */
 .checkbox:checked:hover+label::before {
-    border: 3px solid #c4e3ec8c;
+    /* border: 3px solid #c4e3ec8c; */
     border-radius: 2px;
-    transition: 0.1s;
-    transform: scale(1.1);
+    /* transition: 0.1s;
+    transform: scale(1.1); */
+    box-shadow: 0 0 0 2px #a7d0dc;
 }
 

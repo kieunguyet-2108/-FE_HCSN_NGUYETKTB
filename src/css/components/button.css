@@ -1,5 +1,6 @@
 /* common style for button */
 .button {
+    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11,14 +12,22 @@
     padding: 0px 6px;
     box-sizing: border-box;
 }
+
 button[disabled] {
     opacity: 0.5;
     cursor: not-allowed !important;
-  }
-.button__icon{
+}
+
+button[disabled] .ms-icon {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+.button__icon {
     outline: none;
     border: none;
 }
+
 .button__icon.disabled {
     cursor: not-allowed;
     pointer-events: none;
@@ -31,7 +40,7 @@ button[disabled] {
 
 /* style for button main  */
 .button__main {
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, .16);
+    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
     background-color: #1aa4c8;
     color: #ffffff;
     border: 1px solid #1aa4c8;
@@ -48,7 +57,7 @@ button[disabled] {
 .button__main:focus {
     background-color: #1AA4C8;
     border: 1px solid #1aa4c8;
-    box-shadow: 1px 1px 1px 3px #D1EDF4;
+    box-shadow: 0 0 0 4px #D1EDF4;
     outline: none;
 }
 
@@ -71,7 +80,7 @@ button[disabled] {
 }
 
 .button__sub:focus {
-    box-shadow: 1px 1px 1px 3px #D1EDF4;
+    box-shadow: 0 0 0 4px #D1EDF4;
     border-radius: none;
     border: 1px solid #1aa4c8;
     outline: none;
@@ -87,7 +96,7 @@ button[disabled] {
 
 .button__outline:focus {
     outline: none;
-    box-shadow: 1px 1px 1px 3px #D1EDF4;
+    box-shadow: 0 0 0 4px #D1EDF4;
     border: none;
     background-color: #1AA4C8;
     color: #ffffff;
@@ -98,7 +107,7 @@ button[disabled] {
 
 
 .button__outline:hover {
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, .16);
+    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
     background-color: #1AA4C8;
     color: #ffffff;
     border-style: none;
@@ -109,7 +118,7 @@ button[disabled] {
 .button__icon {
     background-color: #ffffff;
     border-radius: 3px;
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, .16);
+    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
     overflow: hidden;
 }
 

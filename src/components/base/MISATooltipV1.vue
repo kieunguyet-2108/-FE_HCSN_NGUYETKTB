@@ -1,18 +1,18 @@
 <template>
   <div
-    class="v-tooltip"
+    class="ms-tooltip"
     @mousemove="onMouseOver"
     @mouseleave="onMouseLeave"
     @mousedown="onMouseDown"
   >
-    <span
+    <a
       v-if="content"
-      class="v-tooltip__text"
+      class="ms-tooltip__text"
       ref="tooltip"
       :class="isShow ? 'show' : ''"
     >
       {{ content }}
-    </span>
+    </a>
     <slot></slot>
   </div>
 </template>
@@ -40,36 +40,44 @@ export default {
   },
   methods: {
     /**
-     * @description: Hàm này dùng để ẩn tooltip khi hover ra và set lại giá trị isMouseDown = false để cho phép hiển thị tooltip khi hover vào
-     * Author: KTBN 17.05.23
+     * @description: Thực hiện ẩn tooltip khi hover ra và set lại giá trị isMouseDown = false để cho phép hiển thị tooltip khi hover vào
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 20/05/2023
      */
     onMouseLeave() {
       this.isShow = false;
       this.isMouseDown = false;
     },
     /**
-     * @description: Hàm này dùng để ẩn tooltip khi click vào và set lại giá trị isMouseDown = true để không cho phép hiển thị tooltip khi hover vào
-     * Author: KTBN 17.05.23
+     * @description: Thực hiện ẩn tooltip khi click vào và set lại giá trị isMouseDown = true để không cho phép hiển thị tooltip khi hover vào
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 20/05/2023
      */
     onMouseDown() {
       this.isShow = false;
       this.isMouseDown = true;
     },
+
     /**
-     * @description: Hàm này dùng để hiển thị tooltip khi hover vào
-     * Author: KTBN 17.05.23
+     * @description: hiển thị tooltip khi hover vào
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 20/05/2023
      */
     onMouseOver(event) {
       if (!this.isMouseDown) {
-        // nếu isMouseDown = false thì mới cho phép hiển thị tooltip
+        // nếu isMouseDown là false thì  cho phép hiển thị tooltip
         this.isShow = true;
-        const { clientX, clientY } = event; // lấy tọa độ của chuột
+        // lấy tọa độ của chuột
+        const { clientX, clientY } = event;
         const tooltip = this.$refs.tooltip;
         if (tooltip) {
           // tạo tooltip ở dưới vị trí của chuột
           tooltip.style.top = clientY + this.top + "px";
           tooltip.style.left = clientX + this.left + "px";
-          // nếu tooltip bị tràn ra ngoài màn hình thì đưa về vị trí ban đầu
+          // nếu tooltip bị tràn ra ngoài màn hình thì đưa về trở về vị trí ban đầu
           if (tooltip.getBoundingClientRect().right > window.innerWidth) {
             tooltip.style.left = clientX - tooltip.offsetWidth + "px";
           }
@@ -79,8 +87,8 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
-.v-tooltip__text {
+<style scoped lang="css">
+.ms-tooltip__text {
   z-index: 9999;
   display: none;
   text-align: center;
@@ -96,10 +104,12 @@ export default {
   box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
   border-radius: 4px;
   background-color: #4f4f4f;
-
-  &.show {
-    display: block;
-    opacity: 0.9;
-  }
+  width: fit-content;
+  max-width: 250px;
+  white-space: normal;
+}
+.ms-tooltip__text.show {
+  display: block;
+  opacity: 0.9;
 }
 </style>

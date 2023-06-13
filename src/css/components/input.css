@@ -1,11 +1,23 @@
 .input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    /* gap: 8px; */
   }
-  .input-group__content:has(.input__field:focus),
-  .input-group__content:hover {
-    border: 1px solid #77b3c4;
+  .input-group .input-group__label{
+    margin-bottom: 8px;
+  }
+  .input-group .input-group__content{
+    margin-bottom: 2px;
+  }
+  .input-group__content:has(.input__field.box-shadow-none:focus){
+    box-shadow: none;
+  }
+  .input-group__content:has(.input__field:focus) {
+    border: 1px solid #408ea3;
+    box-shadow: 0 0 0 4px #edeff3;
+  }
+  .input-group__content:hover{
+    border: 1px solid #408ea3;
   }
   .filter .input-group__content {
     outline: none;
@@ -36,10 +48,7 @@
   .input__field.italic::placeholder {
     font-style: italic;
   }
-  .error-message {
-    font-size: 13px;
-    color: #ff0000;
-  }
+ 
   .input-group:has(.error-message) .input-group__content {
     border: 1px solid #ff0000;
   }

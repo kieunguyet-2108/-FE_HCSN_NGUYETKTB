@@ -4,7 +4,6 @@ module.exports = defineConfig({
   configureWebpack: {
     devtool: "source-map",
   },
-  // devServer: {
-  //   proxy: 'https://localhost:7081'
-  // },
+
 });
+

@@ -13,9 +13,25 @@ const routers = [
     component: lazyLoad("asset/AssetHome"),
     name: "AssetHome",
     children: [
-      { path: ":asset_id", component: lazyLoad("asset/AssetForm"), props: true , name: "AssetForm"},
-      { path: "add", component: lazyLoad("asset/AssetForm") }
+      {
+        path: ":asset_id",
+        component: lazyLoad("asset/AssetForm"),
+        props: true,
+        name: "AssetForm",
+      },
+      { path: "add", component: lazyLoad("asset/AssetForm") },
+      {
+        path: "add/:duplicate_id",
+        component: lazyLoad("asset/AssetForm"),
+        props: true,
+        name: "AssetFormEdit",
+      },
     ],
+  },
+  {
+    path: "/asset/import",
+    component: lazyLoad("asset/AssetImport"),
+    name: "AssetImport"
   },
   {
     path: "/:pathMatch(.*)*",

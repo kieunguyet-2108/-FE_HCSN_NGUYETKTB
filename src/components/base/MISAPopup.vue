@@ -4,7 +4,15 @@
     <div class="popup-content flex row">
       <div class="popup-icon mr-20">
         <div class="ms-32">
-          <div class="ms-icon-2 ms-32 ms-icon-check-green"></div>
+          <div class="ms-icon-2 ms-32 ms-icon-check-green"
+          v-if="popupMode == this.$msEnum.MS_POPUP_MODE.Success"
+          ></div>
+          <div class="ms-icon-2 ms-32 ms-icon-warning-popup"
+          v-if="popupMode == this.$msEnum.MS_POPUP_MODE.Warning"
+          ></div>
+          <div class="ms-icon-2 ms-32 ms-icon-error-popup"
+          v-if="popupMode == this.$msEnum.MS_POPUP_MODE.Error"
+          ></div>
         </div>
       </div>
       <div
@@ -21,6 +29,10 @@ export default {
     name: "MISAPopup",
     props: {
         popupMessage: {
+            type: String,
+            default: "",
+        },
+        popupMode: {
             type: String,
             default: "",
         },

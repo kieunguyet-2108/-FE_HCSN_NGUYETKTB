@@ -2,19 +2,19 @@
   <!-- DIALOG -->
   <div class="dialog" id="dialog">
     <div class="dialog__main">
-      <div class="dialog__content">
-        <div class="dialog-icon ms-36">
-          <div class="ms-icon-2 ms-36 ms-icon-warning"></div>
+      <div class="dialog__content" :style="styleIcon">
+        <div class="dialog-icon ms-36" >
+          <div class="ms-icon-2 ms-36 ms-icon-warning" ></div>
         </div>
-        <div>
-          <div
+        <ul>
+          <li
             class="dialog-message"
             v-for="(message, index) in dialogMessages"
             :key="index"
+            v-html="message.content" :style="message.style"
           >
-            <div v-html="message.content" :style="message.style"></div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
       <div class="dialog__footer" @keydown="footerKeydown">
         <MISAButton
@@ -63,7 +63,7 @@ export default {
         },
       ],
     },
-    dialogIcon: {
+    styleIcon: {
       type: String,
       default: "",
     },

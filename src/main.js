@@ -11,7 +11,6 @@ import msEnum from "@/js/enum.js";
 import msDialog from "@/js/dialog.js";
 import api from "@/api/api.js";
 const app = createApp(App);
-
 String.prototype.format = function() {
     let formatted = this;
     for (let i = 0; i < arguments.length; i++) {

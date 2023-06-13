@@ -1,5 +1,9 @@
 <template>
-  <div class="input-group" v-if="type == 'text'">
+  <div
+    class="input-group"
+    v-if="type == 'text'"
+    :class="{ 'validate-error': errorMessage }"
+  >
     <div class="input-group__label" v-if="label">
       <label :for="name">
         {{ label }}

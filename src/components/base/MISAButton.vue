@@ -8,7 +8,7 @@
     @click="onClickButton"
     :disabled="disabled"
   >
-    <div class="ms-icon" v-if="icon" :class="icon"></div>
+    <div class="ms-icon" v-if="icon" :class="icon" :style="styleIcon"></div>
     <div>{{ text }}</div>
   </button>
 </template>
@@ -44,6 +44,10 @@ export default {
     isFocus: {
       type: Boolean,
       default: false,
+    },
+    styleIcon: {
+      type: String,
+      default: "",
     },
   },
   components: {},

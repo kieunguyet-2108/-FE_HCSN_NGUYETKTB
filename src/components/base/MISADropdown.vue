@@ -3,7 +3,7 @@
     <MISAButton
       class="button__paging"
       icon="ms-8 ms-icon-arrow-down-bold"
-      :text="itemSelected.value"
+      :text="selectedValue"
       @click="handleClick"
       v-clickOutside="
         () => {
@@ -18,7 +18,7 @@
         :key="index"
         @click="handleClickItem(option)"
         :class="{
-          'dropdown__item--active': option.key === itemSelected.key,
+          'dropdown__item--active': option.key === selectedValue,
         }"
       >
         {{ option.value }}
@@ -43,9 +43,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    itemSelected: {
-      type: Object,
-      default: () => {},
+    selectedValue: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -58,7 +58,7 @@ export default {
       this.isShow = !this.isShow;
     },
     handleClickItem(option) {
-      this.$emit("change", option);
+      this.$emit("changeDropdown", option);
       this.isShow = false;
     },
   },
@@ -87,7 +87,7 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   position: absolute;
-  top: -225px;
+  top: -150px;
   background-color: #fff;
   width: 70px;
   z-index: 12;

@@ -192,3 +192,6 @@ a {
 .sidebar.active .ms-icon-arrow-down {
     display: none;
 }
+.sidebar.active .img__logo--text{
+    opacity: 0;
+}
