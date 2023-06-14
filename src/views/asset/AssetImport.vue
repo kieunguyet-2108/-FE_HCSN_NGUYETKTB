@@ -80,8 +80,22 @@
           statusImport == this.$msEnum.MS_STATUS_IMPORT.Handle && !isLoading
         "
       >
-        <div class="handle--data__header">
+        <div
+          class="handle--data__header"
+          v-if="displayList != null && displayList.length > 0"
+        >
           <div
+            :class="{
+              'error-message': !isValid,
+              'success-message': isValid,
+            }"
+          >
+            {{ importInformation.message }}
+          </div>
+        </div>
+        <div v-if="displayList == null">
+          <div
+            class="text-center"
             :class="{
               'error-message': !isValid,
               'success-message': isValid,
@@ -562,7 +576,6 @@ export default {
           "Định dạng file không hợp lệ(.xlsx, .xls)";
         me.error = [];
         me.data = [];
-        return;
       } else {
         me.file = file;
         me.isValid = true;
@@ -820,6 +833,7 @@ input[type="file"] {
   flex: 1;
   white-space: nowrap;
   position: absolute;
+  font-size: 13px;
 }
 .content-top {
   display: flex;
@@ -857,15 +871,15 @@ tbody tr td {
   border-bottom: 1px solid rgba(128, 128, 128, 0.373);
 }
 th.record__notification {
-  min-width: 270px;
-  max-width: 270px;
-  width: 270px;
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
   text-align: start;
 }
 td.record__notification {
-  min-width: 250px;
-  max-width: 250px;
-  width: 250px;
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
   white-space: pre-wrap;
   line-height: 1.5;
   padding-top: 10px;
@@ -906,6 +920,10 @@ td.record__notification {
   font-weight: bold;
   cursor: pointer;
   color: green;
+}
+.error-message {
+  color: red;
+  font-size: 14px;
 }
 .table-content--title {
   display: flex;

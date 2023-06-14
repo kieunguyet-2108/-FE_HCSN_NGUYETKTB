@@ -3,7 +3,7 @@
   <div class="header flex row space-between align-items-center">
     <div class="text-bold">Danh sách tài sản</div>
     <div class="header-action flex row align-items-center justify-content-end">
-      <div>Sở tài chính</div>
+      <div class="text-bold">Sở tài chính</div>
       <div class="number-picker-group">
         <div>Năm</div>
         <div class="text-bold">2021</div>

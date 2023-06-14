@@ -18,7 +18,7 @@
           iconLeft="ms-18 ms-icon-filter"
           iconRight="ms-8 ms-icon-arrow-down-bold"
           inputType="text"
-          inputClass="input__field"
+          inputClass="input__field placeholder-color-black"
           inputPlaceholder="Loại tài sản"
           id="department_code-filter"
           name="department_code-filter"
@@ -32,7 +32,7 @@
           iconLeft="ms-18 ms-icon-filter"
           iconRight="ms-8 ms-icon-arrow-down-bold"
           inputType="text"
-          inputClass="input__field"
+          inputClass="input__field placeholder-color-black"
           inputPlaceholder="Bộ phận sử dụng"
           primary-key="department_id"
           v-model="filterObj.departmentFilter"
@@ -363,6 +363,10 @@ export default {
           // me.selectedItems = [];
           me.isLoading = false;
         } else {
+          me.fixedAssets = [];
+          me.totalRecord = 0;
+          me.summary.find((x) => x.field == "quantity").value = 0;
+          me.summary.find((x) => x.field == "cost").value = 0;
           me.isLoading = false;
           // CO THONG BAO LOI
         }

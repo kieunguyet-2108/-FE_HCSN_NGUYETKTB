@@ -7,7 +7,7 @@
     <div class="menu-bar">
       <ul class="menu-list">
         <MISATooltipV1 content="Tổng quan">
-          <router-link class="menu-item tooltip" to="/asset1">
+          <router-link class="menu-item tooltip" to="/overview">
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-computer"></div>
             </div>
@@ -23,7 +23,7 @@
             <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
           </router-link>
         </MISATooltipV1>
-        <MISATooltipV1 content="Tài sản HT-ĐB">
+        <MISATooltipV1 content="Tài sản Hệ Thống-Đường Bộ">
           <router-link class="menu-item tooltip" to="/asset2">
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-road"></div>
@@ -33,7 +33,7 @@
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Công cụ dụng cụ">
-          <router-link class="menu-item tooltip" to="/asset3">
+          <router-link class="menu-item tooltip" to="/tool">
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-tool"></div>
             </div>
@@ -42,7 +42,7 @@
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Danh mục">
-          <router-link class="menu-item tooltip" to="/asset4">
+          <router-link class="menu-item tooltip" to="/category">
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-category"></div>
             </div>
@@ -50,7 +50,7 @@
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Tra cứu">
-          <router-link class="menu-item tooltip" to="/asset5">
+          <router-link class="menu-item tooltip" to="/search">
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-search-gray"></div>
             </div>
@@ -59,7 +59,7 @@
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Báo cáo">
-          <router-link class="menu-item tooltip" to="/asset6">
+          <router-link class="menu-item tooltip" to="/report">
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-report"></div>
             </div>
@@ -70,10 +70,12 @@
       </ul>
     </div>
     <div class="bottom-bar">
-      <div
-        class="ms-icon ms-24 ms-icon-arrow-left-border"
-        @click="toggleSideBar"
-      ></div>
+      <MISATooltipV1 :content="iconToogleMessage">
+        <div
+          class="ms-icon ms-24 ms-icon-arrow-left-border"
+          @click="toggleSideBar"
+        ></div>
+      </MISATooltipV1>
     </div>
   </div>
 </template>
@@ -83,13 +85,17 @@ export default {
   name: "TheSideBar",
   data() {
     return {
-      isHaveTooltip: false,
+      iconToogleMessage: "Thu gọn",
     };
   },
   methods: {
     toggleSideBar() {
       this.$refs.sidebar.classList.toggle("active");
-      this.isHaveTooltip = !this.isHaveTooltip;
+      if (this.$refs.sidebar.classList.contains("active")) {
+        this.iconToogleMessage = "Mở rộng";
+      } else {
+        this.iconToogleMessage = "Thu gọn";
+      }
     },
   },
 };

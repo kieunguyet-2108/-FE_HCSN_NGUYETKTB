@@ -26,7 +26,7 @@
                   name="fixed_asset_code"
                   label="Mã tài sản"
                   :required="true"
-                  :maxLength="100"
+                  :maxLength="10"
                   :minLength="1"
                   :isFocus="true"
                   v-model="assetItem.fixed_asset_code"

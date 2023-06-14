@@ -81,6 +81,9 @@ export default {
           if (tooltip.getBoundingClientRect().right > window.innerWidth) {
             tooltip.style.left = clientX - tooltip.offsetWidth + "px";
           }
+          if (tooltip.getBoundingClientRect().bottom > window.innerHeight) {
+            tooltip.style.top = clientY - tooltip.offsetHeight + "px";
+          }
         }
       }
     },

@@ -576,7 +576,10 @@ tfoot {
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.16);
 }
 tbody tr.item--active {
-  background-color: #88cedf;
+  background-color: #d1edf4;
+}
+tbody tr.item--active .row-action {
+  opacity: 1;
 }
 .message-__no-data {
   font-size: 20px;

@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div class="modal-content resize" :style="style">
+    <div class="modal-content" :style="style">
       <slot></slot>
     </div>
   </div>

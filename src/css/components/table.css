@@ -14,6 +14,7 @@
     flex: 1;
     white-space: nowrap;
     position: absolute;
+    font-size: 13px;
 }
 
 .table-content {
@@ -22,7 +23,7 @@
     flex: 1;
     box-sizing: border-box;
     overflow: auto;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     border: 1px solid #afafaf;
     border-radius: 4px;
 }
@@ -78,7 +79,7 @@ tbody tr td {
     width: 100%;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
     justify-content: center;
     opacity: 0;
