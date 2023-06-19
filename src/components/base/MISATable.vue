@@ -335,7 +335,7 @@ export default {
   },
   methods: {
     /**
-     * @description:
+     * @description: Xử lí các sự kiện keydown trên bảng dữ liệu
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 01/06/2023
@@ -400,10 +400,10 @@ export default {
       return new Intl.NumberFormat("vi-VN").format(number);
     },
     /**
-     * Get style cho cell theo type
-     * @param {string} type
-     * @returns {string}
-     * @author NguyetKTB
+     * @description: Lấy ra style cho từng loại dữ liệu
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 28/05/2023
      */
     getStyleByType(type) {
       const me = this;
@@ -466,7 +466,7 @@ export default {
       this.$emit("changePaging", page);
     },
     /**
-     * @description:
+     * @description: Thực hiện xử lí khi người dùng click vào 1 row trên table
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 01/06/2023
@@ -506,7 +506,7 @@ export default {
       this.$emit("changeDropdown", value);
     },
     /**
-     * @description:
+     * @description: Thực hiện tính toán vị trí của menu context
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 01/06/2023

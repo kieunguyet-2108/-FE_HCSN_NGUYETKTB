@@ -9,7 +9,7 @@
           <MISAInput
             type="text"
             placeholder="Tìm kiếm tài sản"
-            className="input__field text-style-italic box-shadow-none"
+            className="input__field box-shadow-none"
             :isValidate="false"
             v-model="filterObj.textSearchFilter"
           ></MISAInput>
@@ -18,10 +18,8 @@
           iconLeft="ms-18 ms-icon-filter"
           iconRight="ms-8 ms-icon-arrow-down-bold"
           inputType="text"
-          inputClass="input__field placeholder-color-black"
+          inputClass="input__field placeholder-black"
           inputPlaceholder="Loại tài sản"
-          id="department_code-filter"
-          name="department_code-filter"
           primaryKey="fixed_asset_category_id"
           v-model="filterObj.categoryFilter"
           :data="fixedAssetCategories"
@@ -32,7 +30,7 @@
           iconLeft="ms-18 ms-icon-filter"
           iconRight="ms-8 ms-icon-arrow-down-bold"
           inputType="text"
-          inputClass="input__field placeholder-color-black"
+          inputClass="input__field placeholder-black"
           inputPlaceholder="Bộ phận sử dụng"
           primary-key="department_id"
           v-model="filterObj.departmentFilter"
@@ -86,6 +84,14 @@
         :pageSize="pageSize"
         @selectMenuItem="selectMenuItem"
       ></MISATable>
+      <MISALoading v-if="isLoading"
+      :style="{
+          top: '38px',
+          left: '1px',
+          right: '1px',
+          bottom: '50px',
+      }"
+      ></MISALoading>
     </div>
     <router-view
       :departmentColumns="departmentColumns"
@@ -108,7 +114,6 @@
       :styleIcon="dialogInformation.styleIcon"
     ></MISADialog>
     <ShortcutGuide :isShowShortcutGuide="isShowShortCut"></ShortcutGuide>
-    <MISALoading v-if="isLoading"></MISALoading>
   </div>
 </template>
 <script>
@@ -206,7 +211,7 @@ export default {
   },
   computed: {
     /**
-     * @description:
+     * @description: Thực hiện xử lí khi có sự thay đổi của các trường lọc
      * @param: {any}
      * @return: {any} totalRecord
      * @author: NguyetKTB 25/05/2023
@@ -247,7 +252,7 @@ export default {
   },
   watch: {
     /**
-     * @description:
+     * @description: Thực hiện xử lí khi có sự thay đổi của các trường lọc
      * @param: {any}
      * @return: {any} totalRecord
      * @author: NguyetKTB 25/05/2023
@@ -438,7 +443,7 @@ export default {
       this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
     },
     /**
-     * @description:
+     * @description: Thực hiện xử lí sự kiện click duplicate 1 dòng trong table
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 28/05/2023
@@ -518,7 +523,7 @@ export default {
                   `<strong>${item.fixed_asset_code}</strong>`,
                   `<strong>${item.fixed_asset_name}</strong>`
                 ),
-              style: "display: flex; flex-direction: column;"
+              style: "display: flex; flex-direction: column;",
             },
           ],
           buttonList: [
@@ -551,7 +556,7 @@ export default {
                 `<div>${me.$msEnum.MS_MESSAGE_DELETE.MULTI_RECORD}</div>`.format(
                   `<strong>${me.selectedItems.length}</strong>`
                 ),
-              style: "display: flex; flex-direction: column;"
+              style: "display: flex; flex-direction: column;",
             },
           ],
           buttonList: [
@@ -609,7 +614,7 @@ export default {
       }
     },
     /**
-     * @description:
+     * @description: Thục hiện ẩn modal
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 11/06/2023
@@ -658,18 +663,18 @@ export default {
       me.showPopup(message, popupMode);
     },
     /**
-     * @description: 
-     * @param: {any} 
-     * @return: {any} 
+     * @description: Thực hiện xử lí sự kiện nhập tài sản qua file
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 12/06/2023
      */
-     importAsset(items){
+    importAsset(items) {
       // const me = this;
       // // unshift là thêm vào đầu mảng
       // me.fixedAssets.unshift(...items);
       // me.totalRecord += items.length;
       // me.summary.find((x) => x.field == "quantity").value += items.reduce((sum, item) => sum + item.quantity, 0);
-     },
+    },
     /**
      * @description: Hàm thực hiện xử lí khi người dùng chọn menu item
      * @param: {any}
@@ -695,6 +700,26 @@ export default {
         default:
           break;
       }
+    },
+    /**
+     * @description: Thực hiện xử lí khi người dùng thực hiện sự kiện chọn item trong combobox filter
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 19/06/2023
+     */
+    handleCategoryFilterItem(item) {
+      const me = this;
+      me.filterObj.categoryFilter = item.fixed_asset_category_id;
+    },
+    /**
+     * @description: Thực hiện xử lí khi người dùng thực hiện sự kiện chọn item trong combobox filter
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 19/06/2023
+     */
+    handleDepartmentFilterItem(item) {
+      const me = this;
+      me.filterObj.departmentFilter = item.department_id;
     },
   },
 };

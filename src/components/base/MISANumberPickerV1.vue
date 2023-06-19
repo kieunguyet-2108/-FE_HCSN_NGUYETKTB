@@ -280,7 +280,7 @@ export default {
     },
 
     /**
-     * @description:
+     * @description: Xóa lỗi khi người dùng nhập vào ô input
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 11/05/2023

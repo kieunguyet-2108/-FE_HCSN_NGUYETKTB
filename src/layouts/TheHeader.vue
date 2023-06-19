@@ -27,33 +27,73 @@
           <div class="ms-icon ms-18 ms-icon-ask"></div>
         </div>
       </MISATooltipV1>
-      <MISATooltipV1 content="Người dùng">
-        <div class="ms-24 header-icon">
-          <div class="ms-icon ms-18 ms-icon-user"></div>
+      <div
+        v-clickOutside="
+          () => {
+            isShowHeaderMenu = false;
+          }
+        "
+      >
+        <MISATooltipV1 content="Người dùng">
+          <div
+            class="header-icon header-icon--user"
+            @click="isShowHeaderMenu = !isShowHeaderMenu"
+          >
+            <div class="ms-icon ms-18 ms-icon-user"></div>
+            <div class="ms-icon ms-8 ms-icon-arrow-down-bold"></div>
+          </div>
+        </MISATooltipV1>
+        <div class="header-menu" v-if="isShowHeaderMenu">
+          <div class="header-menu--item">Thông tin</div>
+          <div class="header-menu--item">Đăng nhập</div>
+          <div class="header-menu--item">Đăng xuất</div>
         </div>
-      </MISATooltipV1>
-      <div class="ms-24 header-icon">
-        <div class="ms-icon ms-8 ms-icon-arrow-down-bold"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
+import vClickOutside from "click-outside-vue3";
 import MISATooltipV1 from "@/components/base/MISATooltipV1.vue";
 export default {
   name: "TheHeader",
   components: {
     MISATooltipV1,
   },
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
+  data() {
+    return {
+      isShowHeaderMenu: false,
+    };
+  },
 };
 </script>
 
 <style scoped>
-/* .header-item {
+.header-menu {
+  position: fixed;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 999;
+  right: 23px;
+  top: 40px;
   display: flex;
-  align-items: center;
-  margin-left: 14px;
-} */
+  flex-direction: column;
+}
+.header-menu .header-menu--item {
+  cursor: pointer;
+  width: 100%;
+  padding: 10px 15px;
+}
+.header-menu .header-menu--item:hover {
+  background-color: #d1edf4;
+}
 @import url(@/css/layouts/header/header.css);
 </style>

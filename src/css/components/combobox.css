@@ -73,10 +73,6 @@
   box-shadow: 0 0 0 4px #edeff3;
 }
 
-.combobox-content .input__field.placeholder-color-black::placeholder {
-  color: #000;
-}
-
 .combobox-content:hover {
   border: 1px solid #408ea3;
 }

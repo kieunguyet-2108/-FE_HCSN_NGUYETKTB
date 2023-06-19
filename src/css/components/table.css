@@ -27,6 +27,14 @@
     border: 1px solid #afafaf;
     border-radius: 4px;
 }
+.table-content::-webkit-scrollbar-button:single-button {
+    display: block;
+    border: none;
+    height: 38px;
+    width: 0;
+    opacity: 0;
+    border-radius: 0px 4px 4px 0px;
+}
 
 .message-no-data-table {
     text-align: center;

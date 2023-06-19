@@ -60,12 +60,6 @@ body {
 .hidden {
     display: none;
 }
-
-/* style for text */
-.text-style-italic {
-    font-style: italic;
-}
-
 .text-bold {
     font-weight: 700;
 }

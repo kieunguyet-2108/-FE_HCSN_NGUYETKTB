@@ -2,7 +2,7 @@ import { createApp, defineAsyncComponent } from "vue";
 class DialogMessage {
 
     /**
-     * @description: 
+     * @description: Hiển thị dialog thông báo
      * @param: {any} 
      * @return: {any} 
      * @author: NguyetKTB 12/05/2023
@@ -12,7 +12,7 @@ class DialogMessage {
     }
 
     /**
-     * @description: 
+     * @description: Tạo instance cho dialog
      * @param: {any} 
      * @return: {any} 
      * @author: NguyetKTB 12/05/2023
@@ -28,7 +28,7 @@ class DialogMessage {
         return app.mount(container.appendChild(document.createElement("div"))) || null;
     }
   /**
-   * @description:
+   * @description: Khai báo dialog với 1 button
    * @param: {any}
    * @return: {any}
    * @author: NguyetKTB 12/05/2023
@@ -52,7 +52,7 @@ class DialogMessage {
   }
 
   /**
-   * @description: 
+   * @description: Khai báo dialog với 2 button
    * @param: {any} 
    * @return: {any} 
    * @author: NguyetKTB 12/05/2023
@@ -81,7 +81,7 @@ class DialogMessage {
   }
 
   /**
-   * @description: 
+   * @description: Khai báo dialog với 3 button
    * @param: {any} 
    * @return: {any} 
    * @author: NguyetKTB 12/05/2023

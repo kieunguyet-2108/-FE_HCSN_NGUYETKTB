@@ -39,15 +39,17 @@
     border: unset;
     padding: 0px 12px;
     color: #090f39;
+    font-style: normal;
   }
   
-  /* khi input active thì placeholder sẽ ...  */
-  .input__field:active::placeholder {
-    color: #090f39;
-  }
   /* khi input field có class là italic */
-  .input__field.italic::placeholder {
+  .input__field::placeholder {
     font-style: italic;
+    color: gray;
+  }
+  .input__field.placeholder-black::placeholder {
+    color: #090f39;
+    font-style: normal;
   }
  
   .input-group:has(.error-message) .input-group__content {

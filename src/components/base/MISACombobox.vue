@@ -93,7 +93,8 @@ import vClickOutside from "click-outside-vue3";
 import _ from "lodash";
 export default {
   name: "MISACombobox",
-  components: {},
+  components: {
+  },
   directives: {
     clickOutside: vClickOutside.directive,
   },
@@ -421,10 +422,6 @@ export default {
       if (value == "" || me.dataFilter.length == 0) {
         me.$emit("selectedItem", {});
       }
-      if (value == "") {
-        me.$emit("update:modelValue", {});
-      }
-
       if (!me.isShowComboboxData) {
         me.showComboboxData();
       }

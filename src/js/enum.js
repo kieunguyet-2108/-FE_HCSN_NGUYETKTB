@@ -90,6 +90,7 @@ const Enum = {
     StartsWith: 6,
     EndsWith: 7,
   },
+  // KHAI BÁO CÁC TOÁN TỬ CỦA FILTER
   MS_FILTER_OPERATOR: {
     And: 0,
     Or: 1,
@@ -106,12 +107,14 @@ const Enum = {
     Error: 1,
     Warning: 2,
   },
+  // TRẠNG THÁI CỦA CÁC THAO TÁC TRONG CONTEXT MENU
   MS_ACTION: {
     Add: 0,
     Edit: 1,
     Delete: 2,
     Duplicate: 3,
   },
+  // LOẠI DỮ LIỆU CỦA CÁC CỘT TRONG BẢNG
   MS_FIELD_TYPE: {
     Int: 1,
     String: 2,
@@ -119,6 +122,7 @@ const Enum = {
     Guid: 4,
     DateTime: 5,
   },
+  // TRẠNG THÁI IMPORT
   MS_STATUS_IMPORT:{
     Import: 1,
     Handle: 2,

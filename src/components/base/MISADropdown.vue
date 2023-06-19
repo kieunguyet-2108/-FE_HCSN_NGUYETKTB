@@ -54,9 +54,22 @@ export default {
     };
   },
   methods: {
+    /**
+     * @description: Thực hiện xử lí sự kiện click vào dropdown
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 01/06/2023
+     */
     handleClick() {
       this.isShow = !this.isShow;
     },
+
+    /**
+     * @description: Thực hiện xử lí sự kiện click vào item trong dropdown
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 01/06/2023
+     */
     handleClickItem(option) {
       this.$emit("changeDropdown", option);
       this.isShow = false;

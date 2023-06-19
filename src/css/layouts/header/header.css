@@ -26,7 +26,7 @@
     position: relative;
 }
 
-.header-action>div:not(:last-child) {
+.header-action>div {
     margin-left: 14px;
 }
 
@@ -40,4 +40,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.header-icon--user .ms-icon-arrow-down-bold{
+    margin-left: 5px;
 }

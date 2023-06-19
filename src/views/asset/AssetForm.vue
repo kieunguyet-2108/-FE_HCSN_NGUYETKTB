@@ -26,7 +26,7 @@
                   name="fixed_asset_code"
                   label="Mã tài sản"
                   :required="true"
-                  :maxLength="10"
+                  :maxLength="100"
                   :minLength="1"
                   :isFocus="true"
                   v-model="assetItem.fixed_asset_code"
@@ -37,7 +37,7 @@
                   ref="fixed_asset_name"
                   type="text"
                   placeholder="Nhập tên tài sản"
-                  className="input__field text-style-italic"
+                  className="input__field "
                   id="fixed_asset_name"
                   name="fixed_asset_name"
                   label="Tên tài sản"
@@ -54,7 +54,7 @@
                   ref="department_code"
                   iconRight="ms-8 ms-icon-arrow-down-bold"
                   inputType="text"
-                  inputClass="input__field text-style-italic"
+                  inputClass="input__field "
                   inputPlaceholder="Chọn mã bộ phận sử dụng"
                   label="Mã bộ phận sử dụng"
                   :required="true"
@@ -72,7 +72,6 @@
                 <MISAInput
                   ref="department_name"
                   type="text"
-                  placeholder="Tên bộ phận sử dụng"
                   className="input__field "
                   id="department_name"
                   name="department_name"
@@ -88,7 +87,7 @@
                   ref="fixed_asset_category_code"
                   iconRight="ms-8 ms-icon-arrow-down-bold"
                   inputType="text"
-                  inputClass="input__field text-style-italic"
+                  inputClass="input__field "
                   inputPlaceholder="Chọn mã loại tài sản"
                   label="Mã loại tài sản"
                   :required="true"
@@ -106,7 +105,6 @@
                 <MISAInput
                   ref="fixed_asset_category_name"
                   type="text"
-                  placeholder="Tên loại tài sản"
                   className="input__field "
                   id="fixed_asset_category_name"
                   name="fixed_asset_category_name"
@@ -262,7 +260,6 @@
           </div>
         </form>
       </MISAModal>
-      <MISALoading v-if="isLoading"></MISALoading>
     </div>
     <MISADialog
       ref="dialog"
@@ -443,6 +440,10 @@ export default {
           case me.$msEnum.KeyCode.Save: // Ctrl + S: lưu và đóng form
             event.preventDefault();
             me.submitForm(); // thực hiện validate -> lưu dữ liệu -> đóng form
+            break;
+          case me.$msEnum.KeyCode.Escape: // Esc: Hủy bỏ
+            event.preventDefault();
+            me.cancelForm();
             break;
           default:
             break;

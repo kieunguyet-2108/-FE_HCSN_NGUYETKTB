@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-overlay">
+  <div class="loading-overlay" :style="style">
     <div class="loading-content">
       <div class="loading-spinner"></div>
       <div class="loading-text">Đang tải...</div>
@@ -9,18 +9,26 @@
 <script>
 export default {
   name: "MISALoading",
-  props: {},
+  props: {
+    style:{
+      type: Object,
+      default: () => {
+        return {
+          width: "100%",
+          height: "100%",
+          top: 0,
+          left: 0,
+        }
+      }
+    }
+  },
 };
 </script>
 <style>
 /* loading */
 .loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,7 +45,7 @@ export default {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border-top: 4px solid #1aa4c8;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -54,6 +62,6 @@ export default {
 .loading-text {
   margin-top: 10px;
   font-size: 14px;
-  color: #fff;
+  color: #1aa4c8;
 }
 </style>

@@ -135,35 +135,8 @@ const tableColumns = [
   },
 ];
 
-const importColumns = [
-  {
-    key: "notification",
-    name: "Thông báo",
-    width: "250px"
-  },
-  {
-    key: "fixed_asset_code",
-    name: "Mã tài sản",
-    width: "120px",
-    type: msEnum.MS_FIELD_TYPE.String,
-  },
-  {
-    key: "fixed_asset_name",
-    name: "Tên tài sản",
-    width: "120px",
-    type: msEnum.MS_FIELD_TYPE.String,
-  },
-  {
-    key: "department_code",
-    name: "Mã phòng ban",
-    width: "120px",
-    type: msEnum.MS_FIELD_TYPE.String,
-  }
-
-]
 export default {
   departmentColumns,
   fixedAssetCategoryColumns,
-  tableColumns,
-  importColumns
+  tableColumns
 };
