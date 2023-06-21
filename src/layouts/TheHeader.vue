@@ -44,9 +44,13 @@
           </div>
         </MISATooltipV1>
         <div class="header-menu" v-if="isShowHeaderMenu">
-          <div class="header-menu--item">Thông tin</div>
-          <div class="header-menu--item">Đăng nhập</div>
-          <div class="header-menu--item">Đăng xuất</div>
+          <router-link class="header-menu--item" to="/user/login"
+            >Thông tin</router-link
+          >
+          <!-- <router-link class="header-menu--item" to="/user/login"
+            >Đăng xuất</router-link
+          > -->
+          <div class="header-menu--item" @click="logout">Đăng xuất</div>
         </div>
       </div>
     </div>
@@ -70,6 +74,12 @@ export default {
       isShowHeaderMenu: false,
     };
   },
+  methods: {
+    async logout() {
+      await this.$store.dispatch("setUserAction", false);
+      this.$router.push("/user/login");
+    },
+  },
 };
 </script>
 
@@ -91,6 +101,7 @@ export default {
   cursor: pointer;
   width: 100%;
   padding: 10px 15px;
+  color: black;
 }
 .header-menu .header-menu--item:hover {
   background-color: #d1edf4;

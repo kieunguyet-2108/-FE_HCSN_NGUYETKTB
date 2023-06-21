@@ -254,8 +254,8 @@ export default {
         // th1: nếu combobox chưa hiển thị list mà nhấn phím lên xuống thì hiển thị list
         if (
           !me.isShowComboboxData &&
-          (keyCodePress == me.$msEnum.KeyCode.ArrowUp ||
-            keyCodePress == me.$msEnum.KeyCode.ArrowDown)
+          (keyCodePress == me.$msEnum.KEY_CODE.ArrowUp ||
+            keyCodePress == me.$msEnum.KEY_CODE.ArrowDown)
         ) {
           event.preventDefault();
           me.showComboboxData();
@@ -263,14 +263,14 @@ export default {
         }
 
         // th2: nếu người dùng bấm tab thì ẩn combobox
-        if (keyCodePress == me.$msEnum.KeyCode.Tab) {
+        if (keyCodePress == me.$msEnum.KEY_CODE.Tab) {
           me.hideComboboxData();
           return;
         }
 
         // th3: nếu list đang hiển thị mà người dùng bấm esc thì ẩn combobox
         if (
-          keyCodePress == me.$msEnum.KeyCode.Escape &&
+          keyCodePress == me.$msEnum.KEY_CODE.Escape &&
           me.isShowComboboxData
         ) {
           me.hideComboboxData();
@@ -279,7 +279,7 @@ export default {
 
         if (me.isShowComboboxData && me.dataFilter.length > 0) {
           // th4: nếu list đang hiển thị thì xử lí các phím lên xuống có scroll
-          if (keyCodePress == me.$msEnum.KeyCode.ArrowUp) {
+          if (keyCodePress == me.$msEnum.KEY_CODE.ArrowUp) {
             event.preventDefault();
             me.indexItemFocus =
               me.indexItemFocus === 0
@@ -291,7 +291,7 @@ export default {
               this.dataFilter[this.indexItemFocus][this.keyValueBinding];
             return;
           }
-          if (keyCodePress == me.$msEnum.KeyCode.ArrowDown) {
+          if (keyCodePress == me.$msEnum.KEY_CODE.ArrowDown) {
             event.preventDefault();
             me.indexItemFocus =
               me.indexItemFocus === me.dataFilter.length - 1
@@ -303,7 +303,7 @@ export default {
             return;
           }
           // th5: nếu list đang hiển thị thì xử lí các phím enter, space
-          if (keyCodePress == me.$msEnum.KeyCode.Enter) {
+          if (keyCodePress == me.$msEnum.KEY_CODE.Enter) {
             event.preventDefault();
             me.selectItem(
               this.dataFilter[this.indexItemFocus],

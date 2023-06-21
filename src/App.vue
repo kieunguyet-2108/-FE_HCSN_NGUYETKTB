@@ -1,19 +1,27 @@
 <template>
   <div id="root">
-    <TheSideBar></TheSideBar>
-    <div id="main">
-      <TheHeader></TheHeader>
-      <TheContent></TheContent>
-    </div>
+    <template v-if="isLogin">
+      <TheSideBar></TheSideBar>
+      <div id="main">
+        <TheHeader></TheHeader>
+        <TheContent></TheContent>
+      </div>
+    </template>
+    <template v-else>
+      <router-view></router-view>
+    </template>
   </div>
 </template>
-
 <script>
 // B1: import vào component muốn dùng
 // Hoặc có thể import global bên main.js
 export default {
   name: "App",
-  components: {
+  components: {},
+  computed: {
+    isLogin() {
+      return this.$store.state.auth.isLogin;
+    },
   },
 };
 </script>

@@ -8,6 +8,7 @@
     </div>
     <div class="date__picker">
       <datepicker
+        :class="className"
         :ref="name"
         :id="id"
         :name="name"

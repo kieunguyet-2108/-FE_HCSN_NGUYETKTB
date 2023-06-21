@@ -14,15 +14,28 @@
             <div class="menu-item__text">Tổng quan</div>
           </router-link>
         </MISATooltipV1>
-        <MISATooltipV1 content="Tài sản">
-          <router-link class="menu-item tooltip" to="/asset">
-            <div class="ms-24">
-              <div class="ms-icon ms-24 ms-icon-car"></div>
-            </div>
-            <div class="menu-item__text">Tài sản</div>
-            <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
-          </router-link>
-        </MISATooltipV1>
+        <div>
+          <MISATooltipV1 content="Tài sản">
+            <router-link class="menu-item tooltip" to="/asset">
+              <div class="ms-24">
+                <div class="ms-icon ms-24 ms-icon-car"></div>
+              </div>
+              <div class="menu-item__text">Tài sản</div>
+              <div class="ms-icon ms-24 ms-icon-arrow-down" @click="isShowAssetMenu = !isShowAssetMenu"></div>
+            </router-link>
+          </MISATooltipV1>
+          <div class="menu-item--list" v-if="isShowAssetMenu">
+            <router-link to="/write-asset">Ghi tăng</router-link>
+            <router-link to="/asset/change-information">Thay đổi thông tin</router-link>
+            <router-link to="/asset/change-information">Đánh giá lại</router-link>
+            <router-link to="/asset/change-information">Tính hao mòn</router-link>
+            <router-link to="/asset/change-information">Điều chuyển tài sản</router-link>
+            <router-link to="/asset/change-information">Ghi giảm</router-link>
+            <router-link to="/asset/change-information">Kiểm kê</router-link>
+            <router-link to="/asset/change-information">Khác</router-link>
+          </div>
+        </div>
+
         <MISATooltipV1 content="Tài sản Hệ Thống-Đường Bộ">
           <router-link class="menu-item tooltip" to="/asset2">
             <div class="ms-24">
@@ -86,12 +99,14 @@ export default {
   data() {
     return {
       iconToogleMessage: "Thu gọn",
+      isShowAssetMenu: false,
     };
   },
   methods: {
     toggleSideBar() {
       this.$refs.sidebar.classList.toggle("active");
       if (this.$refs.sidebar.classList.contains("active")) {
+        this.isShowAssetMenu = false;
         this.iconToogleMessage = "Mở rộng";
       } else {
         this.iconToogleMessage = "Thu gọn";
@@ -102,5 +117,29 @@ export default {
 </script>
 
 <style scoped>
+.menu-item--list {
+  background-color: #33455b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.menu-item--list a {
+  padding-left: 44px;
+  color: #aeacac;
+  font-size: 14px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.menu-item--list a:hover,
+.menu-item--list .router-link-active{
+  background-color: #1aa4c8;
+  color: white;
+}
 @import url(@/css/layouts/sidebar/sidebar.css);
 </style>

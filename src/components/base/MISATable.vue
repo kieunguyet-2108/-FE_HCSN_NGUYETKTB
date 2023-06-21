@@ -1,6 +1,6 @@
 <template>
-  <div class="table-content">
-    <table id="table-data">
+  <div class="table-content" @keydown="handleTableKeyDown" tabindex="0" >
+    <table id="table-data" ref="tableRef" :style="tableStyle">
       <thead class="table__header">
         <tr>
           <th
@@ -20,6 +20,7 @@
               <input
                 type="checkbox"
                 class="checkbox"
+                :class="item.class"
                 :name="item.name"
                 :id="item.name"
                 v-model="selectedAll"
@@ -67,7 +68,7 @@
           @click="handleClickRow(asset, $event)"
           @contextmenu="handleContextMenu(asset, $event)"
           :class="{
-            'item--active': currentRow == asset,
+            'item--active': isExistInSelectedList(asset),
           }"
         >
           <td
@@ -88,6 +89,7 @@
               <input
                 type="checkbox"
                 class="checkbox"
+              :class="item.class"
                 :id="asset[item.key]"
                 :value="asset"
                 v-model="selectedList"
@@ -161,9 +163,10 @@
             </div>
           </td>
         </tr>
+
         <tr></tr>
       </tbody>
-      <tfoot class="table__footer">
+      <tfoot class="table__footer" v-if="isShowFooter">
         <tr>
           <td colspan="6">
             <div class="pagination__content">
@@ -266,6 +269,14 @@ export default {
       type: Number,
       default: 10,
     },
+    isShowFooter: {
+      type: Boolean,
+      default: true,
+    },
+    tableStyle: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -279,25 +290,22 @@ export default {
       menuOptions: [
         {
           text: "Thêm",
-          action: this.$msEnum.MS_ACTION.Add,
+          action: this.$msEnum.MENU_OPTION.Add,
         },
         {
           text: "Sửa",
-          action: this.$msEnum.MS_ACTION.Edit,
+          action: this.$msEnum.MENU_OPTION.Edit,
         },
         {
           text: "Xóa",
-          action: this.$msEnum.MS_ACTION.Delete,
+          action: this.$msEnum.MENU_OPTION.Delete,
         },
         {
           text: "Nhân bản",
-          action: this.$msEnum.MS_ACTION.Duplicate,
+          action: this.$msEnum.MENU_OPTION.Duplicate,
         },
       ],
     };
-  },
-  mounted() {
-    window.addEventListener("keydown", this.handleKeyDown);
   },
   watch: {
     selectedList: {
@@ -335,58 +343,63 @@ export default {
   },
   methods: {
     /**
+     * @description: Thực hiện kiểm tra xem item có tồn tại trong list đã chọn hay không
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 20/06/2023
+     */
+    isExistInSelectedList(item) {
+      const me = this;
+      if (me.selectedList == null || me.selectedList.length == 0) {
+        return false;
+      } else {
+        let index = me.selectedList.find((row, index) => row == item);
+        if (index == undefined) {
+          return false;
+        }
+        return true;
+      }
+    },
+    /**
      * @description: Xử lí các sự kiện keydown trên bảng dữ liệu
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 01/06/2023
      */
-    handleKeyDown(event) {
+    handleTableKeyDown(event) {
+      event.preventDefault();
+      console.log(event.target.value);
       const me = this;
-      if (me.currentRow == null) {
+      if (me.selectedList.length == 0) {
         return;
-      } else {
-        // tìm ra row hiện tại đang được focus trong listData
-        let row = me.listData.find((item, index) => item == me.currentRow);
+      } else if (me.selectedList.length == 1) {
         switch (event.keyCode) {
-          case me.$msEnum.KeyCode.ArrowUp:
-            if (me.currentRow == me.listData[0]) {
-              // TH1: row đang focus là row đầu tiên thì focus vào row cuối cùng
-              me.currentRow = me.listData[me.listData.length - 1];
+          // TH1: Nếu người dùng nhấn mũi tên lên
+          case me.$msEnum.KEY_CODE.ArrowUp:
+            // TH1.1: Nếu người dùng đang ở dòng đầu tiên
+            if (me.selectedList[0] == me.listData[0]) {
+              me.selectedList = [me.listData[me.listData.length - 1]];
             } else {
-              // TH2: row đang focus không phải là row đầu tiên thì focus vào row phía trên
-              me.currentRow = me.listData[me.listData.indexOf(row) - 1];
+              let index = me.listData.findIndex(
+                (row, index) => row == me.selectedList[0]
+              );
+              me.selectedList = [me.listData[index - 1]];
             }
             break;
-          case me.$msEnum.KeyCode.ArrowDown:
-            if (me.currentRow == me.listData[me.listData.length - 1]) {
-              // TH1: row đang focus là row cuối cùng thì focus vào row đầu tiên
-              me.currentRow = me.listData[0];
+          // TH2: Nếu người dùng nhấn mũi tên xuống
+          case me.$msEnum.KEY_CODE.ArrowDown:
+            // TH2.1: Nếu người dùng đang ở dòng cuối cùng
+            if (me.selectedList[0] == me.listData[me.listData.length - 1]) {
+              me.selectedList = [me.listData[0]];
             } else {
-              // TH2: row đang focus không phải là row cuối cùng thì focus vào row phía dưới
-              me.currentRow = me.listData[me.listData.indexOf(row) + 1];
+              let index = me.listData.findIndex(
+                (row, index) => row == me.selectedList[0]
+              );
+              me.selectedList = [me.listData[index + 1]];
             }
             break;
           default:
             break;
-        }
-        // nếu ctrl
-        if (event.ctrlKey) {
-          switch (event.keyCode) {
-            case me.$msEnum.KeyCode.E: // edit: ctrl + e
-              event.preventDefault();
-              me.$emit("edit", me.currentRow);
-              break;
-            case me.$msEnum.KeyCode.C: // copy: ctrl + c
-              event.preventDefault();
-              me.$emit("duplicate", me.currentRow);
-              break;
-            case me.$msEnum.KeyCode.D: // delete: ctrl + d
-              event.preventDefault();
-              me.$emit("delete", me.currentRow);
-              break;
-            default:
-              break;
-          }
         }
       }
     },
@@ -401,8 +414,8 @@ export default {
     },
     /**
      * @description: Lấy ra style cho từng loại dữ liệu
-     * @param: {any} 
-     * @return: {any} 
+     * @param: {any}
+     * @return: {any}
      * @author: NguyetKTB 28/05/2023
      */
     getStyleByType(type) {
@@ -428,7 +441,7 @@ export default {
     formatDataByType(data, type) {
       const me = this;
       switch (type) {
-        case me.$msEnum.ColumnType.Number:
+        case me.$msEnum.COLUMN_TYPE.Number:
           return new Intl.NumberFormat("vi-VN").format(data);
         default:
           return data;
@@ -472,22 +485,35 @@ export default {
      * @author: NguyetKTB 01/06/2023
      */
     handleClickRow(asset, event) {
-      // nếu ctrl + click thì chọn nhiều row
-      if (event.ctrlKey) {
-        this.currentRow = asset;
+      // nếu người dùng click vào checkbox thì không xử lí
+      if (event.target.closest(".checkbox-element")) {
+        return;
+      }
+      const me = this;
+      // TH1: không nhấn ctrl + shift thì chỉ chọn 1 row
+      if (!event.ctrlKey && !event.shiftKey) {
+        //kiểm tra asset có tồn tại trong selected list hay không
+        let item = me.listData.find((row) => row == asset);
+        if (item != undefined) {
+          me.selectedList = [asset];
+          me.currentRow = asset;
+        } else {
+          me.selectedList = [];
+          me.currentRow = {};
+        }
+      }
+      // TH2: nhấn ctrl + click (không nhấn shift) thì chọn nhiều row
+      if (event.ctrlKey && !event.shiftKey) {
         this.selectedList = [
           ...this.selectedList.filter((item) => item != asset),
           asset,
         ];
-      }
-      //  chọn nhiều bằng Shift là khi select 1 dòng dữ liệu,
-      // nhấn giữ phím Shift và dùng chuột click vào 1 dòng dữ liệu khác thì toàn bộ dữ liệu nằm trong khoảng đó sẽ được select.
-      if (!event.shiftKey && this.currentRow != asset) {
         this.currentRow = asset;
       }
-      if (event.shiftKey && this.currentRow != null) {
+      // TH3: nhấn shift + click (không nhấn ctrl) thì chọn nhiều row
+      if (event.shiftKey && !event.ctrlKey) {
         event.preventDefault();
-        const start = this.listData.indexOf(this.currentRow);
+        const start = this.listData.indexOf(me.currentRow);
         const end = this.listData.indexOf(asset);
         const list = this.listData.slice(
           Math.min(start, end),
@@ -587,6 +613,7 @@ tbody tr.item--active .row-action {
   font-weight: bold;
   text-align: center;
 }
+
 @import url(@/css/components/table.css);
 @import url(@/css/components/checkbox.css);
 </style>

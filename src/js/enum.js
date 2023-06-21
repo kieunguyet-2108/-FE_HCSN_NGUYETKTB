@@ -1,12 +1,12 @@
 const Enum = {
   // Trạng thái của form
-  FormMode: {
+  FORM_MODE: {
     Add: 1,
     Edit: 2,
     Duplicate: 3,
   },
   // Các nút nhấn trên bàn phím
-  KeyCode: {
+  KEY_CODE: {
     Enter: 13,
     Escape: 27,
     ArrowUp: 38,
@@ -31,7 +31,7 @@ const Enum = {
     M: 77,
   },
   // Các kiểu dữ liệu của cột
-  ColumnType: {
+  COLUMN_TYPE: {
     Text: "text",
     Number: "number",
     Currency: "currency",
@@ -97,18 +97,18 @@ const Enum = {
   },
   // TRẠNG THÁI DIALOG THÔNG BÁO KHI THỰC HIỆN CÁC THAO TÁC
   MS_DIALOG_MODE: {
-    Success: 0,
-    Error: 1,
-    Warning: 2,
+    Success: "success",
+    Error: "error",
+    Warning: "warning",
   },
   // TRẠNG THÁI POPUP THÔNG BÁO KHI THỰC HIỆN CÁC THAO TÁC
   MS_POPUP_MODE: {
-    Success: 0,
-    Error: 1,
-    Warning: 2,
+    Success: "success",
+    Error: "error",
+    Warning: "warning",
   },
   // TRẠNG THÁI CỦA CÁC THAO TÁC TRONG CONTEXT MENU
-  MS_ACTION: {
+  MENU_OPTION: {
     Add: 0,
     Edit: 1,
     Delete: 2,
@@ -123,11 +123,29 @@ const Enum = {
     DateTime: 5,
   },
   // TRẠNG THÁI IMPORT
-  MS_STATUS_IMPORT:{
+  MS_STATUS_IMPORT: {
     Import: 1,
     Handle: 2,
     Done: 3,
-  }
+  },
+  // TRẠNG THÁI LAYOUT TRONG MÀN HÌNH GHI TĂNG
+  MS_LAYOUT: {
+    Vertical: 1,
+    Horizontal: 2,
+  },
+  // ACTION THỰC HIỆN TRÊN FORM
+  MS_ACTION: {
+    Add: "add",
+    Edit: "edit",
+    Duplicate: "duplicate",
+    Delete: "delete",
+    DeleteMany: "deleteMany",
+    Save: "save",
+    Cancel: "cancel",
+    Close: "close",
+    ZoomIn: "zoomIn",
+    ZoomOut: "zoomOut",
+  },
 };
 
 export default Enum;

@@ -14,18 +14,19 @@ form {
     padding: 20px 16px;
   }
   form .form__header .form__title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
   }
   form .form__content {
     padding: 0px 16px 16px 20px;
+    height: 100%;
   }
   
   .form__content--item {
     display: flex;
-    gap: 16px;
-    padding-bottom: 16px;
-    height: 85px;
+    gap: 15px;
+    margin-bottom: 8px;
+    height: 80px;
   }
   .form__group--element {
     display: flex;

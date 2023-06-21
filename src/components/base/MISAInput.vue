@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="input-group"
-    v-if="type == 'text'"
-    :class="{ 'validate-error': errorMessage }"
-  >
+  <div class="input-group" :class="{ 'validate-error': errorMessage }">
     <div class="input-group__label" v-if="label">
       <label :for="name">
         {{ label }}
@@ -13,7 +9,8 @@
     <div class="input-group__content">
       <input
         ref="input"
-        type="type"
+        :type="type"
+        :style="style"
         autocomplete="off"
         :placeholder="placeholder"
         :class="className"
@@ -24,6 +21,9 @@
         @input="onInputText"
         @blur="onInputText"
       />
+      <div class="input-group__icon" v-if="icon">
+        <div :class="icon" @click="clickInputIcon"></div>
+      </div>
     </div>
     <div class="input-group__error" v-if="isError">
       <div class="error-message" v-html="errorMessage"></div>
@@ -64,6 +64,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    style: {
+      type: String,
+      default: "",
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -83,6 +87,10 @@ export default {
     isValidate: {
       type: Boolean,
       default: true,
+    },
+    icon: {
+      type: String,
+      default: "",
     },
   },
   data() {
@@ -107,6 +115,15 @@ export default {
     }
   },
   methods: {
+    /**
+     * @description: Hàm xử lý khi click icon input
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 19/06/2023
+     */
+    clickInputIcon() {
+      this.$emit("clickInputIcon");
+    },
     /**
      * @description: Hàm xử lý khi nhập text
      * @param: {any}
@@ -144,5 +161,19 @@ export default {
 </script>
 
 <style scoped>
+.input-group__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 4px;
+  height: 36px;
+  width: 36px;
+}
+.input-group__content {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
 @import url(@/css/components/input.css);
 </style>

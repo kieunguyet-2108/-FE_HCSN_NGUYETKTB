@@ -165,10 +165,10 @@ export default {
      */
     onKeydownNumberPicker(event) {
       const self = this;
-      if (event.keyCode == self.$msEnum.KeyCode.ArrowUp) {
+      if (event.keyCode == self.$msEnum.KEY_CODE.ArrowUp) {
         self.increaseValue();
       }
-      if (event.keyCode == self.$msEnum.KeyCode.ArrowDown) {
+      if (event.keyCode == self.$msEnum.KEY_CODE.ArrowDown) {
         self.decreaseValue();
       }
     },

@@ -163,7 +163,7 @@
     background-position: -329px -197px;
 }
 
-.router-link-active {
+.sidebar .router-link-active {
     background-color: #1aa4c8;
 }
 
@@ -172,8 +172,8 @@
     outline: none;
 }
 
-.router-link-active .menu-item__text,
-.router-link-active .menu-item__text,
+.sidebar .router-link-active .menu-item__text,
+.sidebar .router-link-active .menu-item__text,
 .menu-item:focus .menu-item__text {
     color: #EEEEEE;
     font-weight: 600;

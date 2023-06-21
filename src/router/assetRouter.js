@@ -1,17 +1,11 @@
-import { createRouter, createWebHistory } from "vue-router";
-
 function lazyLoad(view) {
   return () => import(`@/views/${view}.vue`);
 }
-const routers = [
-  {
-    path: "/",
-    redirect: "/asset",
-  },
+const assetRouter = [
   {
     path: "/asset",
-    component: lazyLoad("asset/AssetHome"),
-    name: "AssetHome",
+    component: lazyLoad("asset/AssetList"),
+    name: "AssetList",
     children: [
       {
         path: ":asset_id",
@@ -31,21 +25,14 @@ const routers = [
   {
     path: "/asset/import",
     component: lazyLoad("asset/AssetImport"),
-    name: "AssetImport"
+    name: "AssetImport",
   },
   {
     path: "/:pathMatch(.*)*",
-    component: lazyLoad("ErrorPage"),
+    component: () => import("@/views/ErrorPage.vue"),
     meta: {
       title: "Không tìm thấy trang",
     },
   },
 ];
-
-// khởi tạo router
-const router = createRouter({
-  history: createWebHistory(),
-  routes: routers,
-});
-
-export default router;
+export default assetRouter;

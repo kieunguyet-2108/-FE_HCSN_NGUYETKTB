@@ -278,7 +278,6 @@
 
 <script>
 /* eslint-disable */
-import moment from "moment"; // gọi moment để format date
 import validation from "@/js/validation";
 import Enum from "@/js/enum.js";
 /* import component*/
@@ -330,37 +329,30 @@ export default {
     // get current date
     var date = new Date();
     if (this.asset_id != null) {
-      this.formMode = this.$msEnum.FormMode.Edit;
+      this.formMode = this.$msEnum.FORM_MODE.Edit;
       this.title = "Sửa tài sản";
-      this.isLoading = true;
       this.assetItem = await this.getFixedAssetById(this.asset_id);
       this.assetItem.depreciation_rate = this.assetItem.depreciation_rate * 100;
-      this.isLoading = false;
     }
     if (this.asset_id == null) {
-      this.formMode = this.$msEnum.FormMode.Add;
+      this.formMode = this.$msEnum.FORM_MODE.Add;
       this.title = "Thêm mới tài sản";
-      // set năm hiện tại cho trường năm theo dõi
-      this.assetItem.tracked_year = new Date().getFullYear();
-      // set ngày mua cho trường ngày mua
-      this.assetItem.purchase_date = date;
-      // set ngày bắt đầu sử dụng cho trường ngày bắt đầu sử dụng
-      this.assetItem.start_using_date = date;
-      this.assetItem.created_date = date;
-      this.assetItem.modified_date = date;
-      // tự sinh mã : CHƯA LÀM
-      this.isLoading = true;
+      this.assetItem = {
+        ...this.assetItem,
+        tracked_year: new Date().getFullYear(),
+        purchase_date: date,
+        start_using_date: date,
+        created_date: date,
+        modified_date: date,
+      };
       this.assetItem.fixed_asset_code = await this.getNewCode();
-      this.isLoading = false;
     }
     if (this.duplicate_id != null) {
-      this.formMode == this.$msEnum.FormMode.Duplicate;
+      this.formMode == this.$msEnum.FORM_MODE.Duplicate;
       this.title = "Nhân bản tài sản";
-      this.isLoading = true;
       this.assetItem = await this.getFixedAssetById(this.duplicate_id);
       this.assetItem.fixed_asset_code = await this.getNewCode();
       this.assetItem.depreciation_rate = this.assetItem.depreciation_rate * 100;
-      this.isLoading = false;
     }
   },
   computed: {
@@ -386,7 +378,6 @@ export default {
   data() {
     return {
       formMode: 0,
-      isLoading: false,
       assetItem: {
         fixed_asset_id: "", // id tài sản
         fixed_asset_code: "", // mã tài sản
@@ -437,11 +428,11 @@ export default {
       // Nếu nhấn phím Ctrl
       if (event.ctrlKey) {
         switch (event.keyCode) {
-          case me.$msEnum.KeyCode.Save: // Ctrl + S: lưu và đóng form
+          case me.$msEnum.KEY_CODE.Save: // Ctrl + S: lưu và đóng form
             event.preventDefault();
             me.submitForm(); // thực hiện validate -> lưu dữ liệu -> đóng form
             break;
-          case me.$msEnum.KeyCode.Escape: // Esc: Hủy bỏ
+          case me.$msEnum.KEY_CODE.Escape: // Esc: Hủy bỏ
             event.preventDefault();
             me.cancelForm();
             break;
@@ -692,7 +683,7 @@ export default {
      */
     footerKeydown(e) {
       const me = this;
-      if (e.keyCode == me.$msEnum.KeyCode.Tab) {
+      if (e.keyCode == me.$msEnum.KEY_CODE.Tab) {
         this.processUnfocusLastControl(e, () => {
           me.focusFirstControl(me.$el);
         });
@@ -794,8 +785,8 @@ export default {
       if (me.messages.length == 0) {
         // TH1: nếu formMode là add thì thực hiện insert
         if (
-          me.formMode == Enum.FormMode.Add ||
-          me.formMode == Enum.FormMode.Duplicate
+          me.formMode == this.$msEnum.FORM_MODE.Add ||
+          me.formMode == this.$msEnum.FORM_MODE.Duplicate
         ) {
           // tạo mới mã guid cho tài sản
           me.assetItem.fixed_asset_id = me.getUuid();
@@ -821,7 +812,7 @@ export default {
           }
         }
         // TH2: nếu formMode là edit thì thực hiện update
-        if (me.formMode == Enum.FormMode.Edit) {
+        if (me.formMode == this.$msEnum.FORM_MODE.Edit) {
           let date = new Date();
           // call api update
           let tempAssetItem = me.assetItem;
@@ -862,8 +853,8 @@ export default {
      */
     async cancelForm() {
       if (
-        this.formMode == Enum.FormMode.Add ||
-        this.formMode == Enum.FormMode.Duplicate
+        this.formMode == this.$msEnum.FORM_MODE.Add ||
+        this.formMode == this.$msEnum.FORM_MODE.Duplicate
       ) {
         this.dialogInformation = await {
           isShowDialog: true,
@@ -896,7 +887,7 @@ export default {
           ],
         };
       }
-      if (this.formMode == Enum.FormMode.Edit) {
+      if (this.formMode == this.$msEnum.FORM_MODE.Edit) {
         this.dialogInformation = {
           isShowDialog: true,
           messages: [

@@ -69,12 +69,12 @@
 }
 
 .combobox-content:has(.input__field:focus) {
-  border: 1px solid #408ea3;
-  box-shadow: 0 0 0 4px #edeff3;
+  border: 1px solid #32b6e2;
+  /* box-shadow: 0 0 0 4px #edeff3; */
 }
 
 .combobox-content:hover {
-  border: 1px solid #408ea3;
+  border: 1px solid #32b6e2;
 }
 
 .combobox-group .combobox-data {

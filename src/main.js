@@ -5,12 +5,17 @@ import TheHeader from "@/layouts/TheHeader.vue";
 import TheContent from "@/layouts/TheContent.vue";
 import MISALoading from "@/components/base/MISALoading.vue";
 import MISATooltipV1 from "@/components/base/MISATooltipV1.vue";
-import router from "@/router/assetRouter.js";
+import router from "@/router/router.js";
 import axios from "axios";
 import msEnum from "@/js/enum.js";
 import msDialog from "@/js/dialog.js";
 import api from "@/api/api.js";
+import store from "@/store/store.js";
+
 const app = createApp(App);
+app.use(store);
+
+app.config.globalProperties.$store = store;
 String.prototype.format = function() {
     let formatted = this;
     for (let i = 0; i < arguments.length; i++) {

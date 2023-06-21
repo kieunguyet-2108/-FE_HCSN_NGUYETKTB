@@ -10,7 +10,7 @@
       <div
         class="error-page__content__button d-flex justify-content-center border-rounded"
       >
-        <router-link to="/">
+        <router-link to="/asset">
           <v-button className="border-radius-30"> Quay lại </v-button>
         </router-link>
       </div>

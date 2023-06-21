@@ -10,6 +10,11 @@
     cursor: pointer;
 }
 
+.ms-icon-3 {
+    background: url('../../assets/icon/qlts-icon-3.svg') no-repeat;
+    cursor: pointer;
+}
+
 /* style for icon in here */
 .ms-icon-drop-file {
     background-position: -199px -65px;
@@ -51,6 +56,12 @@
 
 .ms-icon-arrow-down {
     background-position: -152px -283px;
+}
+
+.ms-icon-arrow-down-gray {
+    background-position: -158px -249px;
+    width: 12px;
+    height: 7px;
 }
 
 .ms-icon-car {
@@ -197,4 +208,50 @@
 
 .ms-icon-reload {
     background-position: -110px -68px;
+}
+
+.ms-icon-eye-close {
+    background-position: -67px -333px;
+    width: 18px;
+    height: 15px;
+}
+
+.ms-icon-eye-open {
+    background-position: -22px -377px;
+    width: 20px;
+    height: 15px;
+}
+
+.ms-icon-horizontal-layout {
+    background-position: -110px -420px;
+    width: 20px;
+    height: 15px;
+}
+
+.ms-icon-vertical-layout {
+    background-position: -22px -421px;
+    width: 20px;
+    height: 14px;
+}
+
+.ms-icon-print {
+    background-position: -331px -67px;
+}
+
+.ms-icon-three-dot {
+    background-position: -383px -26px;
+    width: 3px;
+    height: 13px;
+}
+
+.ms-icon-zoom-in {
+    background-position: -993px -157px;
+    width: 14px;
+    height: 15px;
+}
+
+.ms-icon-zoom-out {
+    background-position: -1037px -157px;
+    width: 14px;
+    height: 14px;
 }

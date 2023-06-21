@@ -12,7 +12,9 @@
     padding: 0px 6px;
     box-sizing: border-box;
 }
-
+.button__icon.box-shadow-none {
+    box-shadow: none !important;
+}
 button[disabled] {
     opacity: 0.5;
     cursor: not-allowed !important;

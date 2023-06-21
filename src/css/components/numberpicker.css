@@ -1,9 +1,9 @@
 .number-picker-group:has(input:focus) {
-    border: 1px solid #408ea3;
-    box-shadow: 0 0 0 4px #edeff3;
+    border: 1px solid #32b6e2;
+    /* box-shadow: 0 0 0 4px #edeff3; */
   }
   .number-picker-group:hover {
-    border: 1px solid #408ea3;
+    border: 1px solid #32b6e2;
   }
   .number__picker {
     display: flex;

@@ -13,11 +13,11 @@
     box-shadow: none;
   }
   .input-group__content:has(.input__field:focus) {
-    border: 1px solid #408ea3;
-    box-shadow: 0 0 0 4px #edeff3;
+    border: 1px solid #32b6e2;
+    /* box-shadow: 0 0 0 4px #edeff3; */
   }
   .input-group__content:hover{
-    border: 1px solid #408ea3;
+    border: 1px solid #32b6e2;
   }
   .filter .input-group__content {
     outline: none;
@@ -40,12 +40,13 @@
     padding: 0px 12px;
     color: #090f39;
     font-style: normal;
+    flex: 1;
   }
   
   /* khi input field có class là italic */
   .input__field::placeholder {
     font-style: italic;
-    color: gray;
+    color: rgb(174, 171, 171);
   }
   .input__field.placeholder-black::placeholder {
     color: #090f39;

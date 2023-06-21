@@ -1,17 +1,15 @@
 <template>
-  <div class="content">
+  <div class="content" tabindex="0" @keydown="handleEvent">
     <div class="content-top">
       <div class="filter">
         <div class="filter__search--input">
-          <div class="ms-36">
-            <div class="ms-icon ms-22 ms-icon-search-black"></div>
-          </div>
           <MISAInput
             type="text"
             placeholder="Tìm kiếm tài sản"
             className="input__field box-shadow-none"
             :isValidate="false"
             v-model="filterObj.textSearchFilter"
+            icon="ms-icon ms-22 ms-icon-search-black"
           ></MISAInput>
         </div>
         <MISACombobox
@@ -84,13 +82,14 @@
         :pageSize="pageSize"
         @selectMenuItem="selectMenuItem"
       ></MISATable>
-      <MISALoading v-if="isLoading"
-      :style="{
+      <MISALoading
+        v-if="isLoading"
+        :style="{
           top: '38px',
           left: '1px',
           right: '1px',
           bottom: '50px',
-      }"
+        }"
       ></MISALoading>
     </div>
     <router-view
@@ -118,8 +117,6 @@
 </template>
 <script>
 /* eslint-disable */
-// script file
-import Enum from "@/js/enum.js";
 import column from "@/js/column.js";
 import MISADialog from "@/components/base/MISADialog.vue";
 
@@ -132,6 +129,7 @@ import MISACombobox from "@/components/base/MISACombobox.vue";
 import MISATable from "@/components/base/MISATable.vue";
 import ShortcutGuide from "../ShortcutGuide.vue";
 import _ from "lodash";
+import { max } from "moment";
 export default {
   name: "AssetHome",
   components: {
@@ -152,14 +150,10 @@ export default {
     this.departmentColumns = column.departmentColumns;
     this.tableColumns = column.tableColumns;
   },
-  mounted() {
-    window.addEventListener("keydown", this.handleEvent);
-  },
   data() {
     return {
       formMode: null,
       isShowShortCut: false,
-      activeItem: null,
       filterObj: {
         // thông tin lọc
         departmentFilter: null,
@@ -279,22 +273,22 @@ export default {
      */
     handleEvent(event) {
       const me = this;
-      if (event.keyCode == this.$msEnum.KeyCode.F1) {
+      if (event.keyCode == this.$msEnum.KEY_CODE.F1) {
         event.preventDefault();
         this.isShowShortCut = true;
       }
-      if (this.isShowShortCut && event.keyCode == this.$msEnum.KeyCode.Escape) {
+      if (this.isShowShortCut && event.keyCode == this.$msEnum.KEY_CODE.Escape) {
         event.preventDefault();
         this.isShowShortCut = false;
       }
       // kiểm tra nếu chỉ có ctrl được dữ
       if (event.ctrlKey) {
         switch (event.keyCode) {
-          case me.$msEnum.KeyCode.R: // reload data : Ctrl + R
+          case me.$msEnum.KEY_CODE.R: // reload data : Ctrl + R
             event.preventDefault();
             me.getFixedAssetByPaging(me.pageNumber, me.pageSize);
             break;
-          case me.$msEnum.KeyCode.D: // xóa: Ctrl + D
+          case me.$msEnum.KEY_CODE.D: // xóa: Ctrl + D
             event.preventDefault();
             me.onClickDelete();
             break;
@@ -305,7 +299,7 @@ export default {
       // kiểm tra nếu ctrl và alt cùng được dữ
       if (event.ctrlKey && event.shiftKey) {
         switch (event.keyCode) {
-          case me.$msEnum.KeyCode.A: // thêm mới: Ctrl + Alt + A
+          case me.$msEnum.KEY_CODE.A: // thêm mới: Ctrl + Alt + A
             event.preventDefault();
             me.showFormModal();
             break;
@@ -439,7 +433,7 @@ export default {
      * @author: NguyetKTB 19/05/2023
      */
     handleEditRow(dataRow) {
-      this.formMode = this.$msEnum.FormMode.Edit;
+      this.formMode = this.$msEnum.FORM_MODE.Edit;
       this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
     },
     /**
@@ -449,7 +443,7 @@ export default {
      * @author: NguyetKTB 28/05/2023
      */
     handleDuplicateRow(dataRow) {
-      this.formMode = this.$msEnum.FormMode.Duplicate;
+      this.formMode = this.$msEnum.FORM_MODE.Duplicate;
       this.$router.push(`/asset/add/${dataRow.fixed_asset_id}`);
     },
     /**
@@ -471,7 +465,7 @@ export default {
      * @author: NguyetKTB 04/05/2023
      */
     showFormModal() {
-      this.formMode = this.$msEnum.FormMode.Add;
+      this.formMode = this.$msEnum.FORM_MODE.Add;
       this.$router.push("/asset/add");
     },
     /**
@@ -684,17 +678,17 @@ export default {
     selectMenuItem(action, item) {
       const me = this;
       switch (action) {
-        case me.$msEnum.MS_ACTION.Add:
+        case me.$msEnum.MENU_OPTION.Add:
           me.showFormModal();
           break;
-        case me.$msEnum.MS_ACTION.Edit:
+        case me.$msEnum.MENU_OPTION.Edit:
           me.handleEditRow(item);
           break;
-        case me.$msEnum.MS_ACTION.Delete:
+        case me.$msEnum.MENU_OPTION.Delete:
           me.selectedItems = [item];
           me.onClickDelete();
           break;
-        case me.$msEnum.MS_ACTION.Duplicate:
+        case me.$msEnum.MENU_OPTION.Duplicate:
           me.handleDuplicateRow(item);
           break;
         default:
