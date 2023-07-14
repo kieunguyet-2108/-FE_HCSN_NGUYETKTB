@@ -142,10 +142,7 @@
                 >
                   <MISATooltipV1
                     :content="
-                      formatData(
-                        field.field_type,
-                        item.rowData[field.field_key]
-                      )
+                      formatData(field.field_type, item[field.field_key])
                     "
                     v-if="!isValid"
                   >
@@ -452,7 +449,7 @@ export default {
           if (isNaN(date) || value == null || value == "0001-01-01T00:00:00") {
             return "";
           } else {
-            return date.toLocaleDateString("en-GB");
+            return date.toLocaleDateString("en-GB",{ timeZone: 'Asia/Ho_Chi_Minh' });
           }
         default:
           return value;
@@ -509,10 +506,8 @@ export default {
       const me = this;
       try {
         const response = await me.$msApi.import_file.getExcelFields();
-        if (response.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+        if (response.status == me.$msEnum.MS_CODE.SUCCESS) {
           me.excelFields = response.data.data;
-        } else {
-          me.excelFields = [];
         }
       } catch (e) {
         console.log(e);
@@ -572,9 +567,7 @@ export default {
       const fileExtension = me.fileName.split(".").pop();
       if (fileExtension !== "xlsx" && fileExtension !== "xls") {
         me.isValid = false;
-        me.importInformation.message =
-          "Định dạng file không hợp lệ(.xlsx, .xls)";
-        me.error = [];
+        me.importInformation.message = me.$msResource.IMPORT_MESSAGE.Error_File;
         me.data = [];
       } else {
         me.file = file;
@@ -594,7 +587,6 @@ export default {
       const me = this;
       me.isLoading = true;
       me.statusImport = me.$msEnum.MS_STATUS_IMPORT.Handle;
-      me.error = [];
       me.data = [];
       // lấy ra những trường có dữ liệu Datetime
       const dateFields = me.excelFields.filter(
@@ -605,25 +597,24 @@ export default {
         formData.append("fromFile", me.file);
         try {
           const response = await me.$msApi.fixed_asset.sendFile(formData);
-          if (response.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+          me.data = await response.data.data;
+          if (response.status == me.$msEnum.MS_CODE.SUCCESS) {
             // trường hợp không có lỗi
-            me.data = response.data.data;
-            me.error = response.data.error;
             me.isValid = true;
             me.importInformation.message = "Bản ghi hợp lệ.";
-            me.displayList = _.cloneDeep(me.data);
-          } else {
-            me.data = response.data.data;
-            me.error = response.data.error;
+          } else if(response.status == me.$msEnum.MS_CODE.BAD_REQUEST) {
             me.isValid = false;
-            if (me.error == null || me.error.length == 0) {
+            if (me.data == null || me.data.length == 0) {
               me.importInformation.message = response.data.userMsg;
             } else {
               me.importInformation.message =
-                me.error.length + " bản ghi không hợp lệ.";
+                me.data.length + " bản ghi không hợp lệ.";
             }
-            me.displayList = _.cloneDeep(me.error);
+          }else{
+            me.isValid = false;
+            me.importInformation.message = me.$msResource.IMPORT_MESSAGE.Error_Data;
           }
+          me.displayList = _.cloneDeep(me.data);
         } catch (e) {
           console.log(e);
         }
@@ -640,20 +631,19 @@ export default {
       const me = this;
       me.isLoading = true;
       me.statusImport = me.$msEnum.MS_STATUS_IMPORT.Done;
-      if (me.error.length > 0 || me.data.length == 0) {
-        me.isValid = false;
-        me.importInformation.message = me.$msEnum.MS_MESSAGE.MS_MSG_ERROR_DATA;
+      if (!me.isValid) {
+        me.importInformation.message = me.$msResource.IMPORT_MESSAGE.Error_Data;
       } else {
         try {
           const response = await me.$msApi.fixed_asset.importData(me.data);
-          if (response.data.msCode == me.$msEnum.MS_CODE.CREATED) {
+          if (response.status == me.$msEnum.MS_CODE.CREATED) {
             me.isValid = true;
             me.importInformation.message =
-              me.$msEnum.MS_MESSAGE.MS_MSG_IMPORT_SUCCESS;
+              me.$msResource.IMPORT_MESSAGE.Import_Success;
           } else {
             me.isValid = false;
             me.importInformation.message =
-              me.$msEnum.MS_MESSAGE.MS_MSG_IMPORT_FAILED;
+              me.$msResource.IMPORT_MESSAGE.Import_Failed;
           }
         } catch (error) {
           console.log(error);

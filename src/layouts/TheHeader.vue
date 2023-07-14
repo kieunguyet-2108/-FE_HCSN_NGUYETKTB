@@ -30,7 +30,7 @@
       <div
         v-clickOutside="
           () => {
-            isShowHeaderMenu = false;
+            isShowHeaderMenu = false
           }
         "
       >
@@ -44,13 +44,15 @@
           </div>
         </MISATooltipV1>
         <div class="header-menu" v-if="isShowHeaderMenu">
-          <router-link class="header-menu--item" to="/user/login"
-            >Thông tin</router-link
-          >
-          <!-- <router-link class="header-menu--item" to="/user/login"
-            >Đăng xuất</router-link
-          > -->
-          <div class="header-menu--item" @click="logout">Đăng xuất</div>
+          <router-link class="header-menu--item" to="/user/login">{{
+            $t('Common.UserInformation')
+          }}</router-link>
+          <div class="header-menu--item" @click="onChangeLanguage">
+            {{ currentLanguage }}
+          </div>
+          <div class="header-menu--item" @click="logout">
+            {{ $t('Common.Logout') }}
+          </div>
         </div>
       </div>
     </div>
@@ -59,10 +61,10 @@
 
 <script>
 /* eslint-disable */
-import vClickOutside from "click-outside-vue3";
-import MISATooltipV1 from "@/components/base/MISATooltipV1.vue";
+import vClickOutside from 'click-outside-vue3'
+import MISATooltipV1 from '@/components/base/MISATooltipV1.vue'
 export default {
-  name: "TheHeader",
+  name: 'TheHeader',
   components: {
     MISATooltipV1,
   },
@@ -72,15 +74,37 @@ export default {
   data() {
     return {
       isShowHeaderMenu: false,
-    };
+      language: localStorage.getItem('qlts-language'),
+    }
   },
-  methods: {
-    async logout() {
-      await this.$store.dispatch("setUserAction", false);
-      this.$router.push("/user/login");
+  computed: {
+    currentLanguage() {
+      return this.language === 'vi'
+        ? 'Chuyển sang tiếng Anh'
+        : 'Switch to Vietnamese'
     },
   },
-};
+  methods: {
+    onChangeLanguage() {
+      this.isShowHeaderMenu = false
+      this.isShowPopupChangeLanguage = true
+      let language = localStorage.getItem('qlts-language')
+      if (language === 'vi') {
+        this.$i18n.locale = 'en'
+        localStorage.setItem('qlts-language', 'en')
+        this.language = 'en'
+      } else {
+        this.$i18n.locale = 'vi'
+        localStorage.setItem('qlts-language', 'vi')
+        this.language = 'vi'
+      }
+    },
+    async logout() {
+      await this.$store.dispatch('removeToken')
+      this.$router.push('/user/login')
+    },
+  },
+}
 </script>
 
 <style scoped>

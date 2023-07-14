@@ -42,14 +42,14 @@
           class="button button__main"
           text="Thêm tài sản"
           icon="ms-icon-plus ms-8"
-          @click="showFormModal"
+          @click="handleAction(this.$msEnum.MS_ACTION.Add)"
         ></MISAButton>
         <div class="action-item flex column tooltip">
           <MISATooltipV1 content="Nhập">
             <MISAButton
               class="button__icon ms-36"
               icon="ms-icon-excel ms-24"
-              @click="onClickImport"
+              @click="handleAction(this.$msEnum.MS_ACTION.Import)"
             ></MISAButton>
           </MISATooltipV1>
         </div>
@@ -71,8 +71,10 @@
         :listData="fixedAssets"
         :listColumn="tableColumns"
         v-model="selectedItems"
-        @edit="handleEditRow"
-        @duplicate="handleDuplicateRow"
+        @add="handleAction"
+        @edit="handleAction"
+        @delete="handleAction"
+        @duplicate="handleAction"
         @changePaging="changePaging"
         @changeDropdown="changeDropdown"
         :pagingOptions="pagingOptions"
@@ -80,7 +82,7 @@
         :totalRecord="totalRecord"
         :pageNumber="pageNumber"
         :pageSize="pageSize"
-        @selectMenuItem="selectMenuItem"
+        :menuOptions="menuOptions"
       ></MISATable>
       <MISALoading
         v-if="isLoading"
@@ -98,7 +100,6 @@
       @show-popup="showPopup"
       @insertAsset="insertAsset"
       @updateAsset="updateAsset"
-      @importAsset="importAsset"
     ></router-view>
     <MISAPopup
       :popupMessage="popupInformation.popupMessage"
@@ -129,7 +130,6 @@ import MISACombobox from "@/components/base/MISACombobox.vue";
 import MISATable from "@/components/base/MISATable.vue";
 import ShortcutGuide from "../ShortcutGuide.vue";
 import _ from "lodash";
-import { max } from "moment";
 export default {
   name: "AssetHome",
   components: {
@@ -152,7 +152,6 @@ export default {
   },
   data() {
     return {
-      formMode: null,
       isShowShortCut: false,
       filterObj: {
         // thông tin lọc
@@ -199,6 +198,24 @@ export default {
           field: "",
           value: 0,
           width: "100px",
+        },
+      ],
+      menuOptions: [
+        {
+          text: "Thêm",
+          action: this.$msEnum.MS_ACTION.Add,
+        },
+        {
+          text: "Sửa",
+          action: this.$msEnum.MS_ACTION.Edit,
+        },
+        {
+          text: "Xóa",
+          action: this.$msEnum.MS_ACTION.Delete,
+        },
+        {
+          text: "Nhân bản",
+          action: this.$msEnum.MS_ACTION.Duplicate,
         },
       ],
     };
@@ -266,6 +283,35 @@ export default {
   },
   methods: {
     /**
+     * @description: Thực hiện nhảy tới component tùy thuộc vào action
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 21/06/2023
+     */
+    handleAction(action, dataRow = null) {
+      const me = this;
+      switch (action) {
+        case me.$msEnum.MS_ACTION.Add:
+          me.$router.push("/asset/add");
+          break;
+        case me.$msEnum.MS_ACTION.Edit:
+          me.$router.push(`/asset/detail/${dataRow.fixed_asset_id}`);
+          break;
+        case me.$msEnum.MS_ACTION.Duplicate:
+          me.$router.push(`/asset/add/${dataRow.fixed_asset_id}`);
+          break;
+        case me.$msEnum.MS_ACTION.Import:
+          me.$router.push("/asset/import");
+          break;
+        case me.$msEnum.MS_ACTION.Delete:
+          me.selectedItems = [dataRow];
+          me.onClickDelete();
+          break;
+        default:
+          break;
+      }
+    },
+    /**
      * @description: Thực hiện xử lí phím tắt trên trang chủ
      * @param: {any}
      * @return: {any}
@@ -277,7 +323,10 @@ export default {
         event.preventDefault();
         this.isShowShortCut = true;
       }
-      if (this.isShowShortCut && event.keyCode == this.$msEnum.KEY_CODE.Escape) {
+      if (
+        this.isShowShortCut &&
+        event.keyCode == this.$msEnum.KEY_CODE.Escape
+      ) {
         event.preventDefault();
         this.isShowShortCut = false;
       }
@@ -338,40 +387,37 @@ export default {
      */
     async getFixedAssetByPaging(pageNumber, pageSize) {
       const me = this;
+      me.isLoading = true;
       var filters = [];
       me.filter.forEach((filter) => {
         if (filter.value != "") {
           filters.push(filter);
         }
       });
-      // duyệt qua các phần tử trong  filterInfor để lấy ra các tham số cần thiết
       try {
-        me.isLoading = true;
+        // duyệt qua các phần tử trong  filterInfor để lấy ra các tham số cần thiết
         const rs = await me.$msApi.fixed_asset.getListByPagination(
           pageNumber,
           pageSize,
           filters
         );
-        if (rs.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+        if (rs == null) {
+          me.fixedAssets = [];
+          me.totalRecord = 0;
+          me.summary.find((x) => x.field == "quantity").value = 0;
+          me.summary.find((x) => x.field == "cost").value = 0;
+        } else if (rs.status == me.$msEnum.MS_CODE.SUCCESS) {
           me.fixedAssets = rs.data.data.data;
           me.totalRecord = rs.data.data.totalRecord;
           me.summary.find((x) => x.field == "quantity").value =
             rs.data.data.summary.totalQuantity;
           me.summary.find((x) => x.field == "cost").value =
             rs.data.data.summary.totalOfCost;
-          // me.selectedItems = [];
-          me.isLoading = false;
-        } else {
-          me.fixedAssets = [];
-          me.totalRecord = 0;
-          me.summary.find((x) => x.field == "quantity").value = 0;
-          me.summary.find((x) => x.field == "cost").value = 0;
-          me.isLoading = false;
-          // CO THONG BAO LOI
         }
       } catch (error) {
         console.log(error);
       }
+      me.isLoading = false;
     },
     /**
      * @description: Hàm thực hiện gọi api lấy ra tất cả dữ liệu bảng tài sản
@@ -381,13 +427,11 @@ export default {
      */
     async getFixedAssetList() {
       const me = this;
-      try {
-        const result = await me.$msApi.fixed_asset.getFixedAssets();
-        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
-          me.fixedAssets = result.data.data;
-        }
-      } catch (error) {
-        console.log(error);
+      const result = await me.$msApi.fixed_asset.getFixedAssets();
+      if (result == null) {
+        me.fixedAssets = [];
+      } else if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
+        me.fixedAssets = result.data.data;
       }
     },
 
@@ -399,13 +443,11 @@ export default {
      */
     async getDepartmentList() {
       const me = this;
-      try {
-        const result = await me.$msApi.department.getDepartments();
-        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
-          me.departments = result.data.data;
-        }
-      } catch (error) {
-        console.log(error);
+      const result = await me.$msApi.department.getDepartments();
+      if (result == null) {
+        me.departments = [];
+      } else if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
+        me.departments = result.data.data;
       }
     },
     /**
@@ -416,35 +458,13 @@ export default {
      */
     async getFixedAssetCategoryList() {
       const me = this;
-      try {
-        const result =
-          await me.$msApi.fixed_asset_category.getFixedAssetCategories();
-        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
-          me.fixedAssetCategories = result.data.data;
-        }
-      } catch (error) {
-        console.log(error);
+      const result =
+        await me.$msApi.fixed_asset_category.getFixedAssetCategories();
+      if (result == null) {
+        me.fixedAssetCategories = [];
+      } else if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
+        me.fixedAssetCategories = result.data.data;
       }
-    },
-    /**
-     * @description: Hàm xử lí sự kiện click vào 1 dòng trong table
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 19/05/2023
-     */
-    handleEditRow(dataRow) {
-      this.formMode = this.$msEnum.FORM_MODE.Edit;
-      this.$router.push(`/asset/${dataRow.fixed_asset_id}`);
-    },
-    /**
-     * @description: Thực hiện xử lí sự kiện click duplicate 1 dòng trong table
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 28/05/2023
-     */
-    handleDuplicateRow(dataRow) {
-      this.formMode = this.$msEnum.FORM_MODE.Duplicate;
-      this.$router.push(`/asset/add/${dataRow.fixed_asset_id}`);
     },
     /**
      * @description: Hàm thực hiện gọi api lấy dữ liệu theo paging và filter
@@ -457,26 +477,6 @@ export default {
       // set time out 1s để tắt loading
       await this.getFixedAssetByPaging(this.pageNumber, this.pageSize);
       this.isLoading = false;
-    },
-    /**
-     * @description: Thực hiện show form thêm mới tài sản
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 04/05/2023
-     */
-    showFormModal() {
-      this.formMode = this.$msEnum.FORM_MODE.Add;
-      this.$router.push("/asset/add");
-    },
-    /**
-     * @description: Thực hiện xử lí khi click button xuất
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 26/05/2023
-     */
-    async onClickImport() {
-      const me = this;
-      this.$router.push("/asset/import");
     },
 
     /**
@@ -502,38 +502,34 @@ export default {
      */
     async onClickDelete(event) {
       const me = this;
-      // kiểm tra trường hợp chưa chọn bản ghi nào
-      if (me.selectedItems.length == 0) {
-        // disable button xóa
-      } else if (me.selectedItems.length == 1) {
-        let item = me.selectedItems[0];
+      const items = me.selectedItems;
+      if(items.length == 0)return;
+      let assetInVoucherItem = await me.hanldeBeforeDelete(me.selectedItems);
+      if (assetInVoucherItem > 0) {
+        var message = "";
+        if (items.length == 1) {
+          message = `<div>${me.$msResource.DIALOG_MESSAGE.Delete_Warning_OneRecord}</div>`;
+        } else {
+          message =
+            `<div>${me.$msResource.DIALOG_MESSAGE.Delete_Warning_MultiRecord}</div>`.format(
+              `<strong>${items.length}</strong>`
+            );
+        }
         me.dialogInformation = {
           isShowDialog: true,
+          styleIcon: "align-items: flex-start;",
           messages: [
             {
               field: "message",
-              content:
-                `<div>${me.$msEnum.MS_MESSAGE_DELETE.ONE_RECORD}</div>`.format(
-                  `<strong>${item.fixed_asset_code}</strong>`,
-                  `<strong>${item.fixed_asset_name}</strong>`
-                ),
+              content: message,
               style: "display: flex; flex-direction: column;",
             },
           ],
           buttonList: [
             {
-              text: "Xóa",
+              text: "Đóng",
               buttonClass: "button button__main",
               isFocus: true,
-              onclick: async () => {
-                me.deleteFixedAsset(me.selectedItems);
-                // kiểm tra lại nếu list item = 0
-                console.log(me.fixedAssets);
-              },
-            },
-            {
-              text: "Không",
-              buttonClass: "button button__outline",
               onclick: () => {
                 me.dialogInformation.isShowDialog = false;
               },
@@ -541,15 +537,27 @@ export default {
           ],
         };
       } else {
+        let dialogMessage = "";
+        // show message confirm
+        if (items.length == 1) {
+          let itemDelete = items[0];
+          dialogMessage =
+            `<div>${me.$msResource.DIALOG_MESSAGE.Delete_OneRecord}</div>`.format(
+              `<strong>${itemDelete.fixed_asset_code}</strong>`,
+              `<strong>${itemDelete.fixed_asset_name}</strong>`
+            );
+        } else {
+          dialogMessage =
+            `<div>${me.$msResource.DIALOG_MESSAGE.Delete_MultiRecord}</div>`.format(
+              `<strong>${me.selectedItems.length}</strong>`
+            );
+        }
         me.dialogInformation = {
           isShowDialog: true,
           messages: [
             {
               field: "message",
-              content:
-                `<div>${me.$msEnum.MS_MESSAGE_DELETE.MULTI_RECORD}</div>`.format(
-                  `<strong>${me.selectedItems.length}</strong>`
-                ),
+              content: dialogMessage,
               style: "display: flex; flex-direction: column;",
             },
           ],
@@ -559,7 +567,7 @@ export default {
               buttonClass: "button button__main",
               isFocus: true,
               onclick: async () => {
-                me.deleteFixedAsset(me.selectedItems);
+                me.deleteFixedAsset(items);
               },
             },
             {
@@ -582,27 +590,56 @@ export default {
     async deleteFixedAsset(items) {
       const me = this;
       var selectedList = [];
+      // thực hiện lấy ra danh sách id cần xóa
       items.forEach((item) => {
         selectedList.push(item.fixed_asset_id);
       });
       try {
+        // gọi api xóa dữ liệu
         const result = await me.$msApi.fixed_asset.deleteFixedAsset(
           selectedList
         );
-        if (result.data.msCode == me.$msEnum.MS_CODE.SUCCESS) {
+        // kiểm tra kết quả trả về
+        if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
           if (items.length == me.fixedAssets.length) {
             if (me.pageNumber > 1) {
               me.pageNumber = me.pageNumber - 1;
             }
           }
-          me.dialogInformation.isShowDialog = false;
           me.selectedItems = [];
-          me.showPopup(result.data.userMsg, me.$msEnum.MS_POPUP_MODE.Success);
+          me.showPopup(
+            me.$msResource.POPUP_MESSAGE.Msg_Delete_Success.format("tài sản"),
+            me.$msEnum.MS_POPUP_MODE.Success
+          );
           me.loadData();
         } else {
-          me.dialogInformation.isShowDialog = false;
-          me.showPopup(result.data.userMsg, me.$msEnum.MS_POPUP_MODE.Error);
+          me.showPopup(
+            me.$msResource.POPUP_MESSAGE.Msg_Delete_Failed.format("tài sản"),
+            me.$msEnum.MS_POPUP_MODE.Error
+          );
         }
+      } catch (error) {
+        console.log(error);
+      }
+
+      me.dialogInformation.isShowDialog = false;
+    },
+    /**
+     * @description:
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 10/07/2023
+     */
+    async hanldeBeforeDelete(items) {
+      const me = this;
+      var selectedList = [];
+      // thực hiện lấy ra danh sách id cần xóa
+      items.forEach((item) => {
+        selectedList.push(item.fixed_asset_id);
+      });
+      try {
+        const rs = await me.$msApi.fixed_asset.handleBeforeDelete(selectedList);
+        return rs.data.data;
       } catch (error) {
         console.log(error);
       }
@@ -623,7 +660,6 @@ export default {
      * @author: NguyetKTB 25/05/2023
      */
     insertAsset(asset) {
-      // nên load luôn dữ liệu mới nhất từ api về
       const me = this;
       if (asset) {
         me.hideModal();
@@ -633,13 +669,13 @@ export default {
         me.summary.find((x) => x.field == "quantity").value += asset.quantity;
         me.summary.find((x) => x.field == "cost").value += asset.cost;
         me.showPopup(
-          me.$msEnum.MS_MESSAGE.MS_MSG_ADD_SUCCESS,
+          me.$msResource.POPUP_MESSAGE.Msg_Add_Success,
           me.$msEnum.MS_POPUP_MODE.Success
         );
       } else {
         me.hideModal();
         me.showPopup(
-          me.$msEnum.MS_MESSAGE.MS_MSG_ADD_FAILED,
+          me.$msResource.POPUP_MESSAGE.Msg_Add_Failed,
           me.$msEnum.MS_POPUP_MODE.Error
         );
       }
@@ -655,45 +691,6 @@ export default {
       me.hideModal();
       me.loadData();
       me.showPopup(message, popupMode);
-    },
-    /**
-     * @description: Thực hiện xử lí sự kiện nhập tài sản qua file
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 12/06/2023
-     */
-    importAsset(items) {
-      // const me = this;
-      // // unshift là thêm vào đầu mảng
-      // me.fixedAssets.unshift(...items);
-      // me.totalRecord += items.length;
-      // me.summary.find((x) => x.field == "quantity").value += items.reduce((sum, item) => sum + item.quantity, 0);
-    },
-    /**
-     * @description: Hàm thực hiện xử lí khi người dùng chọn menu item
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 02/06/2023
-     */
-    selectMenuItem(action, item) {
-      const me = this;
-      switch (action) {
-        case me.$msEnum.MENU_OPTION.Add:
-          me.showFormModal();
-          break;
-        case me.$msEnum.MENU_OPTION.Edit:
-          me.handleEditRow(item);
-          break;
-        case me.$msEnum.MENU_OPTION.Delete:
-          me.selectedItems = [item];
-          me.onClickDelete();
-          break;
-        case me.$msEnum.MENU_OPTION.Duplicate:
-          me.handleDuplicateRow(item);
-          break;
-        default:
-          break;
-      }
     },
     /**
      * @description: Thực hiện xử lí khi người dùng thực hiện sự kiện chọn item trong combobox filter

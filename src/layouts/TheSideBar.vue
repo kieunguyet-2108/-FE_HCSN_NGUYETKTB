@@ -11,28 +11,28 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-computer"></div>
             </div>
-            <div class="menu-item__text">Tổng quan</div>
+            <div class="menu-item__text">{{ $t("SideBar.Overview") }}</div>
           </router-link>
         </MISATooltipV1>
-        <div>
+        <div class="menu-item__content">
           <MISATooltipV1 content="Tài sản">
             <router-link class="menu-item tooltip" to="/asset">
               <div class="ms-24">
                 <div class="ms-icon ms-24 ms-icon-car"></div>
               </div>
-              <div class="menu-item__text">Tài sản</div>
+              <div class="menu-item__text">{{ $t("SideBar.Asset") }}</div>
               <div class="ms-icon ms-24 ms-icon-arrow-down" @click="isShowAssetMenu = !isShowAssetMenu"></div>
             </router-link>
           </MISATooltipV1>
           <div class="menu-item--list" v-if="isShowAssetMenu">
-            <router-link to="/write-asset">Ghi tăng</router-link>
-            <router-link to="/asset/change-information">Thay đổi thông tin</router-link>
-            <router-link to="/asset/change-information">Đánh giá lại</router-link>
-            <router-link to="/asset/change-information">Tính hao mòn</router-link>
-            <router-link to="/asset/change-information">Điều chuyển tài sản</router-link>
-            <router-link to="/asset/change-information">Ghi giảm</router-link>
-            <router-link to="/asset/change-information">Kiểm kê</router-link>
-            <router-link to="/asset/change-information">Khác</router-link>
+            <router-link to="/asset/increase-asset">{{ $t("SideBar.Increase") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.ChangeInformation") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.Revaluation") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.Depreciation") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.AssetTransfer") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.Decrease") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.Stocktaking") }}</router-link>
+            <router-link to="/asset/change-information">{{ $t("SideBar.Others") }}</router-link>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-road"></div>
             </div>
-            <div class="menu-item__text">Tài sản HT-ĐB</div>
+            <div class="menu-item__text">{{ $t("SideBar.FixedAssets") }}</div>
             <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
           </router-link>
         </MISATooltipV1>
@@ -50,7 +50,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-tool"></div>
             </div>
-            <div class="menu-item__text">Công cụ dụng cụ</div>
+            <div class="menu-item__text"> {{ $t("SideBar.ToolsAndEquipment") }}</div>
             <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
           </router-link>
         </MISATooltipV1>
@@ -59,7 +59,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-category"></div>
             </div>
-            <div class="menu-item__text">Danh mục</div>
+            <div class="menu-item__text"> {{ $t("SideBar.Category") }}</div>
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Tra cứu">
@@ -67,7 +67,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-search-gray"></div>
             </div>
-            <div class="menu-item__text">Tra cứu</div>
+            <div class="menu-item__text"> {{ $t("SideBar.Search") }}</div>
             <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
           </router-link>
         </MISATooltipV1>
@@ -76,7 +76,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-report"></div>
             </div>
-            <div class="menu-item__text">Báo cáo</div>
+            <div class="menu-item__text"> {{ $t("SideBar.Report") }}</div>
             <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
           </router-link>
         </MISATooltipV1>
@@ -135,11 +135,13 @@ export default {
   align-items: center;
   cursor: pointer;
   border-radius: 4px;
+  margin-bottom: 4px;
 }
 .menu-item--list a:hover,
 .menu-item--list .router-link-active{
-  background-color: #1aa4c8;
+  background-color: #48586c;
   color: white;
 }
+
 @import url(@/css/layouts/sidebar/sidebar.css);
 </style>

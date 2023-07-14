@@ -47,6 +47,7 @@
   .input__field::placeholder {
     font-style: italic;
     color: rgb(174, 171, 171);
+    margin-right: 5px;
   }
   .input__field.placeholder-black::placeholder {
     color: #090f39;

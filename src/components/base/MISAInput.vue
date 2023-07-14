@@ -141,12 +141,10 @@ export default {
             me.$emit("update:modelValue", inputValue);
           } else if (inputValue == "") {
             me.isError = true;
-            me.errorMessage = me.$msEnum.MS_VALIDATE_MSG.REQUIRED.format(
-              me.label
-            );
+            me.errorMessage = me.$msResource.VALIDATE.Required.format(me.label);
           } else {
             me.isError = true;
-            me.errorMessage = me.$msEnum.MS_VALIDATE_MSG.MAX_LENGTH.format(
+            me.errorMessage = me.$msResource.VALIDATE.MaxLength.format(
               me.label,
               me.maxLength
             );

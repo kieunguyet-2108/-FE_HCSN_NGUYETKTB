@@ -1,0 +1,46 @@
+{
+  "Asset": {
+    "AddIncreaseVoucher": "Thêm chứng từ ghi tăng"
+  },
+  "Common": {
+    "UserInformation": "Thông tin",
+    "Logout": "Đăng xuất",
+    "Login": "Đăng nhập",
+    "Register": "Đăng ký",
+    "Year": "Năm",
+    "Month": "Tháng",
+    "Day": "Ngày",
+    "Hour": "Giờ",
+    "Minute": "Phút",
+    "Second": "Giây",
+    "Date": "Ngày",
+    "Time": "Thời gian",
+    "DateTime": "Ngày giờ",
+    "Save": "Lưu",
+    "Cancel": "Hủy",
+    "Close": "Đóng",
+    "Delete": "Xóa",
+    "Edit": "Sửa",
+    "Add": "Thêm",
+    "Search": "Tìm kiếm",
+    "Refresh": "Làm mới",
+    "Confirm": "Xác nhận"
+  },
+  "SideBar": {
+    "Overview": "Tổng quan",
+    "Asset": "Tài sản",
+    "Increase": "Ghi tăng",
+    "ChangeInformation": "Thay đổi thông tin",
+    "Revaluation": "Đánh giá lại",
+    "Depreciation": "Tính hao mòn",
+    "AssetTransfer": "Điều chuyển tài sản",
+    "Decrease": "Ghi giảm",
+    "Stocktaking": "Kiểm kê",
+    "Others": "Khác",
+    "FixedAssets": "Tài sản HT-ĐB",
+    "ToolsAndEquipment": "Công cụ dụng cụ",
+    "Category": "Danh mục",
+    "Search": "Tra cứu",
+    "Report": "Báo cáo"
+  }
+}

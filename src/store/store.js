@@ -1,11 +1,13 @@
 import { createStore } from "vuex";
 import auth from "./auth";
-import formMode from "./form";
+import action from "./action";
+import table from "./table";
 
 const store = createStore({
   modules: {
     auth,
-    formMode,
+    action,
+    table,
   },
 });
 export default store;

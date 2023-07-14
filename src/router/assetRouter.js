@@ -4,28 +4,53 @@ function lazyLoad(view) {
 const assetRouter = [
   {
     path: "/asset",
-    component: lazyLoad("asset/AssetList"),
-    name: "AssetList",
+    component: lazyLoad("asset/AssetHome"),
+    name: "AssetHome",
     children: [
       {
-        path: ":asset_id",
-        component: lazyLoad("asset/AssetForm"),
-        props: true,
-        name: "AssetForm",
+        path: "/asset",
+        component: lazyLoad("asset/AssetList"),
+        name: "AssetList",
+        children: [
+          {
+            path: "detail/:asset_id",
+            component: lazyLoad("asset/AssetForm"),
+            props: true,
+            name: "AssetForm",
+          },
+          { path: "add", component: lazyLoad("asset/AssetForm") },
+          {
+            path: "add/:duplicate_id",
+            component: lazyLoad("asset/AssetForm"),
+            props: true,
+            name: "AssetFormEdit",
+          },
+        ],
       },
-      { path: "add", component: lazyLoad("asset/AssetForm") },
       {
-        path: "add/:duplicate_id",
-        component: lazyLoad("asset/AssetForm"),
-        props: true,
-        name: "AssetFormEdit",
+        path: "import",
+        component: lazyLoad("asset/AssetImport"),
+        name: "AssetImport",
       },
+      {
+        path: "increase-asset",
+        component: lazyLoad("increase-asset/IncreaseAssetHome"),
+        name: "IncreaseAssetHome",
+        children:[
+          {
+            path: "add-voucher",
+            component: lazyLoad("increase-asset/VoucherForm"),
+            name: "VoucherForm",
+          },
+          {
+            path: "add-voucher/:voucher_id",
+            component: lazyLoad("increase-asset/VoucherForm"),
+            props: true,
+            name: "VoucherFormEdit",
+          }
+        ]
+      }
     ],
-  },
-  {
-    path: "/asset/import",
-    component: lazyLoad("asset/AssetImport"),
-    name: "AssetImport",
   },
   {
     path: "/:pathMatch(.*)*",

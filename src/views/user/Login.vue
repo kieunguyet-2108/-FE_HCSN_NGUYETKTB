@@ -1,8 +1,20 @@
 <template>
   <div class="login">
+    <div
+      class="login__message"
+      :style="{
+        visibility: loginMessage !== '' ? 'visible' : 'hidden',
+      }"
+    >
+      {{ loginMessage }}
+    </div>
     <div class="login__content">
       <div class="login__content--left">
-        <img src="@/assets/Image_Login.jpg" alt="" style="border-radius: 8px 0px 0px 8px;" />
+        <img
+          src="@/assets/Image_Login.jpg"
+          alt=""
+          style="border-radius: 8px 0px 0px 8px"
+        />
       </div>
       <div class="login__content--right">
         <div class="login__header">
@@ -21,7 +33,7 @@
               :maxLength="100"
               :minLength="1"
               :isValidate="false"
-              v-model="userName"
+              v-model="loginInformation.userName"
             ></MISAInput>
           </div>
           <div class="login__form--password">
@@ -34,7 +46,7 @@
               :minLength="1"
               :isValidate="false"
               :icon="passwordInformation.passwordIcon"
-              v-model="password"
+              v-model="loginInformation.password"
               @clickInputIcon="clickIconPassword"
             ></MISAInput>
           </div>
@@ -42,7 +54,7 @@
             <MISAButton
               class="button-login"
               text="Đăng nhập"
-              @click="login"
+              @click="handeLogin"
             ></MISAButton>
           </div>
           <div class="forgot-password">Quên mật khẩu?</div>
@@ -68,15 +80,40 @@ export default {
         passwordType: "password",
         passwordIcon: "ms-icon-3 ms-icon-eye-close",
       },
-      userName: "",
-      password: "",
+      loginInformation: {
+        userName: "",
+        password: "",
+      },
+      loginMessage: "",
     };
   },
   methods: {
-    async login() {
+    /**
+     * @description: Thực hiện gọi api login và xử lý kết quả trả về
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 22/06/2023
+     */
+    async handeLogin() {
       const me = this;
-      await this.$store.dispatch("setUserAction", true);
-      me.$router.push("/asset");
+      if(me.loginInformation.userName == "" || me.loginInformation.password == "") {
+        me.loginMessage = "Vui lòng nhập đầy đủ thông tin đăng nhập";
+        return;
+      }
+      try {
+        const result = await me.$msApi.account.login(
+          me.loginInformation.userName,
+          me.loginInformation.password
+        );
+        if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
+          await this.$store.dispatch("setToken", result.data.data);
+          await me.$router.push("/asset");
+        } else {
+          me.loginMessage = "Tên đăng nhập hoặc mật khẩu không đúng";
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * @description:
@@ -121,6 +158,18 @@ export default {
   height: 100vh;
   width: 100vw;
   z-index: 9999;
+  gap: 20px;
+}
+.login .login__message {
+  padding: 6px 20px;
+  position: fixed;
+  background-color: #f65335;
+  border-radius: 4px;
+  color: #fff;
+  visibility: hidden;
+  min-width: 250px;
+  text-align: center;
+  top: 50px;
 }
 .login__header {
   display: flex;

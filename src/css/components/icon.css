@@ -173,7 +173,7 @@
     background-position: -156px -68px;
 }
 
-.ms-icon-view {
+.ms-icon-duplicate {
     background-position: -244px -112px;
 }
 
@@ -254,4 +254,16 @@
     background-position: -1037px -157px;
     width: 14px;
     height: 14px;
+}
+
+.ms-icon-add-square {
+    background-position: -375px -419px;
+    width: 18px;
+    height: 18px;
+}
+
+.ms-icon-subtract-circle {
+    background-position: -375px -463px;
+    width: 18px;
+    height: 18px;
 }

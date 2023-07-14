@@ -142,7 +142,7 @@ export default {
      */
     handleClosed() {
       if (!this.isFormatDate(this.$refs[this.name].inputRef.value)) {
-        this.$refs[this.name].input = this.date.toLocaleDateString("en-GB");
+        this.$refs[this.name].input = this.date.toLocaleDateString("en-GB", { timeZone: 'Asia/Ho_Chi_Minh' });
       }
     },
 
@@ -154,7 +154,7 @@ export default {
      */
     handleDate(modelData) {
       this.date = modelData;
-      if (this.isFormatDate(this.date.toLocaleDateString("en-GB"))) {
+      if (this.isFormatDate(this.date.toLocaleDateString("en-GB", { timeZone: 'Asia/Ho_Chi_Minh' }))) {
         this.isError = false;
         this.errorMessage = "";
         this.$emit(

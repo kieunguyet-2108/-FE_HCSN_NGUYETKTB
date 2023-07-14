@@ -49,36 +49,6 @@ const Enum = {
     BAD_REQUEST: 400,
     ERROR: 500,
   },
-  // CÁC MESSAGE VALIDATE
-  MS_VALIDATE_MSG: {
-    REQUIRED: "{0} không được để trống.",
-    MAX_LENGTH: "{0} không được vượt quá {1} ký tự.",
-    DUPLICATE: "{0} đã tồn tại.",
-    INVALID: "{0} không hợp lệ.",
-  },
-  // CÁC MESSAGE THÔNG BÁO KHI THỰC HIỆN DELETE
-  MS_MESSAGE_DELETE: {
-    ONE_RECORD: "Bạn có muốn xóa {0} - {1}?",
-    MULTI_RECORD:
-      "{0} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?",
-    WARNING: "Không thể xóa tài sản này vì đã có chứng từ phát sinh.",
-  },
-  // CÁC MESSAGE TÙY THUỘC VÀO TRẠNG THÁI CỦA FORM
-  MS_MESSAGE: {
-    MS_MSG_CANCEL_ADD: "Bạn có muốn hủy bỏ khai báo tài sản này?",
-    MS_MSG_CANCEL_EDIT:
-      "Thông tin thay đổi sẽ không được cập nhật nếu bạn <br> không lưu. Bạn có muốn lưu các thay đổi này?",
-    MS_MSG_ADD_SUCCESS: "Thêm mới tài sản thành công.",
-    MS_MSG_ADD_FAILED: "Thêm mới tài sản thất bại.",
-    MS_MSG_EDIT_SUCCESS: "Cập nhật tài sản thành công.",
-    MS_MSG_EDIT_FAILED: "Cập nhật tài sản thất bại.",
-    MS_MSG_DELETE_SUCCESS: "Xóa tài sản thành công.",
-    MS_MSG_DELETE_FAILED: "Xóa tài sản thất bại.",
-    MS_MSG_GET_DATA_FAILED: "Không lấy được dữ liệu.",
-    MS_MSG_ERROR_DATA: "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.",
-    MS_MSG_IMPORT_SUCCESS: "Nhập dữ liệu thành công. Bấm hoàn tất để kết thúc.",
-    MS_MSG_IMPORT_FAILED: "Nhập dữ liệu thất bại. Vui lòng thử lại.",
-  },
   // KHAI BÁO CÁC OPERATOR CỦA FILTER
   MS_FILTER_CONDITION: {
     Equal: 0,
@@ -89,6 +59,8 @@ const Enum = {
     NotLike: 5,
     StartsWith: 6,
     EndsWith: 7,
+    In: 8,
+    NotIn: 9,
   },
   // KHAI BÁO CÁC TOÁN TỬ CỦA FILTER
   MS_FILTER_OPERATOR: {
@@ -133,18 +105,37 @@ const Enum = {
     Vertical: 1,
     Horizontal: 2,
   },
+  MS_ACTION_TYPE: {
+    Add: "1",
+    Edit: "2",
+    Delete: "3",
+    Duplicate: "4",
+  },
   // ACTION THỰC HIỆN TRÊN FORM
   MS_ACTION: {
     Add: "add",
     Edit: "edit",
     Duplicate: "duplicate",
+    Import: "import",
     Delete: "delete",
     DeleteMany: "deleteMany",
     Save: "save",
     Cancel: "cancel",
     Close: "close",
+  },
+  MS_TABLE_ACTION: {
+    ChangePage: "changePage",
+    ChangePageSize: "changePageSize",
+    ChooseOption: "chooseOption",
+  },
+  MS_INCREASE_ASSET_ACTION: {
+    VerticalLayout: "verticalLayout",
+    HorizontalLayout: "horizontalLayout",
     ZoomIn: "zoomIn",
     ZoomOut: "zoomOut",
+    AddVoucher: "addVoucher",
+    EditVoucher: "editVoucher",
+    AddAssetInVoucher: "addAssetInVoucher",
   },
 };
 

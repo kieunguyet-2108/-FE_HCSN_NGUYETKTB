@@ -1,11 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import assetRouter from "./assetRouter";
 import userRouter from "./userRouter";
-import writeAssetRouter from "./writeAssetRouter";
 import store from "@/store/store.js";
-// function lazyLoad(view) {
-//   return () => import(`@/views/${view}.vue`);
-// }
 const routes = [
   {
     path: "/",
@@ -13,7 +9,6 @@ const routes = [
   },
   ...assetRouter,
   ...userRouter,
-  ...writeAssetRouter,
 ];
 // check authentication nếu chưa đăng nhập thì redirect về trang login
 
@@ -25,10 +20,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== "Login" && !store.state.auth.isLogin)
+  if (to.name !== "Login" && store.state.auth.token == null)
     next({ name: "Login" });
-  else if(to.name === "Login" && store.state.auth.isLogin)
-    next({ name: "AssetList" });
+  else if(to.name === "Login" && store.state.auth.token != null)
+    next({ name: "AssetHome" });
   else next();
 });
 export default router;

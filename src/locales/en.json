@@ -1,0 +1,49 @@
+{
+  "Asset": {
+    "AddIncreaseVoucher": "Add an increase voucher",
+    "AddDecreaseAsset": "Add a decrease asset",
+    "AddAsset": "Add an asset",
+    "EditIncreaseVoucher": "Edit increase voucher"
+  },
+  "Common": {
+    "UserInformation": "User information",
+    "Logout": "Logout",
+    "Login": "Login",
+    "Register": "Register",
+    "Year": "Year",
+    "Month": "Month",
+    "Day": "Day",
+    "Hour": "Hour",
+    "Minute": "Minute",
+    "Second": "Second",
+    "Date": "Date",
+    "Time": "Time",
+    "DateTime": "Date time",
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Close": "Close",
+    "Delete": "Delete",
+    "Edit": "Edit",
+    "Add": "Add",
+    "Search": "Search",
+    "Refresh": "Refresh",
+    "Confirm": "Confirm"
+  },
+  "SideBar": {
+    "Overview": "Overview",
+    "Asset": "Asset",
+    "Increase": "Increase",
+    "ChangeInformation": "Change information",
+    "Revaluation": "Revaluation",
+    "Depreciation": "Depreciation",
+    "AssetTransfer": "Asset transfer",
+    "Decrease": "Decrease",
+    "Stocktaking": "Stocktaking",
+    "Others": "Others",
+    "FixedAssets": "Fixed assets",
+    "ToolsAndEquipment": "Tools and equipment",
+    "Category": "Category",
+    "Search": "Search",
+    "Report": "Report"
+  }
+}

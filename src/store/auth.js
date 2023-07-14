@@ -1,21 +1,28 @@
 const action = {
   state: {
-    isLogin: localStorage.getItem("isLogin") || false,
+    token: localStorage.getItem("token") || null,
   },
   mutations: {
-    setUserAction(state, action) {
-      state.isLogin = action;
-      localStorage.setItem("isLogin", action);
+    setToken(state, token) {
+      state.token = token;
+      localStorage.setItem("token", token);
     },
+    removeToken(state) {
+      state.token = null;
+      localStorage.removeItem("token");
+    }
   },
   actions: {
-    async setUserAction({ commit }, action) {
-      await commit("setUserAction", action);
+    async setToken({ commit }, token) {
+      await commit("setToken", token);
     },
+    async removeToken({ commit }) {
+      await commit("removeToken");
+    }
   },
   getters: {
-    getUserAction(state) {
-      return state.isLogin;
+    getToken(state) {
+      return state.token;
     },
   },
 };

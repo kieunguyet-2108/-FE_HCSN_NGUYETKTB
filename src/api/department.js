@@ -7,8 +7,13 @@ export default (axios) => ({
      * @return: {any} 
      * @author: NguyetKTB 19/05/2023
      */
-    getDepartments(){
-        return axios.get(`${URL_DEPARTMENT }`);
+    async getDepartments(){
+        try {
+            const result = await axios.get(`${URL_DEPARTMENT }`);
+            return result;
+        } catch (error) {
+            return error.response;
+        }
     },
     /**
      * @description: Lấy ra thông tin phòng ban theo id
@@ -16,7 +21,12 @@ export default (axios) => ({
      * @return: {any} 
      * @author: NguyetKTB 31/05/2023
      */
-    getDepartmentById(id){
-        return axios.get(`${URL_DEPARTMENT}/${id}`);
+    async getDepartmentById(id){
+        try {
+            const result = await axios.get(`${URL_DEPARTMENT}/${id}`);
+            return result;
+        } catch (error) {
+            return error.response;
+        }
     }
 });

@@ -20,7 +20,7 @@ export default {
   components: {},
   computed: {
     isLogin() {
-      return this.$store.state.auth.isLogin;
+      return this.$store.state.auth.token !== null;
     },
   },
 };

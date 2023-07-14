@@ -1,6 +1,6 @@
 <template>
   <!-- POPUP MESSAGE ( SAME TOAST MESSAGE) -->
-  <div class="popup popup-success" id="popup">
+  <div class="popup popup-success" id="popup" :style="style">
     <div class="popup-content flex row">
       <div class="popup-icon mr-20">
         <div class="ms-32">
@@ -35,6 +35,10 @@ export default {
         popupMode: {
             type: String,
             default: "",
+        },
+        style: {
+            type: Object,
+            default: () => {},
         },
     }, 
 };

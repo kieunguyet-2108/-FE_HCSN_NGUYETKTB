@@ -38,7 +38,7 @@
         class="combobox-data"
         v-if="isShowComboboxData && dataFilter.length > 0"
       >
-        <div class="combobox-data--header" tabindex="-1">
+        <div class="combobox-data--header" tabindex="-1" v-if="containHeader">
           <div class="combobox-item">
             <div
               class="combobox-item--code"
@@ -93,8 +93,7 @@ import vClickOutside from "click-outside-vue3";
 import _ from "lodash";
 export default {
   name: "MISACombobox",
-  components: {
-  },
+  components: {},
   directives: {
     clickOutside: vClickOutside.directive,
   },
@@ -163,6 +162,10 @@ export default {
       type: String,
       default: "",
     },
+    containHeader: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -188,7 +191,9 @@ export default {
       handler: function (newValue, oldValue) {
         const me = this;
         if (newValue !== oldValue) {
+          // nếu có truyền model vào và selected item chưa được chọn thì sẽ tự động chọn item
           me.dataFilter = newValue;
+          me.handleSelectedValue();
         }
       },
       deep: true,
@@ -203,44 +208,51 @@ export default {
       handler: function (newValue, oldValue) {
         const me = this;
         if (newValue !== oldValue) {
-          var findValue = {};
-          if (me.eventAction) {
-            me.eventAction = false;
-            findValue = me.selectedItem;
-          } else {
-            if (me.modelValue) {
-              for (let i = 0; i < me.dataFilter.length; i++) {
-                if (me.dataFilter[i][me.primaryKey] === me.modelValue) {
-                  findValue = me.dataFilter[i];
-                  me.indexItemFocus = i;
-                  break;
-                }
-              }
-            }
-          }
-          me.$nextTick(() => {
-            let valueBinding = me.column.find((item) => item.isBinding);
-            if (valueBinding) {
-              me.keyValueBinding = valueBinding["valueBinding"];
-              let keyBinding = findValue[me.keyValueBinding];
-              if (keyBinding != undefined) {
-                me.inputValue = keyBinding;
-              } else {
-                // if (this.required && this.label) {
-                //   this.isError = true;
-                //   this.errorMessage = this.label + " không tồn tại";
-                // }
-                me.indexItemFocus = 0;
-              }
-            }
-            me.keyAllowSearch = me.column.filter((item) => item.isSearching); // danh sách các cột cho phép tìm kiếm
-          });
+          me.handleSelectedValue();
         }
       },
       deep: true,
     },
   },
   methods: {
+    handleSelectedValue() {
+      let me = this;
+      if (me.dataFilter.length === 0) {
+        return;
+      }
+      var findValue = {};
+      if (me.eventAction) {
+        me.eventAction = false;
+        findValue = me.selectedItem;
+      } else {
+        if (me.modelValue) {
+          for (let i = 0; i < me.dataFilter.length; i++) {
+            if (me.dataFilter[i][me.primaryKey] === me.modelValue) {
+              findValue = me.dataFilter[i];
+              me.indexItemFocus = i;
+              break;
+            }
+          }
+        }
+      }
+      me.$nextTick(() => {
+        let valueBinding = me.column.find((item) => item.isBinding);
+        if (valueBinding) {
+          me.keyValueBinding = valueBinding["valueBinding"];
+          let keyBinding = findValue[me.keyValueBinding];
+          if (keyBinding != undefined) {
+            me.inputValue = keyBinding;
+          } else {
+            // if (this.required && this.label) {
+            //   this.isError = true;
+            //   this.errorMessage = this.label + " không tồn tại";
+            // }
+            me.indexItemFocus = 0;
+          }
+        }
+        me.keyAllowSearch = me.column.filter((item) => item.isSearching); // danh sách các cột cho phép tìm kiếm
+      });
+    },
     /**
      * @description: Hàm xử lý khi người dùng nhấn bàn phím khi đang focus vào combobox
      * @param: {any}
@@ -434,19 +446,16 @@ export default {
      * @author: NguyetKTB 11/05/2023
      */
     onBlurCombobox(value) {
-      if (this.isValidate) {
-        if (this.selectedItem == {}) {
-          this.isError = true;
-          this.errorMessage = this.$msEnum.MS_VALIDATE_MSG.INVALID.format(
-            this.label
-          );
+      const me = this;
+      if (me.isValidate) {
+        if (me.selectedItem == {}) {
+          me.isError = true;
+          me.errorMessage = me.$msResource.VALIDATE.Invalid.format(me.label);
         } else if (value == "") {
-          this.isError = true;
-          this.errorMessage = this.$msEnum.MS_VALIDATE_MSG.REQUIRED.format(
-            this.label
-          );
-        } else if (!this.modelValue && value != "") {
-          this.inputValue = "";
+          me.isError = true;
+          me.errorMessage = me.$msResource.VALIDATE.Required.format(me.label);
+        } else if (!me.modelValue && value != "") {
+          me.inputValue = "";
         }
       }
     },

@@ -30,6 +30,17 @@ const fixedAssetCategoryColumns = [
   },
 ];
 
+const budgetCategoryColumns = [
+  {
+    key: "budget_category_name",
+    name: "",
+    width: "100%",
+    isBinding: true,
+    valueBinding: "budget_category_name",
+    isSearching: true,
+  },
+];
+
 // khai báo các cột cho table trong màn hình danh sách tài sản
 const tableColumns = [
   {
@@ -49,7 +60,7 @@ const tableColumns = [
     maxColumnWidth: "40px",
     minColumnWidth: "40px",
     columnType: msEnum.COLUMN_TYPE.Number,
-    type: '',
+    type: "",
     tooltip: "Số thứ tự",
     isShowIndex: true,
   },
@@ -103,27 +114,27 @@ const tableColumns = [
     name: "Nguyên giá",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "120px",
-    maxColumnWidth : "120px",
-    minColumnWidth : "120px",
+    maxColumnWidth: "120px",
+    minColumnWidth: "120px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
   },
   {
-    key: "",
+    key: "depreciation_rate",
     name: "HM/KH lũy kế",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "100px",
-    maxColumnWidth : "100px",
-    minColumnWidth : "100px",
+    maxColumnWidth: "100px",
+    minColumnWidth: "100px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
     tooltip: "Hao mòn/Khấu hao lũy kế",
   },
   {
-    key: "",
+    key: "depreciation_year",
     name: "Giá trị còn lại",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "100px",
-    maxColumnWidth : "100px",
-    minColumnWidth : "100px",
+    maxColumnWidth: "100px",
+    minColumnWidth: "100px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
   },
   {
@@ -133,13 +144,25 @@ const tableColumns = [
     maxColumnWidth: "110px",
     minColumnWidth: "110px",
     type: "action",
+    actionIcons: [
+      {
+        icon: "ms-icon ms-16 ms-icon-pencil",
+        tooltip: "Sửa",
+        action: msEnum.MS_ACTION.Edit,
+      },
+      {
+        icon: "ms-icon ms-16 ms-icon-duplicate",
+        tooltip: "Nhân bản",
+        action: msEnum.MS_ACTION.Duplicate,
+      },
+    ],
   },
 ];
 
 // khai báo các cột do bảng chứa danh sách chứng từ
 const vourcherColumns = [
   {
-    key: "",
+    key: "voucher_id",
     name: "checkbox",
     class: "vourcher-checkbox",
     columnWidth: "50px",
@@ -155,12 +178,12 @@ const vourcherColumns = [
     maxColumnWidth: "50px",
     minColumnWidth: "50px",
     columnType: msEnum.COLUMN_TYPE.Number,
-    type: '',
+    type: "",
     tooltip: "Số thứ tự",
     isShowIndex: true,
   },
   {
-    key: "",
+    key: "voucher_code",
     name: "Số chứng từ",
     columnType: msEnum.COLUMN_TYPE.Text,
     columnWidth: "150px",
@@ -169,36 +192,34 @@ const vourcherColumns = [
     type: msEnum.MS_FIELD_TYPE.String,
   },
   {
-    key: "",
+    key: "voucher_date",
     name: "Ngày chứng từ",
     columnWidth: "150px",
     maxColumnWidth: "150px",
     minColumnWidth: "150px",
     columnType: msEnum.COLUMN_TYPE.Date,
-    type: '',
-    isShowIndex: true,
+    type: "",
   },
   {
-    key: "",
+    key: "increment_date",
     name: "Ngày ghi tăng",
     columnWidth: "150px",
     maxColumnWidth: "150px",
     minColumnWidth: "150px",
     columnType: msEnum.COLUMN_TYPE.Date,
-    type: '',
-    isShowIndex: true,
+    type: "",
   },
   {
-    key: "",
+    key: "total_orgprice",
     name: "Tổng nguyên giá",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "200px",
-    maxColumnWidth : "200px",
-    minColumnWidth : "200px",
+    maxColumnWidth: "200px",
+    minColumnWidth: "200px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
   },
   {
-    key: "",
+    key: "description",
     name: "Nội dung",
     columnType: msEnum.COLUMN_TYPE.Text,
     columnWidth: "100% - 550px",
@@ -208,11 +229,23 @@ const vourcherColumns = [
   },
   {
     key: "action",
-    name: "Chức năng",
+    name: "",
     columnWidth: "110px",
     maxColumnWidth: "110px",
     minColumnWidth: "110px",
     type: "action",
+    actionIcons: [
+      {
+        icon: "ms-icon ms-16 ms-icon-pencil",
+        tooltip: "Sửa",
+        action: msEnum.MS_ACTION.Edit,
+      },
+      {
+        icon: "ms-icon ms-icon-trash-red ms-24",
+        tooltip: "Xóa",
+        action: msEnum.MS_ACTION.Delete,
+      },
+    ],
   },
 ];
 
@@ -225,7 +258,7 @@ const assetColumns = [
     maxColumnWidth: "40px",
     minColumnWidth: "40px",
     columnType: msEnum.COLUMN_TYPE.Number,
-    type: '',
+    type: "",
     tooltip: "Số thứ tự",
     isShowIndex: true,
   },
@@ -261,28 +294,51 @@ const assetColumns = [
     name: "Nguyên giá",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "120px",
-    maxColumnWidth : "120px",
-    minColumnWidth : "120px",
+    maxColumnWidth: "120px",
+    minColumnWidth: "120px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
   },
   {
-    key: "depreciation_year",
+    key: "HMN",
     name: "Hao mòn năm",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "100px",
-    maxColumnWidth : "100px",
-    minColumnWidth : "100px",
+    maxColumnWidth: "100px",
+    minColumnWidth: "100px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
     tooltip: "Hao mòn/Khấu hao lũy kế",
   },
   {
-    key: "",
+    key: "remaining_value",
     name: "Giá trị còn lại",
     columnType: msEnum.COLUMN_TYPE.Number,
     columnWidth: "100px",
-    maxColumnWidth : "100px",
-    minColumnWidth : "100px",
+    maxColumnWidth: "100px",
+    minColumnWidth: "100px",
     type: msEnum.MS_FIELD_TYPE.Decimal,
+  },
+];
+const formAssetColumns = [
+  ...assetColumns,
+  {
+    key: "action",
+    name: "",
+    columnWidth: "110px",
+    maxColumnWidth: "110px",
+    minColumnWidth: "110px",
+    type: "action",
+    actionIcons: [
+      {
+        icon: "ms-icon ms-16 ms-icon-pencil",
+        tooltip: "Sửa",
+        action: msEnum.MS_ACTION.Edit,
+      },
+      {
+        icon: "ms-icon ms-icon-trash-red ms-24",
+        tooltip: "Xóa",
+        action: msEnum.MS_ACTION.Delete,
+      },
+    ],
   },
 ];
 export default {
@@ -291,4 +347,6 @@ export default {
   tableColumns,
   vourcherColumns,
   assetColumns,
+  formAssetColumns,
+  budgetCategoryColumns,
 };

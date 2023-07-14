@@ -86,7 +86,7 @@
   border: 1px solid #e6e6e6;
   overflow: auto;
   position: absolute;
-  width: 400px;
+  width: 100%;
   top: calc(100% + 2px);
   margin: 0;
   padding: 0px 0px 0px 4px;
@@ -194,4 +194,7 @@
 
 .combobox-data::-webkit-scrollbar-track {
   margin-top: 36px;
+}
+.combobox-data--main{
+  max-height: 150px;
 }

@@ -28,6 +28,7 @@ button[disabled] .ms-icon {
 .button__icon {
     outline: none;
     border: none;
+    cursor: pointer;
 }
 
 .button__icon.disabled {

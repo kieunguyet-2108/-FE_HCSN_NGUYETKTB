@@ -8,6 +8,11 @@ export default (axios) => ({
    * @author: NguyetKTB 04/06/2023
    */
   async getExcelFields() {
-    return await axios.get(`${URL_FIXED_ASSET}`);
+    try {
+      const result = await axios.get(`${URL_FIXED_ASSET}`);
+      return result;
+    } catch (error) {
+      return error.response;
+    }
   },
 });

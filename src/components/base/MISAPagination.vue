@@ -109,6 +109,7 @@ export default {
       }
       this.numberOfPage = pageNum;
       this.$emit("changePaging", pageNum);
+      
     },
   },
 };
