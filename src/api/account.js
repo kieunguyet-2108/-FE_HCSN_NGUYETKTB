@@ -3,7 +3,9 @@ const URL_ACCOUNT = "api/v1/Account";
 export default (axios) => ({
   /**
    * @description: Thực hiện call api đăng nhập
-   * @param: {any}
+   * @param: 
+   * user_name: tên đăng nhập
+   * password: mật khẩu
    * @return: {any}
    * @author: NguyetKTB 19/05/2023
    */

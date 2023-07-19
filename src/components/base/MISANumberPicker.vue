@@ -148,7 +148,7 @@ export default {
   methods: {
     /**
      * @description: Hàm xử lí khi người dùng thực hiện bấm mũi tên lên - xuống
-     * @param: {any}
+     * @param: {*} event : sự kiện keydown
      * @return: {any}
      * @author: NguyetKTB 09/05/2023
      */

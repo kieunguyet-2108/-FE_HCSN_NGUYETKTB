@@ -1,3 +1,9 @@
+/**
+ * @description: Action store của form
+ * @param: {any} 
+ * @return: {any} 
+ * @author: NguyetKTB 19/07/2023
+ */
 const action = {
   state: {
     action: null,

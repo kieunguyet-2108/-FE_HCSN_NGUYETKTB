@@ -11,7 +11,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-computer"></div>
             </div>
-            <div class="menu-item__text">{{ $t("SideBar.Overview") }}</div>
+            <div class="menu-item__text">{{ $t('SideBar.Overview') }}</div>
           </router-link>
         </MISATooltipV1>
         <div class="menu-item__content">
@@ -20,19 +20,37 @@
               <div class="ms-24">
                 <div class="ms-icon ms-24 ms-icon-car"></div>
               </div>
-              <div class="menu-item__text">{{ $t("SideBar.Asset") }}</div>
-              <div class="ms-icon ms-24 ms-icon-arrow-down" @click="isShowAssetMenu = !isShowAssetMenu"></div>
+              <div class="menu-item__text">{{ $t('SideBar.Asset') }}</div>
+              <div class="ms-36" @click="isShowAssetMenu = !isShowAssetMenu">
+                <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+              </div>
             </router-link>
           </MISATooltipV1>
           <div class="menu-item--list" v-if="isShowAssetMenu">
-            <router-link to="/asset/increase-asset">{{ $t("SideBar.Increase") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.ChangeInformation") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.Revaluation") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.Depreciation") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.AssetTransfer") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.Decrease") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.Stocktaking") }}</router-link>
-            <router-link to="/asset/change-information">{{ $t("SideBar.Others") }}</router-link>
+            <router-link to="/asset/increase-asset">{{
+              $t('SideBar.Increase')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.ChangeInformation')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.Revaluation')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.Depreciation')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.AssetTransfer')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.Decrease')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.Stocktaking')
+            }}</router-link>
+            <router-link to="/asset/change-information">{{
+              $t('SideBar.Others')
+            }}</router-link>
           </div>
         </div>
 
@@ -41,8 +59,10 @@
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-road"></div>
             </div>
-            <div class="menu-item__text">{{ $t("SideBar.FixedAssets") }}</div>
-            <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+            <div class="menu-item__text">{{ $t('SideBar.FixedAssets') }}</div>
+            <div class="ms-36">
+                <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+              </div>
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Công cụ dụng cụ">
@@ -50,8 +70,12 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-tool"></div>
             </div>
-            <div class="menu-item__text"> {{ $t("SideBar.ToolsAndEquipment") }}</div>
-            <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+            <div class="menu-item__text">
+              {{ $t('SideBar.ToolsAndEquipment') }}
+            </div>
+            <div class="ms-36">
+                <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+              </div>
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Danh mục">
@@ -59,7 +83,7 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-category"></div>
             </div>
-            <div class="menu-item__text"> {{ $t("SideBar.Category") }}</div>
+            <div class="menu-item__text">{{ $t('SideBar.Category') }}</div>
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Tra cứu">
@@ -67,8 +91,10 @@
             <div class="ms-24">
               <div class="ms-icon ms-22 ms-icon-search-gray"></div>
             </div>
-            <div class="menu-item__text"> {{ $t("SideBar.Search") }}</div>
-            <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+            <div class="menu-item__text">{{ $t('SideBar.Search') }}</div>
+            <div class="ms-36">
+                <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+              </div>
           </router-link>
         </MISATooltipV1>
         <MISATooltipV1 content="Báo cáo">
@@ -76,8 +102,10 @@
             <div class="ms-24">
               <div class="ms-icon ms-24 ms-icon-report"></div>
             </div>
-            <div class="menu-item__text"> {{ $t("SideBar.Report") }}</div>
-            <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+            <div class="menu-item__text">{{ $t('SideBar.Report') }}</div>
+            <div class="ms-36" >
+                <div class="ms-icon ms-24 ms-icon-arrow-down"></div>
+              </div>
           </router-link>
         </MISATooltipV1>
       </ul>
@@ -95,25 +123,31 @@
 
 <script>
 export default {
-  name: "TheSideBar",
+  name: 'TheSideBar',
   data() {
     return {
-      iconToogleMessage: "Thu gọn",
+      iconToogleMessage: 'Thu gọn',
       isShowAssetMenu: false,
-    };
+    }
   },
   methods: {
+    /**
+     * @description: Hàm mở rộng thu gọn side bar
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 18/07/2023
+     */
     toggleSideBar() {
-      this.$refs.sidebar.classList.toggle("active");
-      if (this.$refs.sidebar.classList.contains("active")) {
-        this.isShowAssetMenu = false;
-        this.iconToogleMessage = "Mở rộng";
+      this.$refs.sidebar.classList.toggle('active')
+      if (this.$refs.sidebar.classList.contains('active')) {
+        this.isShowAssetMenu = false
+        this.iconToogleMessage = 'Mở rộng'
       } else {
-        this.iconToogleMessage = "Thu gọn";
+        this.iconToogleMessage = 'Thu gọn'
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -138,9 +172,14 @@ export default {
   margin-bottom: 4px;
 }
 .menu-item--list a:hover,
-.menu-item--list .router-link-active{
+.menu-item--list .router-link-active {
   background-color: #48586c;
   color: white;
+}
+.menu-item .ms-36 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center
 }
 
 @import url(@/css/layouts/sidebar/sidebar.css);

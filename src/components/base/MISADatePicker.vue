@@ -12,12 +12,11 @@
         :ref="name"
         :id="id"
         :name="name"
-        v-model="date"
+        v-model="dateValue"
         :typeable="true"
         :inputFormat="format"
         :placeholder="format"
         @blur="handleClosed"
-        @update:modelValue="handleDate"
         autocomplete="off"
       >
       </datepicker>
@@ -32,17 +31,17 @@
   </div>
 </template>
   <script>
-import moment from "moment"; // gọi moment để format date
-import datepicker from "vue3-datepicker"; // gọi datepicker
+import moment from 'moment' // gọi moment để format date
+import datepicker from 'vue3-datepicker' // gọi datepicker
 export default {
-  name: "MISADatePicker",
+  name: 'MISADatePicker',
   components: {
     datepicker,
   },
   props: {
     label: {
       type: String,
-      default: "",
+      default: '',
     },
     required: {
       type: Boolean,
@@ -50,65 +49,85 @@ export default {
     },
     className: {
       type: String,
-      default: "",
+      default: '',
     },
     id: {
       type: String,
-      default: "",
+      default: '',
     },
-    // MM/dd/yyyy
-    // dd/MM/yyyy
     format: {
       type: String,
-      default: "",
+      default: '',
     },
     name: {
       type: String,
-      default: "",
+      default: '',
     },
     modelValue: {
       type: String,
-      default: "",
+      default: '',
     },
     tabIndex: {
       type: Number,
       default: 0,
     },
+    isTodayDefault: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      isError: false,
-      errorMessage: "",
-      date: "",
-    };
+      isError: false, // trạng thái validate
+      errorMessage: '', // thông báo validate
+      date: null, // giá trị ngày tháng năm
+    }
   },
-  watch: {
-    modelValue: function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.date = moment(new Date(newVal), this.format).toDate();
-      }
+  computed: {
+    /**
+     * @description: Lấy giá trị ngày tháng năm 
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 18/07/2023
+     */
+    dateValue: {
+      get() {
+        if (this.modelValue) {
+          return moment(new Date(this.modelValue), this.format).toDate()
+        }
+        return null
+      },
+      set(value) {
+        if (value) {
+          const parsedDate = moment(value, this.format)
+          if (parsedDate.isValid()) {
+            this.$emit('update:modelValue', parsedDate.toISOString(true))
+          }
+        } else {
+          this.$emit('update:modelValue', null)
+        }
+      },
     },
   },
   mounted() {
+    // nếu ngày hiện tại là ngày mặc định
+    if (this.isTodayDefault) {
+      this.dateValue = moment(new Date(), this.format).toDate()
+    }
     this.$nextTick(() => {
-      if (this.modelValue) {
-        this.date = moment(this.modelValue, this.format).toDate();
-      } else {
-        this.date = moment(this.getCurrentDate(), this.format).toDate();
-      }
-      this.$refs[this.name].inputRef.addEventListener("keydown", (e) => {
+      this.$refs[this.name].inputRef.addEventListener('keydown', (e) => {
         if (e.keyCode === 9) {
-          this.$refs[this.name].inputRef.blur();
+          this.$refs[this.name].inputRef.blur()
         }
-      });
-    });
+      })
+    })
   },
   beforeUnmount() {
-    this.$refs[this.name].inputRef.removeEventListener("keydown", (e) => {
+    this.$refs[this.name].inputRef.removeEventListener('keydown', (e) => {
       if (e.keyCode === 9) {
-        this.$refs[this.name].inputRef.blur();
+        this.$refs[this.name].inputRef.blur()
       }
-    });
+    })
   },
   methods: {
     /**
@@ -118,11 +137,11 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     getCurrentDate() {
-      let date = new Date();
-      let day = date.getDate();
-      let month = date.getMonth() + 1;
-      let year = date.getFullYear();
-      return `${day}/${month}/${year}`;
+      let date = new Date()
+      let day = date.getDate()
+      let month = date.getMonth() + 1
+      let year = date.getFullYear()
+      return `${day}/${month}/${year}`
     },
     /**
      * @description: Hàm xử lý khi click vào icon calendar
@@ -131,7 +150,7 @@ export default {
      * @author: NguyetKTB 02/05/2023
      */
     handleOpen() {
-      this.$refs[this.name].inputRef.focus();
+      this.$refs[this.name].inputRef.focus()
     },
 
     /**
@@ -142,7 +161,12 @@ export default {
      */
     handleClosed() {
       if (!this.isFormatDate(this.$refs[this.name].inputRef.value)) {
-        this.$refs[this.name].input = this.date.toLocaleDateString("en-GB", { timeZone: 'Asia/Ho_Chi_Minh' });
+        this.isError = true
+        this.errorMessage = this.$msResource.VALIDATE.Invalid.format(this.label)
+        this.dateValue = null
+      } else {
+        this.isError = false
+        this.errorMessage = ''
       }
     },
 
@@ -153,14 +177,11 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     handleDate(modelData) {
-      this.date = modelData;
-      if (this.isFormatDate(this.date.toLocaleDateString("en-GB", { timeZone: 'Asia/Ho_Chi_Minh' }))) {
-        this.isError = false;
-        this.errorMessage = "";
-        this.$emit(
-          "update:modelValue",
-          moment(this.date, this.format).toDate()
-        );
+      this.date = modelData
+      if (modelData) {
+        this.isError = false
+        this.errorMessage = ''
+        this.$emit('update:modelValue', moment(this.date, this.format).toDate())
       }
     },
 
@@ -171,11 +192,11 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     isFormatDate(date) {
-      const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
-      return regex.test(date);
+      const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/
+      return regex.test(date)
     },
   },
-};
+}
 </script>
 <style>
 @import url(@/css/components/datepicker.css);

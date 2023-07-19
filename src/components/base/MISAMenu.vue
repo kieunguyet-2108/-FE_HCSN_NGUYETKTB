@@ -29,7 +29,7 @@ export default {
   methods: {
     /**
      * @description: Thực hiện hành động khi click vào item
-     * @param: {any}
+     * @param: {item}: item được click
      * @return: {any}
      * @author: NguyetKTB 02/06/2023
      */

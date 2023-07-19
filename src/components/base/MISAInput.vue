@@ -126,7 +126,7 @@ export default {
     },
     /**
      * @description: Hàm xử lý khi nhập text
-     * @param: {any}
+     * @param: {event}: event
      * @return: {any}
      * @author: NguyetKTB 02/05/2023
      */

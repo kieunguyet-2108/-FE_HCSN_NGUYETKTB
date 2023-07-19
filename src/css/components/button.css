@@ -1,6 +1,6 @@
 /* common style for button */
 .button {
-    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,9 +12,7 @@
     padding: 0px 6px;
     box-sizing: border-box;
 }
-.button__icon.box-shadow-none {
-    box-shadow: none !important;
-}
+
 button[disabled] {
     opacity: 0.5;
     cursor: not-allowed !important;
@@ -25,13 +23,112 @@ button[disabled] .ms-icon {
     cursor: not-allowed !important;
 }
 
-.button__icon {
+
+/* style for button main  */
+/* button have t */
+
+button[type="main"] {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
+    background-color: #1aa4c8;
+    color: #ffffff;
+    border: 1px solid #1aa4c8;
+}
+
+button[type="main"]:active {
+    background-color: #28B7DC;
+}
+
+button[type="main"]:hover {
+    background-color: #0582A2;
+}
+
+button[type="main"]:focus {
+    background-color: #1AA4C8;
+    border: 1px solid #1aa4c8;
+    box-shadow: 0 0 0 4px #D1EDF4;
+    outline: none;
+}
+
+/* style for sub button */
+button[type="sub"] {
+    color: #1aa4c8;
+    border: 1px solid #1aa4c8;
+    background-color: #ffffff;
+}
+
+button[type="sub"]:active {
+    color: #1aa4c8;
+    background-color: #FFFFFF;
+}
+
+
+button[type="sub"]:hover {
+    background-color: #D1EDF4;
+    color: #1aa4c8;
+}
+
+button[type="sub"]:focus {
+    box-shadow: 0 0 0 4px #D1EDF4;
+    border-radius: none;
+    border: 1px solid #1aa4c8;
+    outline: none;
+}
+
+/* style for outline button */
+button[type="outline"] {
+    background-color: #ffffff;
+    color: black;
+    border: 1px solid #afafaf;
+
+}
+
+button[type="outline"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #D1EDF4;
+    border: none;
+    background-color: #1AA4C8;
+    color: #ffffff;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+
+button[type="outline"]:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
+    background-color: #1AA4C8;
+    color: #ffffff;
+    border-style: none;
+}
+
+
+/* style for button contain icon */
+button[type="btn-icon"] {
+    background-color: #ffffff !important;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
+    overflow: hidden;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+    outline: none !important;
+    border: none !important;
+}
+
+button[type="btn-icon"] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+button[type="btn-icon"] {
     outline: none;
     border: none;
     cursor: pointer;
 }
 
-.button__icon.disabled {
+button[type="btn-icon"].disabled {
     cursor: not-allowed;
     pointer-events: none;
     opacity: 0.5;
@@ -41,9 +138,8 @@ button[disabled] .ms-icon {
     border: none !important;
 }
 
-/* style for button main  */
 .button__main {
-    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
     background-color: #1aa4c8;
     color: #ffffff;
     border: 1px solid #1aa4c8;
@@ -57,81 +153,3 @@ button[disabled] .ms-icon {
     background-color: #0582A2;
 }
 
-.button__main:focus {
-    background-color: #1AA4C8;
-    border: 1px solid #1aa4c8;
-    box-shadow: 0 0 0 4px #D1EDF4;
-    outline: none;
-}
-
-/* style for sub button */
-.button__sub {
-    color: #1aa4c8;
-    border: 1px solid #1aa4c8;
-    background-color: #ffffff;
-}
-
-.button__sub:active {
-    color: #1aa4c8;
-    background-color: #FFFFFF;
-}
-
-
-.button__sub:hover {
-    background-color: #D1EDF4;
-    color: #1aa4c8;
-}
-
-.button__sub:focus {
-    box-shadow: 0 0 0 4px #D1EDF4;
-    border-radius: none;
-    border: 1px solid #1aa4c8;
-    outline: none;
-}
-
-/* style for outline button */
-.button__outline {
-    background-color: #ffffff;
-    color: black;
-    border: 1px solid #afafaf;
-
-}
-
-.button__outline:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px #D1EDF4;
-    border: none;
-    background-color: #1AA4C8;
-    color: #ffffff;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-
-
-.button__outline:hover {
-    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
-    background-color: #1AA4C8;
-    color: #ffffff;
-    border-style: none;
-}
-
-
-/* style for button contain icon */
-.button__icon {
-    background-color: #ffffff;
-    border-radius: 3px;
-    box-shadow:  0 2px 6px rgba(0, 0, 0, .16);
-    overflow: hidden;
-}
-
-.button__icon {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-.button .ms-icon {
-    margin-right: 5px;
-}

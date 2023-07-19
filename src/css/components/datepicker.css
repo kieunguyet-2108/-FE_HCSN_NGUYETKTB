@@ -11,10 +11,12 @@
   display: flex;
   flex-direction: column;
 }
+
 .date-picker-group .date-picker-label {
   margin-bottom: 8px;
 }
-.date-picker-group .date__picker{
+
+.date-picker-group .date__picker {
   margin-bottom: 2px;
 }
 
@@ -52,8 +54,14 @@
 .v3dp__popout {
   top: -220px;
   right: -80px;
+  z-index: 999999 !important;
 }
+
 .date__picker:has(input.write_asset_date) .v3dp__popout {
   top: 40px !important;
   right: -30px;
+}
+
+.validate-error .date__picker {
+  border: 1px solid #ff0000;
 }

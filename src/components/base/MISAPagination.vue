@@ -1,12 +1,17 @@
 <template>
   <div class="pagination__main">
-    <div class="pagination__prev ms-20" @click="handleChange('previous')">
-      <div class="ms-icon ms-12 ms-icon-arrow-left"
-      :class="{
-        'ms-icon--disable': numberOfPage <= 1,
-      }"
-      ></div>
-    </div>
+    <MISATooltip content="Trang trước">
+      <div
+        class="pagination__prev ms-20"
+        @click="handleChange('previous')"
+        :class="{
+          'ms-icon--disable': numberOfPage <= 1,
+        }"
+      >
+        <div class="ms-icon ms-12 ms-icon-arrow-left"></div>
+      </div>
+    </MISATooltip>
+
     <div
       class="pagination__item"
       v-for="(page, index) in getPaging()"
@@ -19,21 +24,27 @@
     >
       {{ page }}
     </div>
-    <div class="pagination__next ms-20" @click="handleChange('next')">
-      <div class="ms-icon ms-12 ms-icon-arrow-right"
-      :class="{
-        'ms-icon--disable': numberOfPage >= getTotalPage(),
-      }"
-      ></div>
-    </div>
+    <MISATooltip content="Trang sau">
+      <div
+        class="pagination__next ms-20"
+        @click="handleChange('next')"
+        :class="{
+          'ms-icon--disable': numberOfPage >= getTotalPage(),
+        }"
+      >
+        <div class="ms-icon ms-12 ms-icon-arrow-right"></div>
+      </div>
+    </MISATooltip>
   </div>
 </template>
     
 <script>
 /* eslint-disable */
+import MISATooltip from './MISATooltipV1.vue'
 export default {
-  name: "MISAPagination",
+  name: 'MISAPagination',
   components: {
+    MISATooltip,
   },
   props: {
     pageNumber: {
@@ -52,7 +63,7 @@ export default {
   data() {
     return {
       numberOfPage: 1,
-    };
+    }
   },
   methods: {
     /**
@@ -62,7 +73,7 @@ export default {
      * @author: NguyetKTB 21/05/2023
      */
     getTotalPage() {
-      return Math.ceil(this.totalRecord / this.pageSize);
+      return Math.ceil(this.totalRecord / this.pageSize)
     },
     /**
      * @description: Tính toán hiển thị paging
@@ -71,19 +82,19 @@ export default {
      * @author: NguyetKTB 21/05/2023
      */
     getPaging() {
-      let pages = [];
+      let pages = []
       for (let i = 1; i <= this.getTotalPage(); i++) {
         if (
           i == 1 ||
           i == this.getTotalPage() ||
           (i >= this.pageNumber - 2 && i <= this.pageNumber + 2)
         ) {
-          pages.push(i);
+          pages.push(i)
         } else if (i == this.pageNumber - 3 || i == this.pageNumber + 3) {
-          pages.push("...");
+          pages.push('...')
         }
       }
-      return pages;
+      return pages
     },
     /**
      * @description: Thực hiện xử lí khi người dùng click vào button paging
@@ -92,27 +103,26 @@ export default {
      * @author: NguyetKTB 21/05/2023
      */
     handleChange(page) {
-      let pageNum = this.pageNumber;
+      let pageNum = this.pageNumber
       // kiểm tra xem người dùng có click vào button previous hay next hay không
-      if (page == "previous" && pageNum <= 1) {
-        return;
-      } else if (page == "next" && pageNum >= this.getTotalPage()) {
-        return;
-      } else if (page == "...") {
-        return;
-      } else if (page == "previous") {
-        pageNum--;
-      } else if (page == "next") {
-        pageNum++;
+      if (page == 'previous' && pageNum <= 1) {
+        return
+      } else if (page == 'next' && pageNum >= this.getTotalPage()) {
+        return
+      } else if (page == '...') {
+        return
+      } else if (page == 'previous') {
+        pageNum--
+      } else if (page == 'next') {
+        pageNum++
       } else {
-        pageNum = page;
+        pageNum = page
       }
-      this.numberOfPage = pageNum;
-      this.$emit("changePaging", pageNum);
-      
+      this.numberOfPage = pageNum
+      this.$emit('changePaging', pageNum)
     },
   },
-};
+}
 </script>
     
 <style>
@@ -153,6 +163,10 @@ export default {
   justify-content: center;
 }
 .ms-icon--disable {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.ms-icon--disable .ms-icon {
   cursor: not-allowed;
 }
 </style>

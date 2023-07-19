@@ -85,6 +85,12 @@ export default {
     },
   },
   methods: {
+    /**
+     * @description: Hàm thay đổi ngôn ngữ
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 18/07/2023
+     */
     onChangeLanguage() {
       this.isShowHeaderMenu = false
       this.isShowPopupChangeLanguage = true
@@ -99,6 +105,12 @@ export default {
         this.language = 'vi'
       }
     },
+    /**
+     * @description: Hàm đăng xuất
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 18/07/2023
+     */
     async logout() {
       await this.$store.dispatch('removeToken')
       this.$router.push('/user/login')

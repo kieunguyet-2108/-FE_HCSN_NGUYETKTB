@@ -49,3 +49,13 @@
   .ms-icon {
     cursor: pointer;
   }
+
+  .input__field[disabled] {
+    pointer-events: none;
+  }
+  .number-picker-group:has(.input__field[disabled]) {
+    cursor: not-allowed;
+  }
+  .number-picker-group:has(.input__field[disabled]):hover {
+    border: 1px solid #afafaf;
+  }

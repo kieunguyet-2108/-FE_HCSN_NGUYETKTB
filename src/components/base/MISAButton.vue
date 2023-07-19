@@ -2,11 +2,12 @@
   <!-- props la cac giá trị của mảng buttonClass -->
   <button
     ref="button"
-    :class="buttonClass"
     :tabindex="tabindex"
     :style="{ order: order }"
     @click="onClickButton"
     :disabled="disabled"
+    :type="type"
+    class="button"
   >
     <div class="ms-icon" v-if="icon" :class="icon" :style="styleIcon"></div>
     <div>{{ text }}</div>
@@ -17,15 +18,15 @@
 export default {
   name: "MISAButton",
   props: {
+    type: {
+      type: String,
+      default: "",
+    },
     icon: {
       type: String,
       default: "",
     },
     text: {
-      type: String,
-      default: "",
-    },
-    buttonClass: {
       type: String,
       default: "",
     },
@@ -67,6 +68,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      // Nếu có thuộc tính isFocus thì focus vào button
       if (this.isFocus) {
         this.$refs.button.focus();
       }

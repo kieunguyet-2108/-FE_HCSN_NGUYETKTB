@@ -22,12 +22,13 @@
             v-for="(button, index) in dialogInfo.buttons"
             :key="index"
             :tabindex="0"
-            :buttonClass="button.buttonClass"
+            :type="button.type"
             :text="button.text"
             :isFocus="button.isFocus"
             @click="button.onclick"
             @keydown="button.onKeydown"
           >
+          {{ button.type }}
           </MISAButton>
         </div>
       </div>

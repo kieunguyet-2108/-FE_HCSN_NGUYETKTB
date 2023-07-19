@@ -1,6 +1,12 @@
 function lazyLoad(view) {
   return () => import(`@/views/${view}.vue`);
 }
+/**
+ * @description: Router cho màn hình tài sản
+ * @param: {any} 
+ * @return: {any} 
+ * @author: NguyetKTB 19/07/2023
+ */
 const assetRouter = [
   {
     path: "/asset",

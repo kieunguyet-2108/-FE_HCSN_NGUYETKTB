@@ -1,10 +1,7 @@
 <template >
   <div>
     <div>
-      <MISAModal
-        @keydown.esc="cancelForm"
-        style="min-width: 1000px; width: 1000px"
-      >
+      <MISAModal @keydown.esc="cancelForm" type="default">
         <form action="">
           <div class="form__header">
             <div class="form__title">{{ title }}</div>
@@ -218,6 +215,7 @@
                   id="purchase_date"
                   name="purchase_date"
                   v-model="assetItem.purchase_date"
+                  isTodayDefault
                 ></MISADatePicker>
               </div>
               <div class="form__group--element">
@@ -230,6 +228,7 @@
                     id="start_using_date"
                     name="start_using_date"
                     v-model="assetItem.start_using_date"
+                    isTodayDefault
                   ></MISADatePicker>
                 </div>
                 <div class="form__group"></div>
@@ -242,7 +241,7 @@
             <MISATooltipV1 content="Ctrl + S">
               <MISAButton
                 ref="saveButton"
-                class="button button__main"
+                type="main"
                 text="Lưu"
                 @onClickButton="submitForm"
                 :order="2"
@@ -251,7 +250,7 @@
             <MISATooltipV1 content="Esc">
               <MISAButton
                 ref="cancelButton"
-                class="button button__outline border-none"
+                type="outline"
                 text="Hủy"
                 @onClickButton="cancelForm"
                 :order="1"
@@ -278,20 +277,20 @@
 
 <script>
 /* eslint-disable */
-import validation from "@/js/validation";
+import validation from '@/js/validation'
 /* import component*/
-import MISAButton from "@/components/base/MISAButton.vue";
-import MISADatePicker from "@/components/base/MISADatePicker.vue";
-import MISANumberPicker from "@/components/base/MISANumberPicker.vue";
-import MISANumberPickerV1 from "@/components/base/MISANumberPickerV1.vue";
-import MISACombobox from "@/components/base/MISACombobox.vue";
-import MISAInput from "../../components/base/MISAInput.vue";
-import MISAModal from "@/components/base/MISAModal.vue";
-import MISADialog from "@/components/base/MISADialog.vue";
-import MISATooltipV1 from "@/components/base/MISATooltipV1.vue";
-import MISAPopup from "@/components/base/MISAPopup.vue";
+import MISAButton from '@/components/base/MISAButton.vue'
+import MISADatePicker from '@/components/base/MISADatePicker.vue'
+import MISANumberPicker from '@/components/base/MISANumberPicker.vue'
+import MISANumberPickerV1 from '@/components/base/MISANumberPickerV1.vue'
+import MISACombobox from '@/components/base/MISACombobox.vue'
+import MISAInput from '../../components/base/MISAInput.vue'
+import MISAModal from '@/components/base/MISAModal.vue'
+import MISADialog from '@/components/base/MISADialog.vue'
+import MISATooltipV1 from '@/components/base/MISATooltipV1.vue'
+import MISAPopup from '@/components/base/MISAPopup.vue'
 export default {
-  name: "AssetForm",
+  name: 'AssetForm',
   components: {
     MISAInput,
     MISACombobox,
@@ -323,88 +322,84 @@ export default {
     },
   },
   async created() {
-    const me = this;
-    me.getDepartmentList();
-    me.getFixedAssetCategoryList();
+    const me = this
+    me.getDepartmentList()
+    me.getFixedAssetCategoryList()
     // get current date
-    var date = new Date();
+    var date = new Date()
     if (me.asset_id != null) {
-      me.formMode = me.$msEnum.FORM_MODE.Edit;
-      me.title = "Sửa tài sản";
-      me.assetItem = await me.getFixedAssetById(me.asset_id);
-      me.assetItem.modified_date = date;
-      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate * 100;
+      me.formMode = me.$msEnum.FORM_MODE.Edit
+      me.title = 'Sửa tài sản'
+      me.assetItem = await me.getFixedAssetById(me.asset_id)
+      me.assetItem.modified_date = date
+      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate * 100
     } else {
-      me.formMode = me.$msEnum.FORM_MODE.Add;
-      me.title = "Thêm mới tài sản";
+      me.formMode = me.$msEnum.FORM_MODE.Add
+      me.title = 'Thêm mới tài sản'
       me.assetItem = {
         ...me.assetItem,
         tracked_year: new Date().getFullYear(),
-        purchase_date: date,
-        start_using_date: date,
-        created_date: date,
-        modified_date: date,
-      };
-      me.assetItem.fixed_asset_code = await me.getNewCode();
+      }
+      me.assetItem.fixed_asset_code = await me.getNewCode()
     }
     if (me.duplicate_id != null) {
-      me.formMode = me.$msEnum.FORM_MODE.Duplicate;
-      me.title = "Nhân bản tài sản";
-      me.assetItem = await me.getFixedAssetById(me.duplicate_id);
-      me.assetItem.fixed_asset_code = await me.getNewCode();
-      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate * 100;
+      me.formMode = me.$msEnum.FORM_MODE.Duplicate
+      me.title = 'Nhân bản tài sản'
+      me.assetItem = await me.getFixedAssetById(me.duplicate_id)
+      me.assetItem.fixed_asset_code = await me.getNewCode()
+      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate * 100
     }
   },
   computed: {
     // tính toán giá trị hao mòn năm
     depreciationYear: {
       get() {
-        let a = validation.convertStringToNumber(this.assetItem.cost);
+        let a = validation.convertStringToNumber(this.assetItem.cost)
         let b = validation.convertStringToNumber(
           this.assetItem.depreciation_rate
-        );
-        let result = a * (b / 100);
-        this.assetItem.depreciation_year = result;
-        return result;
+        )
+        let result = a * (b / 100)
+        this.assetItem.depreciation_year = result
+        return result
       },
       set(value) {
-        this.assetItem.depreciation_year = value;
+        this.assetItem.depreciation_year = value
       },
     },
   },
   mounted() {
-    window.addEventListener("keydown", this.handleEvent);
+    window.addEventListener('keydown', this.handleEvent)
   },
   data() {
     return {
       formMode: null,
       assetItem: {
-        fixed_asset_id: "", // id tài sản
-        fixed_asset_code: "", // mã tài sản
-        fixed_asset_name: "", // tên tài sản
-        fixed_asset_category_id: "", // id loại tài sản
-        fixed_asset_category_code: "", // mã loại tài sản
-        fixed_asset_category_name: "", // tên loại tài sản
-        department_id: "", // id bộ phận sử dụng
-        department_code: "", // mã bộ phận sử dụng
-        department_name: "", // tên bộ phận sử dụng
+        fixed_asset_id: '', // id tài sản
+        fixed_asset_code: '', // mã tài sản
+        fixed_asset_name: '', // tên tài sản
+        fixed_asset_category_id: '', // id loại tài sản
+        fixed_asset_category_code: '', // mã loại tài sản
+        fixed_asset_category_name: '', // tên loại tài sản
+        department_id: '', // id bộ phận sử dụng
+        department_code: '', // mã bộ phận sử dụng
+        department_name: '', // tên bộ phận sử dụng
         quantity: 1, // số lượng
         cost: 0, // nguyên giá
-        life_time: "", // số năm sử dụng
+        life_time: '', // số năm sử dụng
         depreciation_rate: 0, // tỉ lệ hao mòn
         depreciation_year: 0, // giá trị hao mòn nămfmessages
-        tracked_year: "", // năm bắt đầu theo dõi
-        purchase_date: "", // ngày mua
-        start_using_date: "", // ngày bắt đầu sử dụng
-        created_date: "",
-        modified_date: "",
+        tracked_year: '', // năm bắt đầu theo dõi
+        purchase_date: '', // ngày mua
+        start_using_date: '', // ngày bắt đầu sử dụng
+        created_date: '',
+        modified_date: '',
       },
       // phòng ban được chọn
       selectedDepartment: {},
       // loại tài sản được chọn
       selectedFixedAssetCategory: {},
       // tiêu đề của form
-      title: "",
+      title: '',
       // thông tin dialog hiển thị khi có sự kiện trong form
       dialogInformation: {},
       // danh sách tài sản
@@ -415,7 +410,7 @@ export default {
       fixedAssetCategories: [],
       popupInformation: {}, // thông tin popup
       errorMessages: [], // danh sách thông báo lỗi
-    };
+    }
   },
   methods: {
     /**
@@ -425,20 +420,20 @@ export default {
      * @author: NguyetKTB 01/06/2023
      */
     handleEvent(event) {
-      const me = this;
+      const me = this
       // Nếu nhấn phím Ctrl
       if (event.ctrlKey) {
         switch (event.keyCode) {
           case me.$msEnum.KEY_CODE.Save: // Ctrl + S: lưu và đóng form
-            event.preventDefault();
-            me.submitForm(); // thực hiện validate -> lưu dữ liệu -> đóng form
-            break;
+            event.preventDefault()
+            me.submitForm() // thực hiện validate -> lưu dữ liệu -> đóng form
+            break
           case me.$msEnum.KEY_CODE.Escape: // Esc: Hủy bỏ
-            event.preventDefault();
-            me.cancelForm();
-            break;
+            event.preventDefault()
+            me.cancelForm()
+            break
           default:
-            break;
+            break
         }
       }
     },
@@ -451,12 +446,12 @@ export default {
      */
     async showPopup(message, popupMode) {
       // load data xong show popup
-      this.popupInformation.isShowPopup = true;
-      this.popupInformation.popupMessage = message;
-      this.popupInformation.popupMode = popupMode;
+      this.popupInformation.isShowPopup = true
+      this.popupInformation.popupMessage = message
+      this.popupInformation.popupMode = popupMode
       setTimeout(() => {
-        this.popupInformation.isShowPopup = false;
-      }, 3000);
+        this.popupInformation.isShowPopup = false
+      }, 3000)
     },
     /**
      * @description: Hàm này dùng để lấy ra mã tài sản mới
@@ -465,15 +460,15 @@ export default {
      * @author: NguyetKTB 29/05/2023
      */
     async getNewCode() {
-      const me = this;
+      const me = this
       try {
-        const result = await this.$msApi.fixed_asset.getNewAssetCode();
-        if (result == null) return null;
+        const result = await this.$msApi.fixed_asset.getNewAssetCode()
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          return result.data.data;
+          return result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -483,15 +478,15 @@ export default {
      * @author: NguyetKTB 19/05/2023
      */
     async getDepartmentList() {
-      const me = this;
+      const me = this
       try {
-        const result = await this.$msApi.department.getDepartments();
-        if (result == null) return null;
+        const result = await this.$msApi.department.getDepartments()
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.departments = result.data.data;
+          me.departments = result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -501,15 +496,15 @@ export default {
      * @author: NguyetKTB 31/05/2023
      */
     async getDepartmentById(id) {
-      const me = this;
+      const me = this
       try {
-        const result = await this.$msApi.department.getDepartmentById(id);
-        if (result == null) return null;
+        const result = await this.$msApi.department.getDepartmentById(id)
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          return result.data.data;
+          return result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -519,16 +514,16 @@ export default {
      * @author: NguyetKTB 19/05/2023
      */
     async getFixedAssetCategoryList() {
-      const me = this;
+      const me = this
       try {
         const result =
-          await this.$msApi.fixed_asset_category.getFixedAssetCategories();
-        if (result == null) return null;
+          await this.$msApi.fixed_asset_category.getFixedAssetCategories()
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          me.fixedAssetCategories = result.data.data;
+          me.fixedAssetCategories = result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -538,16 +533,16 @@ export default {
      * @author: NguyetKTB 31/05/2023
      */
     async getFixedAssetCategoryById(id) {
-      const me = this;
+      const me = this
       try {
         const result =
-          await this.$msApi.fixed_asset_category.getFixedAssetCategoryById(id);
-        if (result == null) return null;
+          await this.$msApi.fixed_asset_category.getFixedAssetCategoryById(id)
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          return result.data.data;
+          return result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -557,15 +552,15 @@ export default {
      * @author: NguyetKTB 20/05/2023
      */
     async getFixedAssetById(id) {
-      const me = this;
+      const me = this
       try {
-        const result = await this.$msApi.fixed_asset.getFixedAssetById(id);
-        if (result == null) return null;
+        const result = await this.$msApi.fixed_asset.getFixedAssetById(id)
+        if (result == null) return null
         if (result.status == this.$msEnum.MS_CODE.SUCCESS) {
-          return result.data.data;
+          return result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -575,28 +570,28 @@ export default {
      * @author: NguyetKTB 11/05/2023
      */
     processUnfocusLastControl(e, fn) {
-      if (e.which === 13 && e.target == document.activeElement) return;
+      if (e.which === 13 && e.target == document.activeElement) return
       if (e.which === 9 && !e.shiftKey) {
-        let cur = e.target;
-        let els = e.currentTarget.querySelectorAll("*");
-        var flag = true;
+        let cur = e.target
+        let els = e.currentTarget.querySelectorAll('*')
+        var flag = true
         for (let i = 0; i < els.length; i++) {
           if (els[i] === cur) {
-            flag = false;
-            continue;
+            flag = false
+            continue
           }
           if (flag) {
-            continue;
+            continue
           }
-          els[i].focus();
+          els[i].focus()
           if (els[i] === document.activeElement) {
-            e.preventDefault();
-            return;
+            e.preventDefault()
+            return
           }
         }
       }
-      e.preventDefault();
-      fn();
+      e.preventDefault()
+      fn()
     },
 
     /**
@@ -613,13 +608,13 @@ export default {
           'textarea:not([disabled]):not([tabindex="-1"])',
           'button:not([disabled]):not([tabindex="-1"])',
           'a:not([disabled]):not([tabindex="-1"])',
-        ].join(", ");
-      const items = obj.querySelectorAll(selector);
+        ].join(', ')
+      const items = obj.querySelectorAll(selector)
       if (items.length > 0) {
         for (let i = 0; i < items.length; i++) {
           if (items[i].offsetParent !== null) {
-            items[i].focus();
-            return items[i];
+            items[i].focus()
+            return items[i]
           }
         }
       }
@@ -632,23 +627,23 @@ export default {
      */
     focusFirstControl(scope) {
       if (scope) {
-        const me = this;
+        const me = this
         me.$nextTick(() => {
-          let input;
+          let input
           if (
-            scope.type === "text" ||
+            scope.type === 'text' ||
             (scope.hasAttribute &&
-              scope.hasAttribute("type") &&
-              scope.getAttribute("type") === "text")
+              scope.hasAttribute('type') &&
+              scope.getAttribute('type') === 'text')
           ) {
-            input = scope;
+            input = scope
           } else {
-            input = this.getFirstControlFocus(scope);
+            input = this.getFirstControlFocus(scope)
           }
           if (input) {
-            input.focus();
+            input.focus()
           }
-        });
+        })
       }
     },
     /**
@@ -658,11 +653,11 @@ export default {
      * @author: NguyetKTB 11/05/2023
      */
     footerKeydown(e) {
-      const me = this;
+      const me = this
       if (e.keyCode == me.$msEnum.KEY_CODE.Tab) {
         this.processUnfocusLastControl(e, () => {
-          me.focusFirstControl(me.$el);
-        });
+          me.focusFirstControl(me.$el)
+        })
       }
     },
     /**
@@ -672,7 +667,7 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     closeModal() {
-      this.$router.push("/asset");
+      this.$router.push('/asset')
     },
     /**
      * @description: Thực hiện update các thông tin của bộ phận sử dụng
@@ -682,9 +677,9 @@ export default {
      */
     updateDepartment(department) {
       if (department) {
-        this.assetItem.department_id = department.department_id;
-        this.assetItem.department_name = department.department_name;
-        this.assetItem.department_code = department.department_code;
+        this.assetItem.department_id = department.department_id
+        this.assetItem.department_name = department.department_name
+        this.assetItem.department_code = department.department_code
       }
     },
 
@@ -697,13 +692,13 @@ export default {
     updateFixedAssetCategory(fixedAssetCategory) {
       if (fixedAssetCategory) {
         this.assetItem.fixed_asset_category_id =
-          fixedAssetCategory.fixed_asset_category_id;
+          fixedAssetCategory.fixed_asset_category_id
         this.assetItem.fixed_asset_category_code =
-          fixedAssetCategory.fixed_asset_category_code;
+          fixedAssetCategory.fixed_asset_category_code
         this.assetItem.fixed_asset_category_name =
-          fixedAssetCategory.fixed_asset_category_name;
-        this.assetItem.depreciation_rate = fixedAssetCategory.depreciation_rate;
-        this.assetItem.life_time = fixedAssetCategory.life_time;
+          fixedAssetCategory.fixed_asset_category_name
+        this.assetItem.depreciation_rate = fixedAssetCategory.depreciation_rate
+        this.assetItem.life_time = fixedAssetCategory.life_time
       }
     },
     /**
@@ -713,10 +708,10 @@ export default {
      * @author: NguyetKTB 24/05/2023
      */
     getUuid() {
-      var temp_url = URL.createObjectURL(new Blob());
-      var uuid = temp_url.toString();
-      URL.revokeObjectURL(temp_url);
-      return uuid.substr(uuid.lastIndexOf("/") + 1);
+      var temp_url = URL.createObjectURL(new Blob())
+      var uuid = temp_url.toString()
+      URL.revokeObjectURL(temp_url)
+      return uuid.substr(uuid.lastIndexOf('/') + 1)
     },
 
     /**
@@ -726,14 +721,14 @@ export default {
      * @author: NguyetKTB 02/05/2023
      */
     async submitForm() {
-      const me = this;
+      const me = this
       // validate dữ liệu
-      await me.handleData(this.assetItem);
+      await me.handleData(this.assetItem)
       // nếu có lỗi thì hiển thị message lỗi cho người dùng
-      const messages = me.errorMessages;
+      const messages = me.errorMessages
       if (messages.length > 0) {
-        me.showErrorMessage();
-        return;
+        me.showErrorMessage()
+        return
       }
       // nếu không có lỗi thì thực hiện lưu dữ liệu
       else {
@@ -741,28 +736,28 @@ export default {
           me.formMode == this.$msEnum.FORM_MODE.Add ||
           me.formMode == this.$msEnum.FORM_MODE.Duplicate
         ) {
-          let result = await me.insertData();
+          let result = await me.insertData()
           if (result != null) {
-            me.assetItem.fixed_asset_id = result;
-            me.$emit("insertAsset", me.assetItem);
+            me.assetItem.fixed_asset_id = result
+            me.$emit('insertAsset', me.assetItem)
           }
         } else {
-          console.log(me.assetItem);
-          let result = await me.updateData();
+          console.log(me.assetItem)
+          let result = await me.updateData()
           if (result) {
             me.$emit(
-              "updateAsset",
-              "Cập nhật dữ liệu thành công",
+              'updateAsset',
+              'Cập nhật dữ liệu thành công',
               me.$msEnum.MS_POPUP_MODE.Success,
               me.assetItem
-            );
+            )
           } else {
             me.$emit(
-              "updateAsset",
-              "Cập nhật dữ liệu thất bại",
+              'updateAsset',
+              'Cập nhật dữ liệu thất bại',
               me.$msEnum.MS_POPUP_MODE.Error,
               me.assetItem
-            );
+            )
           }
         }
       }
@@ -774,34 +769,34 @@ export default {
      * @author: NguyetKTB 29/06/2023
      */
     showErrorMessage() {
-      const me = this;
-      const messages = me.errorMessages;
+      const me = this
+      const messages = me.errorMessages
       if (messages.length > 0) {
         me.dialogInformation = {
           isShowDialog: true,
-          styleIcon: "align-items: flex-start;",
+          styleIcon: 'align-items: flex-start;',
           messages: messages,
           buttonList: [
             {
-              text: "Đóng",
-              buttonClass: "button button__main",
+              text: 'Đóng',
+              type: 'main',
               isFocus: true,
               onclick: () => {
-                me.dialogInformation.isShowDialog = false;
+                me.dialogInformation.isShowDialog = false
                 // duyệt message để focus vào control lỗi đầu tiên
                 messages.forEach((message) => {
                   // thêm class error vào control lỗi
-                  this.$refs[message.field].isError = true;
-                  this.$refs[message.field].errorMessage = message.content;
-                });
+                  this.$refs[message.field].isError = true
+                  this.$refs[message.field].errorMessage = message.content
+                })
                 me.$nextTick(() => {
                   // focus vào control lỗi đầu tiên
-                  me.focusFirstControl(me.$el.querySelector(".validate-error"));
-                });
+                  me.focusFirstControl(me.$el.querySelector('.validate-error'))
+                })
               },
             },
           ],
-        };
+        }
       }
     },
     /**
@@ -811,21 +806,21 @@ export default {
      * @author: NguyetKTB 21/06/2023
      */
     async updateData() {
-      const me = this;
-      let tempAssetItem = me.assetItem;
-      tempAssetItem.depreciation_rate = me.assetItem.depreciation_rate / 100;
+      const me = this
+      let tempAssetItem = me.assetItem
+      tempAssetItem.depreciation_rate = me.assetItem.depreciation_rate / 100
       try {
         let result = await me.$msApi.fixed_asset.updateFixedAsset(
           tempAssetItem,
           me.assetItem.fixed_asset_id
-        );
+        )
         if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
-          return true;
+          return true
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
-      return false;
+      return false
     },
 
     /**
@@ -835,22 +830,22 @@ export default {
      * @author: NguyetKTB 21/06/2023
      */
     async insertData() {
-      const me = this;
+      const me = this
       // gán id tài sản cho assetItem
       // me.assetItem.fixed_asset_id = me.getUuid();
       // chuyển đổi tỉ lệ HM
-      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate / 100;
+      me.assetItem.depreciation_rate = me.assetItem.depreciation_rate / 100
       try {
         // call api insert
-        let result = await me.$msApi.fixed_asset.insertFixedAsset(me.assetItem);
+        let result = await me.$msApi.fixed_asset.insertFixedAsset(me.assetItem)
         if (result.status == me.$msEnum.MS_CODE.CREATED) {
           // gán mã tài sản cho assetItem
-          return result.data.data;
+          return result.data.data
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
-      return null;
+      return null
     },
 
     /**
@@ -868,71 +863,71 @@ export default {
           isShowDialog: true,
           messages: [
             {
-              field: "1",
+              field: '1',
               content:
-                this.$msResource.DIALOG_MESSAGE.Cancel_Add.format("tài sản"),
-              style: "display: flex; flex-direction: column;",
+                this.$msResource.DIALOG_MESSAGE.Cancel_Add.format('tài sản'),
+              style: 'display: flex; flex-direction: column;',
             },
           ],
           buttonList: [
             {
-              text: "Hủy bỏ",
-              buttonClass: "button button__main",
+              text: 'Hủy bỏ',
+              type: 'main',
               isFocus: true,
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
-                this.closeModal();
+                this.dialogInformation.isShowDialog = false
+                this.closeModal()
               },
             },
             {
-              text: "Không",
-              buttonClass: "button button__outline",
+              text: 'Không',
+              type: 'outline',
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
+                this.dialogInformation.isShowDialog = false
                 //focus vào ô đầu tiên
-                document.querySelector("#fixed_asset_code").focus();
+                document.querySelector('#fixed_asset_code').focus()
               },
             },
           ],
-        };
+        }
       }
       if (this.formMode == this.$msEnum.FORM_MODE.Edit) {
         this.dialogInformation = {
           isShowDialog: true,
           messages: [
             {
-              field: "1",
+              field: '1',
               content: this.$msResource.DIALOG_MESSAGE.Cancel_Edit,
-              style: "display: flex; flex-direction: column;",
+              style: 'display: flex; flex-direction: column;',
             },
           ],
           buttonList: [
             {
-              text: "Lưu",
-              buttonClass: "button button__main",
+              text: 'Lưu',
+              type: 'main',
               isFocus: true,
               onclick: () => {
-                this.submitForm();
+                this.submitForm()
               },
             },
             {
-              text: "Không lưu",
-              buttonClass: "button button__sub",
+              text: 'Không lưu',
+              type: 'sub',
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
-                this.closeModal();
+                this.dialogInformation.isShowDialog = false
+                this.closeModal()
               },
             },
             {
-              text: "Hủy bỏ",
-              buttonClass: "button button__outline",
+              text: 'Hủy bỏ',
+              type: 'outline',
               onclick: () => {
-                this.dialogInformation.isShowDialog = false;
-                document.querySelector("#fixed_asset_code").focus();
+                this.dialogInformation.isShowDialog = false
+                document.querySelector('#fixed_asset_code').focus()
               },
             },
           ],
-        };
+        }
       }
     },
     /**
@@ -942,87 +937,87 @@ export default {
      * @author: NguyetKTB 22/05/2023
      */
     async handleData(item) {
-      const me = this;
-      var errors = [];
+      const me = this
+      var errors = []
       // kiểm tra độ dài mã tài sản
-      if (item.fixed_asset_code == "") {
+      if (item.fixed_asset_code == '') {
         errors.push({
-          field: "fixed_asset_code",
-          content: me.$msResource.VALIDATE.Required.format("Mã tài sản"),
-        });
+          field: 'fixed_asset_code',
+          content: me.$msResource.VALIDATE.Required.format('Mã tài sản'),
+        })
       } else if (item.fixed_asset_code.length > 100) {
         // nếu mã tài sản dài hơn 100 ký tự
         errors.push({
-          field: "fixed_asset_code",
-          content: me.$msResource.VALIDATE.MaxLength.format(" Mã tài sản", 100),
-        });
+          field: 'fixed_asset_code',
+          content: me.$msResource.VALIDATE.MaxLength.format(' Mã tài sản', 100),
+        })
       }
-      let isDuplicate = await me.checkExistCode(item);
+      let isDuplicate = await me.checkExistCode(item)
       if (!isDuplicate) {
         errors.push({
-          field: "fixed_asset_code",
-          content: me.$msResource.VALIDATE.Duplicate.format(" Mã tài sản"),
-        });
+          field: 'fixed_asset_code',
+          content: me.$msResource.VALIDATE.Duplicate.format(' Mã tài sản'),
+        })
       }
       // kiểm tra độ dài tên tài sản
-      if (item.fixed_asset_name == "") {
+      if (item.fixed_asset_name == '') {
         // nếu tên tài sản rỗng
         errors.push({
-          field: "fixed_asset_name",
-          content: me.$msResource.VALIDATE.Required.format(" Tên tài sản"),
-        });
+          field: 'fixed_asset_name',
+          content: me.$msResource.VALIDATE.Required.format(' Tên tài sản'),
+        })
       } else if (item.fixed_asset_name.length > 255) {
         // nếu tên tài sản dài hơn 100 ký tự
         errors.push({
-          field: "fixed_asset_name",
+          field: 'fixed_asset_name',
           content: me.$msResource.VALIDATE.MaxLength.format(
-            " Tên tài sản",
+            ' Tên tài sản',
             255
           ),
-        });
+        })
       }
       // kiểm tra độ dài bộ phận sử dụng
-      if (item.department_code == "" || item.department_code == null) {
+      if (item.department_code == '' || item.department_code == null) {
         errors.push({
-          field: "department_code",
+          field: 'department_code',
           content: me.$msResource.VALIDATE.Required.format(
-            " Mã bộ phận sử dụng "
+            ' Mã bộ phận sử dụng '
           ),
-        });
+        })
       } else if (item.department_code.length > 50) {
         errors.push({
-          field: "department_code",
+          field: 'department_code',
           content: me.$msResource.VALIDATE.MaxLength.format(
-            " Mã bộ phận sử dụng ",
+            ' Mã bộ phận sử dụng ',
             20
           ),
-        });
+        })
       }
       // kiểm tra độ dài ngày mua
       if (
-        item.fixed_asset_category_code == "" ||
+        item.fixed_asset_category_code == '' ||
         item.fixed_asset_category_code == null
       ) {
         errors.push({
-          field: "fixed_asset_category_code",
-          content: me.$msResource.VALIDATE.Required.format(" Mã Loại tài sản"),
-        });
+          field: 'fixed_asset_category_code',
+          content: me.$msResource.VALIDATE.Required.format(' Mã Loại tài sản'),
+        })
       } else if (item.fixed_asset_category_code.length > 50) {
         errors.push({
-          field: "fixed_asset_category_code",
+          field: 'fixed_asset_category_code',
           content: me.$msResource.VALIDATE.MaxLength.format(
-            " Mã Loại tài sản ",
+            ' Mã Loại tài sản ',
             20
           ),
-        });
+        })
       }
 
       // validate tỉ lệ HM = 1 / số năm sử dụng
       if (item.depreciation_rate / 100 != 1 / item.life_time) {
         errors.push({
-          field: "depreciation_rate",
+          field: 'depreciation_rate',
           content: me.$msResource.VALIDATE_SERVICE.Invalid_DepreciationRate,
-        });
+        })
       }
       // giá trị hao mòn năm ( = tỉ lệ HM / 100 * nguyên giá)
       if (
@@ -1030,16 +1025,32 @@ export default {
         item.depreciation_year
       ) {
         errors.push({
-          field: "depreciation_year",
+          field: 'depreciation_year',
           content: me.$msResource.VALIDATE_SERVICE.Invalid_DepreciationValue,
-        });
+        })
       } else {
         // làm tròn giá trị hao mòn năm về 2 chữ số thập phân
         item.depreciation_year = parseFloat(item.depreciation_year).toPrecision(
           12
-        );
+        )
       }
-      me.errorMessages = errors;
+      // kiểm tra ngày mua đúng định dạng
+      if (item.purchase_date == null) {
+        errors.push({
+          field: 'purchase_date',
+          content: me.$msResource.VALIDATE.Invalid.format(' Ngày mua'),
+        })
+      }
+      // kiểm tra ngày mua đúng định dạng dd/mm/yyyy
+
+      // kiểm tra ngày bắt đầu sử dụng đúng định dạng
+      if (item.start_using_date == null) {
+        errors.push({
+          field: 'start_using_date',
+          content: me.$msResource.VALIDATE.Invalid.format(' Ngày bắt đầu'),
+        })
+      }
+      me.errorMessages = errors
     },
 
     /**
@@ -1049,24 +1060,26 @@ export default {
      * @author: NguyetKTB 29/06/2023
      */
     async checkExistCode(item) {
-      const me = this;
+      const me = this
       try {
         const result = await me.$msApi.fixed_asset.checkDuplicateCode(
           item.fixed_asset_code,
           item.fixed_asset_id
-        );
-        if (result == null) return null;
+        )
+        if (result == null) return null
         else {
-          return result.status == me.$msEnum.MS_CODE.SUCCESS ? true : false;
+          return result.status == me.$msEnum.MS_CODE.SUCCESS ? true : false
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
   },
-};
+}
 </script>
 
 <style>
 @import url(@/css/components/form.css);
+/* button have type = btn-selection -> tabindex = -1 */
+
 </style>

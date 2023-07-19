@@ -1,11 +1,11 @@
 <template>
-  <div @keydown="handleEventKeyDown">
+  <div @keydown="handleEventKeyDown" class="main__content">
     <div class="content">
       <div class="content-top" style="height: 40px">
         <div class="content-top__title">Ghi tăng tài sản</div>
         <div class="data-action">
           <MISAButton
-            class="button button__main"
+            type="main"
             text="Thêm"
             @click="handleAction(this.$msEnum.MS_ACTION.Add)"
           ></MISAButton>
@@ -38,117 +38,133 @@
           </div>
         </div>
       </div>
-      <div class="content-bottom" :style="vourcherStyle">
-        <div class="content-bottom__filter">
-          <MISAInput
-            type="text"
-            placeholder="Tìm kiếm theo số chứng từ, nội dung"
-            className="input__field box-shadow-none flex-1"
-            style="padding: 0px 12px 0px 0px !important"
-            :isValidate="false"
-            icon="ms-icon ms-22 ms-icon-search-black"
-            v-model="voucherFilter.textSearchFilter"
-          ></MISAInput>
-          <div class="data-action">
+      <div class="container" ref="container">
+        <div
+          class="content-bottom box1"
+          ref="voucherTable"
+          :style="vourcherStyle"
+        >
+          <div class="content-bottom__filter">
+            <MISAInput
+              type="text"
+              placeholder="Tìm kiếm theo số chứng từ, nội dung"
+              className="input__field box-shadow-none flex-1"
+              style="padding: 0px 12px 0px 0px !important"
+              :isValidate="false"
+              icon="ms-icon ms-22 ms-icon-search-black"
+              v-model="voucherFilter.textSearchFilter"
+            ></MISAInput>
+            <div class="data-action--icon">
+              <div
+                class="action-item flex column tooltip"
+                v-if="voucherSelected.length > 0"
+              >
+                <MISATooltipV1 content="Xóa">
+                  <MISAButton
+                    ref="deleteButton"
+                    type="btn-icon"
+                    icon="ms-icon-trash-red ms-24"
+                    @click="onClickDeleteRow(voucherSelected)"
+                  ></MISAButton>
+                </MISATooltipV1>
+              </div>
+              <div class="action-item flex column tooltip">
+                <MISATooltipV1 content="In">
+                  <MISAButton
+                    type="btn-icon"
+                    icon="ms-icon ms-icon-print ms-18"
+                  ></MISAButton>
+                </MISATooltipV1>
+              </div>
+              <div class="action-item flex column tooltip">
+                <MISATooltipV1 content="Tiện ích">
+                  <MISAButton
+                    type="btn-icon"
+                    icon="ms-icon ms-icon-three-dot"
+                  ></MISAButton>
+                </MISATooltipV1>
+              </div>
+            </div>
+          </div>
+          <MISATable
+            tableRef="voucherTable"
+            :listData="listVoucher"
+            :listColumn="voucherColumns"
+            @delete="handleAction"
+            @edit="handleAction"
+            @clickRow="handleClickRow"
+            primaryKey="voucher_id"
+            :pagingOptions="voucherPagination.pagingOptions"
+            :summary="summary"
+            :totalRecord="totalRecord"
+            :pageNumber="voucherPagination.pageNumber"
+            :pageSize="voucherPagination.pageSize"
+            v-model="voucherSelected"
+            @changePaging="changePaging"
+            @changeDropdown="changeDropdown"
+            :isFocusFirstRow="true"
+          ></MISATable>
+          <MISALoading
+            v-if="isLoadingVoucher"
+            :style="{
+              top: '98px',
+              left: '0px',
+              right: '0px',
+              bottom: '40px',
+            }"
+          ></MISALoading>
+        </div>
+
+        <div
+          class="content-bottom content-bottom__sub box2"
+          ref="assetTable"
+          :style="assetStyle"
+        >
+          <MISATooltipV1 content="Kéo">
             <div
-              class="action-item flex column tooltip"
-              v-if="voucherSelected.length > 0"
+              class="handler"
+              v-if="action != this.$msEnum.MS_INCREASE_ASSET_ACTION.ZoomIn"
             >
-              <MISATooltipV1 content="Xóa">
-                <MISAButton
-                  ref="deleteButton"
-                  class="button__icon box-shadow-none"
-                  icon="ms-icon-trash-red ms-24"
-                  @click="onClickDeleteRow(voucherSelected)"
-                ></MISAButton>
-              </MISATooltipV1>
+              <img
+                src="@/assets/resize_icon.png"
+                alt=""
+                @mousedown="startResize"
+              />
             </div>
-            <div class="action-item flex column tooltip">
-              <MISATooltipV1 content="In">
-                <MISAButton
-                  class="button__icon box-shadow-none"
-                  icon="ms-icon ms-icon-print ms-18"
-                ></MISAButton>
-              </MISATooltipV1>
-            </div>
-            <div class="action-item flex column tooltip">
-              <MISATooltipV1 content="Tiện ích">
-                <MISAButton
-                  class="button__icon box-shadow-none"
-                  icon="ms-icon ms-icon-three-dot"
-                ></MISAButton>
-              </MISATooltipV1>
+          </MISATooltipV1>
+          <div class="content-bottom__filter">
+            <div class="content-bottom__sub__title">Thông tin chi tiết</div>
+            <div class="data-action">
+              <div class="action-item flex column tooltip">
+                <MISATooltipV1 :content="iconZoom.text">
+                  <MISAButton
+                    ref="deleteButton"
+                    type="btn-icon"
+                    :icon="iconZoom.icon"
+                    @click="handleZoom(iconZoom)"
+                  ></MISAButton>
+                </MISATooltipV1>
+              </div>
             </div>
           </div>
+          <MISATable
+            :listData="listAsset"
+            :listColumn="assetColumns"
+            :isShowPagination="false"
+            :isCheckEmpty="false"
+          ></MISATable>
+          <MISALoading
+            v-if="isLoadingAsset"
+            :style="{
+              top: '75px',
+              left: '0px',
+              right: '0px',
+              bottom: '30px',
+            }"
+          ></MISALoading>
         </div>
-        <MISATable
-          tableRef="voucherTable"
-          :listData="listVoucher"
-          :listColumn="voucherColumns"
-          @delete="handleAction"
-          @edit="handleAction"
-          @clickRow="handleClickRow"
-          :pagingOptions="voucherPagination.pagingOptions"
-          :summary="summary"
-          :totalRecord="totalRecord"
-          :pageNumber="voucherPagination.pageNumber"
-          :pageSize="voucherPagination.pageSize"
-          v-model="voucherSelected"
-          @changePaging="changePaging"
-          @changeDropdown="changeDropdown"
-          :isFocusFirstRow="true"
-        ></MISATable>
-        <MISALoading
-          v-if="isLoadingVoucher"
-          :style="{
-            top: '100px',
-            left: '1px',
-            right: '1px',
-            bottom: '40px',
-          }"
-        ></MISALoading>
-      </div>
-      <div
-        class="content-bottom content-bottom__sub"
-        ref="assetTable"
-        :style="assetStyle"
-      >
-      <div class="icon_resize">
-        <img src="@/assets/resize_icon.png" alt="">
-      </div>
-        <div class="content-bottom__filter">
-          <div class="content-bottom__sub__title">Thông tin chi tiết</div>
-          <div class="data-action">
-            <div class="action-item flex column tooltip">
-              <MISATooltipV1 :content="iconZoom.text">
-                <MISAButton
-                  ref="deleteButton"
-                  class="button__icon box-shadow-none"
-                  :icon="iconZoom.icon"
-                  @click="handleZoom(iconZoom)"
-                ></MISAButton>
-              </MISATooltipV1>
-            </div>
-          </div>
-        </div>
-        <MISATable
-          :listData="listAsset"
-          :listColumn="assetColumns"
-          :isShowPagination="false"
-          :isCheckEmpty="false"
-        ></MISATable>
-        <MISALoading
-          v-if="isLoadingAsset"
-          :style="{
-            top: '74px',
-            left: '1px',
-            right: '1px',
-            bottom: '45px',
-          }"
-        ></MISALoading>
       </div>
     </div>
-    <!-- <DemoResizeable></DemoResizeable> -->
     <router-view
       @insertVoucher="insertVoucher"
       @updateVoucher="updateVoucher"
@@ -170,7 +186,6 @@
 </template>
 
 <script>
-// import DemoResizeable from './demo.vue'
 import _ from 'lodash'
 import column from '@/js/column.js'
 import vClickOutside from 'click-outside-vue3'
@@ -197,14 +212,8 @@ export default {
     return {
       isLoadingVoucher: false,
       isLoadingAsset: false,
-      vourcherStyle: {
-        'max-height': '400px',
-        'min-height': '400px',
-      },
-      assetStyle: {
-        'max-height': 'calc(100vh - 540px)',
-        'min-height': 'calc(100vh - 540px)',
-      },
+      vourcherStyle: {},
+      assetStyle: {},
       isShowShortCut: false,
       dialogInformation: {}, // thông tin dialog
       popupInformation: {}, // thông tin popup
@@ -250,24 +259,31 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         totalRecord: 0,
-        pagingOptions: [
-          { key: 10, value: 10 },
-          { key: 20, value: 20 },
-          { key: 50, value: 50 },
-          { key: 100, value: 100 },
-        ],
+        pagingOptions: column.pagingOptions,
       },
       voucherItem: {},
+      container: null,
+      startY: 0,
+      box1Flex: 1,
+      box2Flex: 1,
+      isResizing: false,
     }
   },
   async created() {
     await this.getVourcherListByPaging()
   },
   mounted() {
+    document.addEventListener('mousemove', this.handleResize)
+    document.addEventListener('mouseup', this.stopResize)
     this.$nextTick(async () => {
+      this.container = this.$refs['container']
       this.voucherColumns = column.vourcherColumns
       this.assetColumns = column.assetColumns
     })
+  },
+  beforeUnmount() {
+    document.removeEventListener('mousemove', this.handleResize)
+    document.removeEventListener('mouseup', this.stopResize)
   },
   computed: {
     action: {
@@ -307,40 +323,34 @@ export default {
           me.assetStyle = 'display: none'
           me.vourcherStyle = {
             display: 'flex',
-            'max-height': 'calc(100vh - 130px)',
-            'min-height': 'calc(100vh - 130px)',
+            flex: '1 1 auto',
           }
           break
         case me.$msEnum.MS_INCREASE_ASSET_ACTION.HorizontalLayout: // giao diện ngang
           me.assetStyle = {
             display: 'flex',
-            'max-height': 'calc(100vh - 540px)',
-            'min-height': 'calc(100vh - 540px)',
+            flex: '1 1 auto',
           }
           me.vourcherStyle = {
             display: 'flex',
-            'max-height': '400px',
-            'min-height': '400px',
+            flex: '1 1 auto',
           }
           break
         case me.$msEnum.MS_INCREASE_ASSET_ACTION.ZoomIn: // phóng to
           me.assetStyle = {
             display: 'flex',
-            'max-height': 'calc(100vh - 140px)',
-            'min-height': 'calc(100vh - 140px)',
+            flex: '1 1 auto',
           }
           me.vourcherStyle = 'display: none'
           break
         case me.$msEnum.MS_INCREASE_ASSET_ACTION.ZoomOut: // thu nhỏ
           me.assetStyle = {
             display: 'flex',
-            'max-height': 'calc(100vh - 540px)',
-            'min-height': 'calc(100vh - 540px)',
+            flex: '1 1 auto',
           }
           me.vourcherStyle = {
             display: 'flex',
-            'max-height': '400px',
-            'min-height': '400px',
+            flex: '1 1 auto',
           }
           break
         default:
@@ -353,19 +363,51 @@ export default {
     }, 500),
   },
   methods: {
-    handleMouseDown(e) {
-      console.log(e, 'mouse down');
-      window.addEventListener('mousemove', this.handleMouseMove, false)
-      window.addEventListener('mouseup', this.handleMouseUp, false)
+    startResize(e) {
+      this.isResizing = true
+      this.startY = e.clientY
     },
-    handleMouseUp(e) {
-      console.log(e, 'mouse up')
-    },
-    handleMouseMove(e) {
-      // lấy ra ref assetTable
-      console.log(e, 'mouse move');
+    handleResize(e) {
+      if (!this.isResizing) {
+        return
+      }
 
-      // 
+      const deltaY = e.clientY - this.startY
+      const containerHeight = this.container.offsetHeight
+      const totalFlex = this.box1Flex + this.box2Flex
+
+      this.box1Flex += (deltaY / containerHeight) * totalFlex
+      this.box2Flex -= (deltaY / containerHeight) * totalFlex
+
+      // nếu box 2 có chiều cao gần bằng container thì ẩn box 1
+      if (this.box2Flex > 2) {
+        this.assetStyle = {
+          flex: this.box2Flex,
+        }
+        this.vourcherStyle = {
+          display: 'none',
+        }
+      }
+      //  else if (this.box1Flex > 2) {
+      //   this.vourcherStyle = {
+      //     flex: this.box1Flex,
+      //   }
+      //   this.assetStyle = {
+      //     display: 'none',
+      //   }
+      // }
+      else {
+        this.vourcherStyle = {
+          flex: this.box1Flex,
+        }
+        this.assetStyle = {
+          flex: this.box2Flex,
+        }
+      }
+      this.startY = e.clientY
+    },
+    stopResize() {
+      this.isResizing = false
     },
     /**
      * @description:
@@ -375,8 +417,11 @@ export default {
      */
     async handleClickRow(item) {
       const me = this
+      me.isLoadingAsset = true
+      // set timeout 3s
       me.voucherItem = await item
       await me.getFixedAssetList()
+      me.isLoadingAsset = false
     },
     /**
      * @description: Thực hiện xử lí các action thêm sửa xóa liên quan tới chứng từ
@@ -403,7 +448,7 @@ export default {
       }
     },
     /**
-     * @description:
+     * @description: Thực hiện xử lí hiển thị thông báo khi người dùng click vào nút xóa
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 29/06/2023
@@ -436,7 +481,7 @@ export default {
         buttonList: [
           {
             text: 'Xóa',
-            buttonClass: 'button button__main',
+            type: 'main',
             isFocus: true,
             onclick: async () => {
               me.deleteVoucher(items)
@@ -444,7 +489,7 @@ export default {
           },
           {
             text: 'Không',
-            buttonClass: 'button button__outline',
+            type: 'outline',
             onclick: () => {
               me.dialogInformation.isShowDialog = false
             },
@@ -453,7 +498,7 @@ export default {
       }
     },
     /**
-     * @description:
+     * @description: Thực hiện gọi api xóa dữ liệu
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 06/07/2023
@@ -472,8 +517,7 @@ export default {
         if (result.status == me.$msEnum.MS_CODE.SUCCESS) {
           if (items.length == me.listVoucher.length) {
             if (me.voucherPagination.pageNumber > 1) {
-              me.voucherPagination.pageNumbe =
-                me.voucherPagination.pageNumbe - 1
+              me.voucherPagination.pageNumber--
             }
           }
           me.voucherSelected = []
@@ -515,10 +559,12 @@ export default {
      * @author: NguyetKTB 05/05/2023
      */
     async loadData() {
-      this.isLoadingVoucher = true
+      const me = this
+      me.isLoadingVoucher = true
       // set time out 1s để tắt loading
-      await this.getVourcherListByPaging()
-      this.isLoadingVoucher = false
+      await me.getVourcherListByPaging()
+      me.handleClickRow(me.listVoucher[0])
+      me.isLoadingVoucher = false
     },
     /**
      * @description: Thực hiện gọi api lấy danh sách chứng từ
@@ -565,7 +611,7 @@ export default {
      */
     async getFixedAssetList() {
       const me = this
-      me.assetLoading = true
+      me.isLoadingAsset = true
       try {
         const result = await me.$msApi.fixed_asset.getAllByVoucher(
           me.voucherItem.voucher_id
@@ -578,10 +624,10 @@ export default {
       } catch (error) {
         console.log(error)
       }
-      me.assetLoading = false
+      me.isLoadingAsset = false
     },
     /**
-     * @description:
+     * @description: Thực hiện gọi api thêm mới chứng từ
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 10/07/2023
@@ -607,6 +653,12 @@ export default {
         )
       }
     },
+    /**
+     * @description: Thực hiện gọi api cập nhật chứng từ
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 19/07/2023
+     */
     updateVoucher(voucher) {
       const me = this
       if (voucher > 0) {
@@ -616,17 +668,18 @@ export default {
           me.$msResource.POPUP_MESSAGE.Msg_Edit_Success,
           me.$msEnum.MS_POPUP_MODE.Success
         )
+        me.loadData()
       } else {
         me.hideModal()
         me.showPopup(
           me.$msResource.POPUP_MESSAGE.Msg_Edit_Failed,
           me.$msEnum.MS_POPUP_MODE.Error
         )
+        me.loadData()
       }
-      me.loadData()
     },
     /**
-     * @description:
+     * @description: Thực hiện hiển thị form thêm mới chứng từ
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 20/06/2023
@@ -740,7 +793,8 @@ export default {
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  z-index: 999999;
+  overflow: hidden;
 }
 .layout-menu .layout-menu__item {
   padding: 10px;
@@ -761,7 +815,7 @@ export default {
 .content-bottom__filter {
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 10px 15px 10px 15px;
 }
 .content-bottom__filter .input-group {
   width: 300px;
@@ -775,9 +829,12 @@ export default {
 .data-action {
   gap: 20px;
 }
-.content-bottom__sub {
-  flex: 1 !important;
-  margin-top: 10px;
+.box1 {
+  min-height: 0px;
+}
+.box2 {
+  flex: 1;
+  z-index: 999;
 }
 .content-bottom__sub .content-bottom__filter {
   padding: 0px 15px 0px 15px !important;
@@ -785,19 +842,37 @@ export default {
 .data-action .button__icon {
   height: 36px;
   width: 20px;
-  cursor: pointer;
+  user-select: none;
 }
-.icon_resize {
-  cursor: pointer;
+.handler {
+  display: flex;
+  justify-content: center;
+  height: 1px;
+}
+.handler img {
   width: 15px;
   height: 15px;
-  position: absolute;
+  position: relative;
   top: -8px;
-  left: 50%;
+  z-index: 1000;
+  cursor: ns-resize;
 }
-.icon_resize img{
-  width: 15px;
+.container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 54px - 14px - 55px);
+  gap: 10px;
 }
-
+button[type='btn-icon'] {
+  box-shadow: none !important;
+}
+.main__content {
+  flex: 1;
+  background-color: #f4f7ff;
+}
+.data-action--icon {
+  display: flex;
+  gap: 10px;
+}
 @import url(@/css/layouts/content/content.css);
 </style>

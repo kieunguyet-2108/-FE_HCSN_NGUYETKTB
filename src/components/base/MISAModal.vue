@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div class="modal-content" :style="style">
+    <div class="modal-content" :type="type">
       <slot></slot>
     </div>
   </div>
@@ -16,9 +16,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    style: {
+    type: {
       type: String,
-      default: "",
+      default: "default",
     },
   },
 };
@@ -41,6 +41,14 @@ export default {
   max-height: 100vh;
   overflow: auto;
   resize: both;
+}
+.modal-content[type="default"]{
+  width: 1000px;
+  min-width: 700px;
+}
+.modal-content[type="modal-voucher"]{
+  width: 1200px;
+  min-width: 700px;
 }
 @import url(@/css/components/modal.css);
 </style>

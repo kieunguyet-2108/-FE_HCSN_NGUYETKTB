@@ -222,6 +222,7 @@ export default {
           }
         }
         self.$emit("update:modelValue", Number(originNumber));
+        self.$emit("change", Number(originNumber));
       } catch (error) {
         console.log(error);
       }
@@ -243,6 +244,7 @@ export default {
           event.target.value.length - 1
         );
       }
+      // nếu value < min thì hiển thị thông báo lỗi
     },
 
     /**

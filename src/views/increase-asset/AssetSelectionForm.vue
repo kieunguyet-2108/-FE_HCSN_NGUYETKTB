@@ -1,74 +1,78 @@
 <template>
-  <form action="" @keydown="handleKeydown">
-    <div class="form__header">
-      <div class="form__title">{{ formTitle }}</div>
-      <MISATooltipV1 content="Esc">
+  <MISAModal type="modal-voucher">
+    <form action="" type="modal-voucher">
+      <div class="form__header">
+        <div class="form__title">Chọn tài sản ghi tăng</div>
         <div
           class="ms-24"
           @click="handleAssetAction(this.$msEnum.MS_ACTION.Cancel)"
         >
-          <div class="ms-icon ms-18 ms-icon-arrow-close"></div>
+          <MISATooltipV1 content="Đóng">
+            <div class="ms-icon ms-18 ms-icon-arrow-close"></div>
+          </MISATooltipV1>
         </div>
-      </MISATooltipV1>
-    </div>
-    <div class="form__content" style="padding: 0px !important">
-      <div class="data__content--filter flex space-between w-100">
-        <MISAInput
-          type="text"
-          placeholder="Tìm kiếm theo mã tài sản, tên tài sản"
-          className="input__field box-shadow-none"
-          style="padding: 0px 12px 0px 0px !important"
-          :isValidate="false"
-          icon="ms-icon ms-22 ms-icon-search-black"
-          v-model="assetFilter.textSearchFilter"
-        ></MISAInput>
       </div>
-      <div>
-        <MISATable
-          :listColumn="dataColumn"
-          :tableStyle="{
-            minHeight: '460px',
-            maxHeight: '460px',
-          }"
-          :listData="assetList"
-          :pagingOptions="assetPagination.pagingOptions"
-          :totalRecord="assetPagination.totalRecord"
-          :pageNumber="assetPagination.pageNumber"
-          :pageSize="assetPagination.pageSize"
-          @changePaging="changePaging"
-          @changeDropdown="changeDropdown"
-          v-model="assetSelected"
-        ></MISATable>
-        <MISALoading
-          v-if="isLoadingAsset"
-          :style="{
-            top: '200px',
-            width: '1200px',
-            height: '410px',
-          }"
-        ></MISALoading>
+      <div class="form__content" style="padding: 0px !important">
+        <div class="data__content--filter flex space-between w-100">
+          <MISAInput
+            type="text"
+            placeholder="Tìm kiếm theo mã tài sản, tên tài sản"
+            className="input__field box-shadow-none"
+            style="padding: 0px 12px 0px 0px !important"
+            :isValidate="false"
+            icon="ms-icon ms-22 ms-icon-search-black"
+            v-model="assetFilter.textSearchFilter"
+          ></MISAInput>
+        </div>
+        <div>
+          <MISATable
+            :listColumn="dataColumn"
+            :tableStyle="{
+              minHeight: '460px',
+              maxHeight: '460px',
+            }"
+            :listData="assetList"
+            :pagingOptions="assetPagination.pagingOptions"
+            :totalRecord="assetPagination.totalRecord"
+            :pageNumber="assetPagination.pageNumber"
+            :pageSize="assetPagination.pageSize"
+            @changePaging="changePaging"
+            @changeDropdown="changeDropdown"
+            v-model="assetSelected"
+          ></MISATable>
+          <MISALoading
+            v-if="isLoadingAsset"
+            :style="{
+              top: '200px',
+              width: '1200px',
+              height: '410px',
+            }"
+          ></MISALoading>
+        </div>
       </div>
-    </div>
-    <div class="form__footer gap-10" @keydown="footerKeydown">
-      <!-- flex row justify-content-end -->
-      <MISATooltipV1
-        :content="button.buttonTooltip"
-        v-for="(button, index) in buttonFooter"
-        :key="index"
-      >
-        <MISAButton
-          ref="saveButton"
-          :class="button.buttonClass"
-          :text="button.text"
-          @click="handleAssetAction(button.action)"
-        ></MISAButton>
-      </MISATooltipV1>
-    </div>
-  </form>
+      <div class="form__footer gap-10" @keydown="footerKeydown">
+        <!-- flex row justify-content-end -->
+        <MISATooltipV1
+          v-for="(button, index) in buttonFooter"
+          :key="index"
+          :content="button.buttonTooltip"
+        >
+          <MISAButton
+            ref="saveButton"
+            :type="button.buttonType"
+            :text="button.text"
+            @click="handleAssetAction(button.action)"
+          ></MISAButton>
+        </MISATooltipV1>
+      </div>
+    </form>
+  </MISAModal>
 </template>
 
 <script>
 import _ from 'lodash'
+import column from '@/js/column.js'
+import MISAModal from '@/components/base/MISAModal.vue'
 import MISALoading from '@/components/base/MISALoading.vue'
 import MISATable from '@/components/base/MISATable.vue'
 import MISAInput from '@/components/base/MISAInput.vue'
@@ -82,17 +86,10 @@ export default {
     MISAButton,
     MISATooltipV1,
     MISALoading,
+    MISAModal,
   },
   props: {
-    formTitle: {
-      type: String,
-      default: 'Chọn tài sản',
-    },
     dataColumn: {
-      type: Array,
-      default: () => [],
-    },
-    buttonFooter: {
       type: Array,
       default: () => [],
     },
@@ -100,33 +97,44 @@ export default {
       type: Array,
       default: () => [],
     },
-    formMode: {
-      type: String,
-      default: '',
-    },
   },
   data() {
     return {
-      isLoadingAsset: false,
-      assetList: [],
+      isLoadingAsset: false, // trạng thái loading của danh sách tài sản
+      assetList: [], // danh sách tài sản
+      buttonFooter: [
+        // danh sách button ở footer
+        {
+          text: 'Đồng ý',
+          ref: 'saveButton',
+          buttonType: 'main',
+          buttonTooltip: 'Lưu',
+          action: this.$msEnum.MS_ACTION.Save,
+        },
+        {
+          text: 'Hủy bỏ',
+          ref: 'cancelButton',
+          buttonType: 'outline',
+          buttonTooltip: 'Hủy',
+          action: this.$msEnum.MS_ACTION.Cancel,
+        },
+      ],
       assetPagination: {
+        // thông tin phân trang
         pageNumber: 1,
         pageSize: 10,
         totalRecord: 0,
-        pagingOptions: [
-          { key: 10, value: 10 },
-          { key: 20, value: 20 },
-          { key: 50, value: 50 },
-          { key: 100, value: 100 },
-        ],
+        pagingOptions: column.pagingOptions,
       },
       assetFilter: {
+        // thông tin filter
         textSearchFilter: '',
       },
-      assetSelected: [],
+      assetSelected: [], // danh sách tài sản được chọn
     }
   },
   async created() {
+    // lấy ra danh sách tài sản không thuộc chứng từ nào
     await this.getFixedAssetList()
   },
   mounted() {
@@ -137,6 +145,12 @@ export default {
     })
   },
   computed: {
+    /**
+     * @description: Tính toán, xử lí dữ liệu khi thông tin lọc và phân trang thay đổi
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 19/07/2023
+     */
     assetFilterParams() {
       let tempFilter = []
       if (
@@ -166,15 +180,7 @@ export default {
   },
   methods: {
     /**
-     * @description:
-     * @param: {any}
-     * @return: {any} 27/06/2023
-     */
-    handleKeydown(event) {
-      console.log(event.keyCode)
-    },
-    /**
-     * @description:
+     * @description: Xử lí hành động của người dùng trong màn hình
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 27/06/2023
@@ -189,7 +195,7 @@ export default {
           me.$emit('closeForm')
           break
         case me.$msEnum.MS_ACTION.Save:
-          me.$emit('assetSelected', me.assetSelected);
+          me.$emit('assetSelected', me.assetSelected)
           break
         default:
           break
@@ -218,9 +224,21 @@ export default {
      */
     handleCondition(assetList) {
       let tempAssetList = []
+      console.log(this.listData)
       assetList.forEach((asset) => {
         tempAssetList.push(asset.fixed_asset_id)
       })
+      this.listData.forEach((asset) => {
+        if (asset.action == null) {
+          tempAssetList.push(asset.fixed_asset_id)
+        } else if (asset.action == this.$msEnum.MS_ACTION_TYPE.Delete) {
+          // loại bỏ ra khỏi tempAssetList
+          tempAssetList = tempAssetList.filter(
+            (item) => item != asset.fixed_asset_id
+          )
+        }
+      })
+      console.log(tempAssetList)
       return tempAssetList
     },
     /**
@@ -232,6 +250,7 @@ export default {
     async getFixedAssetList() {
       const me = this
       me.isLoadingAsset = true
+      // xử lí điều kiện lọc tài sản(chỉ lấy ra tài sản chưa thuộc bất kì chứng từ nào)
       let filters = []
       filters.push({
         field: 'fixed_asset_id',

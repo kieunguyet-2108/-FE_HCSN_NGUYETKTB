@@ -1,19 +1,19 @@
 <template>
-  <MISAModal style="min-width: 800px; width: 800px">
+  <MISAModal>
     <form action="">
       <div class="form__header">
         <div class="form__title">
           Sửa tài sản xe {{ budgetItem.fixed_asset_name }}
         </div>
-        <MISATooltipV1 content="Esc">
+        <MISATooltipV1 content="Đóng">
           <div class="ms-24" @click="closeForm">
             <div class="ms-icon ms-18 ms-icon-arrow-close"></div>
           </div>
         </MISATooltipV1>
       </div>
       <div class="form__content">
-        <div class="form__content--item">
-          <div class="form__group">
+        <div class="form__content--item form__content--item-budget">
+          <div class="form__group form__group--budget">
             <MISAInput
               ref="department_name"
               type="text"
@@ -26,34 +26,41 @@
             ></MISAInput>
           </div>
         </div>
-        <div class="flex space-between align-items-center">
+        <div
+          class="flex space-between align-items-center form__content--item-budget"
+        >
           <div class="form__content--title">Nguyên giá</div>
-          <div v-if="budgetList.length == 0" style="margin-top: 15px">
+          <div v-if="caculateBudgetList.length == 0" style="margin-top: 15px">
             <MISATooltipV1 content="Thêm nguồn chi phí">
               <MISAButton
-                class="button__icon box-shadow-none"
-                icon="ms-icon-add-square"
+                type="sub"
+                text="Thêm"
                 @click="addBudgetItem"
               ></MISAButton>
             </MISATooltipV1>
           </div>
         </div>
         <div class="form__content--header">
-          <div class="form__content--item" v-if="budgetList.length > 0">
+          <div class="form__content--item" v-if="caculateBudgetList.length > 0">
             <div class="form__group">Nguồn hình thành</div>
             <div class="form__group">Giá trị</div>
             <div class="form__group form__group--btnIcon"></div>
           </div>
         </div>
-
-        <div class="form__content--main">
+        <div
+          class="form__content--main"
+          ref="contentMain"
+          @scroll="handleScrollParent"
+        >
           <div
+            ref="budgetItem"
             class="form__content--item"
             v-for="(budget, index) in caculateBudgetList"
             :key="index"
           >
             <div class="form__group">
               <MISACombobox
+                :ref="'budget_category_code' + index"
                 iconRight="ms-8 ms-icon-arrow-down-bold"
                 inputType="text"
                 inputClass="input__field "
@@ -71,6 +78,7 @@
             </div>
             <div class="form__group">
               <MISANumberPickerV1
+                :ref="'budget_value' + index"
                 type="text"
                 className="input__field"
                 placeholder="0"
@@ -81,15 +89,17 @@
             <div class="form__group form__group--btnIcon">
               <MISATooltipV1 content="Thêm nguồn chi phí">
                 <MISAButton
-                  class="button__icon box-shadow-none"
+                  type="btn-icon"
                   icon="ms-icon-add-square"
+                  tabindex="-1"
                   @click="addBudgetItem"
                 ></MISAButton>
               </MISATooltipV1>
               <MISATooltipV1 content="Xóa nguồn chi phí">
                 <MISAButton
-                  class="button__icon box-shadow-none"
+                  type="btn-icon"
                   icon="ms-icon-subtract-circle"
+                  tabindex="-1"
                   @click="removeBudgetItem(index, budget)"
                 ></MISAButton>
               </MISATooltipV1>
@@ -112,26 +122,28 @@
                 className="input__field"
                 placeholder="0"
                 v-model="totalBudgetValue"
+                :disabled="true"
               ></MISANumberPickerV1>
             </div>
             <div class="form__group form__group--btnIcon"></div>
           </div>
         </div>
       </div>
-      <div class="form__footer gap-10" @keydown="footerKeydown">
+      <div class="form__footer gap-10">
         <!-- flex row justify-content-end -->
-        <MISATooltipV1 content="Ctrl + S">
+
+        <MISATooltipV1 content="Lưu">
           <MISAButton
             ref="saveButton"
-            class="button button__main"
+            type="main"
             text="Lưu"
             @onClickButton="submitForm"
           ></MISAButton>
         </MISATooltipV1>
-        <MISATooltipV1 content="Esc">
+        <MISATooltipV1 content="Hủy">
           <MISAButton
             ref="cancelButton"
-            class="button button__outline border-none"
+            type="outline"
             text="Hủy"
             @onClickButton="closeForm"
           ></MISAButton>
@@ -150,6 +162,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import MISAPopup from '@/components/base/MISAPopup.vue'
 import column from '@/js/column'
 import MISAInput from '@/components/base/MISAInput.vue'
@@ -210,6 +223,7 @@ export default {
     },
     caculateBudgetList() {
       const data = this.budgetList
+      console.log('data', data)
       let list = []
       // chỉ lấy các bản ghi có action không phải là delete
       data.forEach((item) => {
@@ -222,12 +236,12 @@ export default {
   },
   data() {
     return {
-      budgetItem: {},
-      budgetList: [],
-      budgetCategoryColumns: [],
-      budgetCategoryList: [],
-      budgetDetailList: [],
-      popupInformation: {
+      budgetItem: {}, // thông tin nguồn chi phí
+      budgetList: [], // danh sách nguồn chi phí 
+      budgetCategoryColumns: [], // danh sách cột nguồn chi phí
+      budgetCategoryList: [], // danh sách nguồn chi phí
+      budgetDetailList: [], // danh sách chi tiết nguồn chi phí
+      popupInformation: { // thông tin popup
         isShowPopup: false,
         popupMessage: '',
         popupMode: '',
@@ -236,42 +250,63 @@ export default {
   },
   methods: {
     /**
-     * @description:
+     * @description: Thực hiện xử lí khi bắt sự kiện scroll component cha và ẩn combobox data
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 19/07/2023
+     */
+    handleScrollParent(event) {
+      const comboboxDataList =
+        this.$refs.contentMain.querySelectorAll('.combobox-data')
+      comboboxDataList.forEach((comboboxData) => {
+        comboboxData.style.display = 'none'
+      })
+    },
+    /**
+     * @description: Thực hiện xử lí hành động khi người dùng chọn một item trong combobox
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 11/07/2023
      */
     selectedItem(index, item) {
       let me = this
-      // kiểm tra item đã tồn tại trong budget list chưa
-      for (let i = 0; i < me.budgetList.length; i++) {
-        if (
-          me.budgetList[i].budget_category_id == item.budget_category_id &&
-          i != index && 
-          me.budgetList[i].action !== me.$msEnum.MS_ACTION_TYPE.Delete
-        ) {
-          // me.budgetList[index].budget_category_id = '';
-          me.showPopup(
-            'Nguồn chi phí đã tồn tại trong danh sách.',
-            me.$msEnum.MS_POPUP_MODE.Warning
-          )
-          return
-        }
-      }
-      // kiểm tra item đã tồn tại trong budget infomation chưa
-      let buggetItem = me.budgetList[index]
-      let findItem = me.budgetInfomation.find(
-        (budget) => budget.budget_detail_id == buggetItem.budget_detail_id
+      //tìm kiếm trong mảng budgetList xem có bản ghi nào có budget_category_id = item.budget_category_id không
+      let budgetItem = me.budgetList.find(
+        (budget) =>
+          budget.budget_category_id == item.budget_category_id &&
+          index != me.budgetList.indexOf(budget) &&
+          budget.action !== this.$msEnum.MS_ACTION_TYPE.Delete
       )
-      me.budgetList[index].budget_category_id = item.budget_category_id
-      me.budgetList[index].budget_category_code = item.budget_category_code
-      me.budgetList[index].budget_category_name = item.budget_category_name
-      if (findItem) {
-        me.budgetList[index].action = me.$msEnum.MS_ACTION_TYPE.Edit
+      //nếu có thì thay đổi giá trị của bản ghi đó
+      if (budgetItem) {
+        // waring
+        me.showPopup('Loại ngân sách đã tồn tại.', 'warning')
+        // tìm lại trong danh sách budgetCategoryList xem có bản ghi nào có budget_category_id = item.budget_category_id không
+        let budgetCategoryItem = me.budgetCategoryList.find(
+          (budgetCategory) =>
+            me.budgetList[index].budget_category_name ==
+              budgetCategory.budget_category_name &&
+            me.budgetList[index].budget_category_code ==
+              budgetCategory.budget_category_code
+        )
+        // nếu có thì gán lại giá trị cho bản ghi
+        if (budgetCategoryItem) {
+          me.budgetList[index].budget_category_id =
+            budgetCategoryItem.budget_category_id
+          this.$refs['budget_category_code' + index][0].inputValue =
+            budgetCategoryItem.budget_category_name
+        } else {
+          me.budgetList[index].budget_category_id = ''
+          me.budgetList[index].budget_category_name = ''
+          me.budgetList[index].budget_category_code = ''
+        }
+
+        return
       } else {
-        me.budgetList[index].action = me.$msEnum.MS_ACTION_TYPE.Add
+        me.budgetList[index].budget_category_id = item.budget_category_id
+        me.budgetList[index].budget_category_name = item.budget_category_name
+        me.budgetList[index].budget_category_code = item.budget_category_code
       }
-      console.log(me.budgetList)
     },
 
     /**
@@ -299,54 +334,116 @@ export default {
       this.$emit('close')
     },
     /**
-     * @description:
+     * @description: Thực hiện xử lí kiểm tra dữ liệu và emit danh sách chi phí đã chọn sang component cha
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 10/07/2023
      */
     submitForm() {
-      const me = this;
-      console.log(me.budgetList);
+      const me = this
       // kiểm tra dữ liệu nhập vào
-      let isValid = me.handleData()
+      let isValid = me.validateData()
       if (!isValid) return
       else {
-        this.$emit(
-          'submitBudgetDetail',
-          this.budgetList,
-          this.budgetItem.fixed_asset_id
-        )
+        const list = me.handleData()
+        this.$emit('submitBudgetDetail', list, this.budgetItem.fixed_asset_id)
       }
     },
     /**
-     * @description:
+     * @description: Thực hiện xử lí dữ liệu theo nghiệp vụ nhất định
+     * @param: {any} 
+     * @return: {any} 
+     * @author: NguyetKTB 19/07/2023
+     */
+    validateData() {
+      const me = this
+      let errorMessage = []
+      // kiểm tra dữ liệu nhập vào
+      me.budgetList.forEach((item) => {
+        if (!item.budget_category_id) {
+          errorMessage.push({
+            field: 'budget_category_code' + me.budgetList.indexOf(item),
+            content: 'Thông tin không được để trống.',
+          })
+        }
+        if (!item.budget_value) {
+          errorMessage.push({
+            field: 'budget_value' + me.budgetList.indexOf(item),
+            content: 'Thông tin không được để trống.',
+          })
+        }
+      })
+      if (errorMessage.length > 0) {
+        // hiển thị thông báo lỗi
+        me.showPopup('Vui lòng nhập đầy đủ thông tin.', 'warning')
+        errorMessage.forEach((message) => {
+          // thêm class error vào control lỗi
+          this.$refs[message.field][0].isError = true
+          this.$refs[message.field][0].errorMessage = message.content
+        })
+        return false
+      }
+      return true
+    },
+    /**
+     * @description: Thực hiện xử lí danh sách dữ liệu trước khi emit sang component cha
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 11/07/2023
      */
     handleData() {
-      // kiểm tra dữ liệu nhập vào
-      if (this.budgetList.length > 0) {
-        for (let i = 0; i < this.budgetList.length; i++) {
+      const me = this
+      // lấy ra danh sach các bản ghi đã xóa
+      var deletedList = []
+      me.budgetInfomation.forEach((item) => {
+        let findItem = me.budgetList.find(
+          (budget) => budget.budget_detail_id == item.budget_detail_id
+        )
+        if (!findItem) {
+          item.action = me.$msEnum.MS_ACTION_TYPE.Delete
+          deletedList.push(item)
+        }
+      })
+      // lấy ra danh sách các bản ghi đã thêm mới
+      var addedList = me.budgetList.filter(
+        (item) => item.action == me.$msEnum.MS_ACTION_TYPE.Add
+      )
+      // lấy ra danh sách các bản ghi đã sửa: so sánh giá trị cũ và giá trị mới
+      var editList = []
+      me.budgetList.forEach((item) => {
+        let findItem = me.budgetInfomation.find(
+          (budget) => budget.budget_detail_id == item.budget_detail_id
+        )
+        if (findItem) {
           if (
-            this.budgetList[i].budget_category_id == '' ||
-            this.budgetList[i].budget_value == ''
+            findItem.budget_category_id != item.budget_category_id ||
+            findItem.budget_value != item.budget_value
           ) {
-            this.showPopup(
-              'Vui lòng nhập đầy đủ thông tin nguồn chi phí.',
-              this.$msEnum.MS_POPUP_MODE.Warning
-            )
-            // focus vào ô đang nhập
-            return false;
+            item.action = me.$msEnum.MS_ACTION_TYPE.Edit
+            editList.push(item)
           }
         }
-        return true
-      } else {
-        return true
-      }
+      })
+      // lấy ra dánh sách bản ghi không thay đổi
+      var noChangeList = []
+      me.budgetList.forEach((item) => {
+        let findItem = me.budgetInfomation.find(
+          (budget) => budget.budget_detail_id == item.budget_detail_id
+        )
+        if (findItem) {
+          if (
+            findItem.budget_category_id == item.budget_category_id &&
+            findItem.budget_value == item.budget_value
+          ) {
+            noChangeList.push(item)
+          }
+        }
+      })
+      // gộp 3 danh sách lại
+      return [...addedList, ...editList, ...deletedList, ...noChangeList]
     },
     /**
-     * @description: Thêm mới budget item
+     * @description: Thực hiện thêm mới nguồn chi phí khi người dùng click vào nút thêm mới
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 30/06/2023
@@ -371,25 +468,14 @@ export default {
       }
     },
     /**
-     * @description: Xóa budget item
+     * @description: Thực hiện xóa nguồn chi phí ở vị trí người dùng chọn
      * @param: {any}
      * @return: {any}
      * @author: NguyetKTB 30/06/2023
      */
-    removeBudgetItem(index, budgetItem) {
+    removeBudgetItem(index) {
       const me = this
-      if (budgetItem.budget_category_id == '') {
-        me.budgetList.splice(index, 1)
-        return
-      }
-      let findItem = me.budgetInfomation.find(
-        (budget) => budget.budget_category_id == budgetItem.budget_category_id
-      )
-      if (findItem.action == me.$msEnum.MS_ACTION_TYPE.Add ) {
-        me.budgetList.splice(index, 1)
-      } else {
-        me.budgetList[index].action = me.$msEnum.MS_ACTION_TYPE.Delete
-      }
+      me.budgetList.splice(index, 1)
     },
     /**
      * @description: Lấy ra thông tin danh sách nguồn chi phí
@@ -431,6 +517,9 @@ export default {
   height: 70px !important;
   width: 750px;
 }
+.form__content--item-budget {
+  width: 660px !important;
+}
 .form__content--item .form__group:first-child {
   flex: 2 !important;
 }
@@ -452,5 +541,11 @@ export default {
 .button__icon:hover .ms-icon.ms-icon-add-square {
   background-position: -419px -419px !important;
   background-color: #333333;
+}
+button[type='btn-icon'] {
+  box-shadow: none !important;
+}
+.form__group .form__content--item.is-clicked .form__group {
+  pointer-events: none;
 }
 </style>

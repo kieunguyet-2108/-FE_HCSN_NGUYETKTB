@@ -123,11 +123,13 @@ const Enum = {
     Cancel: "cancel",
     Close: "close",
   },
+  // ACTION THỰC HIỆN TRÊN FORM
   MS_TABLE_ACTION: {
     ChangePage: "changePage",
     ChangePageSize: "changePageSize",
     ChooseOption: "chooseOption",
   },
+  // ACTION THỰC HIỆN TRÊN FORM VOUCHER
   MS_INCREASE_ASSET_ACTION: {
     VerticalLayout: "verticalLayout",
     HorizontalLayout: "horizontalLayout",

@@ -1,15 +1,18 @@
 const Resource = {
+  // MESSAGE VALIDATE
   VALIDATE: {
     Required: "{0} không được để trống.",
     MaxLength: "{0} không được vượt quá {1} ký tự.",
     Duplicate: "{0} đã tồn tại.",
     Invalid: "{0} không hợp lệ.",
   },
+  // MESSAGE VALIDATE ASSET
   VALIDATE_SERVICE: {
     Invalid_DepreciationRate: "Tỉ lệ hao mòn phải bằng 1 chia số năm sử dụng.",
     Invalid_DepreciationValue:
       "Giá trị hao mòn năm phải bằng nguyên giá nhân tỉ lệ hao mòn.",
   },
+  // THÔNG BÁO HIỂN THỊ TRÊN POPUP
   POPUP_MESSAGE: {
     Msg_Add_Success: "Thêm mới dữ liệu thành công.",
     Msg_Add_Failed: "Thêm mới dữ liệu thất bại.",
@@ -18,6 +21,7 @@ const Resource = {
     Msg_Delete_Success: "Xóa dữ liệu thành công.",
     Msg_Delete_Failed: "Xóa dữ liệu thất bại.",
   },
+  // THÔNG BÁO HIỂN THỊ TRÊN DIALOG
   DIALOG_MESSAGE: {
     Voucher_Delete_OneRecord: "Bạn có muốn xóa chứng từ có mã {0}?",
     Voucher_Delete_MultiRecord:
@@ -33,10 +37,12 @@ const Resource = {
     Cancel_Edit:
       "Thông tin thay đổi sẽ không được cập nhật nếu bạn <br> không lưu. Bạn có muốn lưu các thay đổi này?",
   },
+  // THÔNG BÁO LỖI HIỂN THỊ
   ERROR_MESSAGE: {
     Server_Error: "Có lỗi xảy ra, vui lòng liên hệ MISA để được trợ giúp!",
     Empty_Data: "Chọn ít nhất một tài sản.",
   },
+  // THÔNG BÁO KHI NGƯỜI DÙNG THỰC HIỆN CHỨC NĂNG NHẬP KHẨU
   IMPORT_MESSAGE: {
     Error_File: "File không đúng định dạng. Vui lòng chọn lại file excel.",
     Error_Data: "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.",

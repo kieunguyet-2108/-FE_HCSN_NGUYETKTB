@@ -21,7 +21,7 @@
           v-for="(button, index) in buttonList"
           :key="index"
           :tabindex="0"
-          :buttonClass="button.buttonClass"
+          :type="button.type"
           :text="button.text"
           :isFocus="button.isFocus"
           @click="button.onclick"
@@ -46,7 +46,7 @@ export default {
       default: () => [
         {
           text: "",
-          buttonClass: "",
+          type: "",
           isFocus: false,
           onclick: () => {},
           onKeydown: () => {},
@@ -71,7 +71,7 @@ export default {
   methods: {
     /**
      * @description:  Hàm xử lí unfocus control trong dialog khi nhấn tab
-     * @param: {any} 
+     * @param: {e, fn}: e: event, fn: hàm focus vào control đầu tiên trong dialog 
      * @return: {any} 
      * @author: NguyetKTB 10/05/2023
      */
@@ -140,7 +140,7 @@ export default {
     },
     /**
      * @description: Hàm xử lí khi nhấn tab trong dialog
-     * @param: {any} 
+     * @param: {e} : event
      * @return: {any} 
      * @author: NguyetKTB 10/05/2023
      */

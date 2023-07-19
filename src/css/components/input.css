@@ -1,59 +1,77 @@
 .input-group {
-    display: flex;
-    flex-direction: column;
-    /* gap: 8px; */
-  }
-  .input-group .input-group__label{
-    margin-bottom: 8px;
-  }
-  .input-group .input-group__content{
-    margin-bottom: 2px;
-  }
-  .input-group__content:has(.input__field.box-shadow-none:focus){
-    box-shadow: none;
-  }
-  .input-group__content:has(.input__field:focus) {
-    border: 1px solid #32b6e2;
-    /* box-shadow: 0 0 0 4px #edeff3; */
-  }
-  .input-group__content:hover{
-    border: 1px solid #32b6e2;
-  }
-  .filter .input-group__content {
-    outline: none;
-    border: unset;
-  }
-  .input-group__content {
-    display: flex;
-    border-radius: 4px;
-    border: 1px solid #afafaf;
-  }
-  /* common style cho input field */
-  .input__field {
-    height: 36px;
-    max-height: 36px;
-    border-radius: 4px;
-    font-size: 13px;
-    box-sizing: border-box;
-    outline: none;
-    border: unset;
-    padding: 0px 12px;
-    color: #090f39;
-    font-style: normal;
-    flex: 1;
-  }
-  
-  /* khi input field có class là italic */
-  .input__field::placeholder {
-    font-style: italic;
-    color: rgb(174, 171, 171);
-    margin-right: 5px;
-  }
-  .input__field.placeholder-black::placeholder {
-    color: #090f39;
-    font-style: normal;
-  }
- 
-  .input-group:has(.error-message) .input-group__content {
-    border: 1px solid #ff0000;
-  }
+  display: flex;
+  flex-direction: column;
+  /* gap: 8px; */
+}
+
+/* nếu input disabled */
+.input__field[disabled] {
+  pointer-events: none;
+}
+.input-group__content:has(.input__field[disabled]) {
+  cursor: not-allowed;
+}
+.input-group__content:has(.input__field[disabled]):hover {
+  border: 1px solid #afafaf;
+}
+.input-group .input-group__label {
+  margin-bottom: 8px;
+}
+
+.input-group .input-group__content {
+  margin-bottom: 2px;
+}
+
+.input-group__content:has(.input__field.box-shadow-none:focus) {
+  box-shadow: none;
+}
+
+.input-group__content:has(.input__field:focus) {
+  border: 1px solid #32b6e2;
+  /* box-shadow: 0 0 0 4px #edeff3; */
+}
+
+.input-group__content:hover {
+  border: 1px solid #32b6e2;
+}
+
+.filter .input-group__content {
+  outline: none;
+  border: unset;
+}
+
+.input-group__content {
+  display: flex;
+  border-radius: 4px;
+  border: 1px solid #afafaf;
+}
+
+/* common style cho input field */
+.input__field {
+  height: 36px;
+  max-height: 36px;
+  border-radius: 4px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  border: unset;
+  padding: 0px 12px;
+  color: #090f39;
+  font-style: normal;
+  flex: 1;
+}
+
+/* khi input field có class là italic */
+.input__field::placeholder {
+  font-style: italic;
+  color: rgb(174, 171, 171);
+}
+
+.input__field.placeholder-black::placeholder {
+  color: #090f39;
+  font-style: normal;
+}
+
+.input-group:has(.error-message) .input-group__content {
+  border: 1px solid #ff0000;
+}

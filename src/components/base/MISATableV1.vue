@@ -28,7 +28,6 @@
                 :name="item.key"
                 :id="item.key"
                 v-model="selectedAll"
-                @click="checkAll()"
               />
               <label :for="item.key"></label>
             </div>
@@ -127,12 +126,10 @@
                 v-for="(icon, index) in item.actionIcons"
                 :key="index"
               >
-                <div class="ms-36">
-                  <div
-                    :class="icon.icon"
-                    @click="handleAction(asset, icon.action, $event)"
-                  ></div>
-                </div>
+                <div
+                  :class="icon.icon"
+                  @click="handleAction(asset, icon.action, $event)"
+                ></div>
               </MISATooltipV1>
               <MISAMenu
                 ref="contextMenu"
@@ -392,9 +389,7 @@ export default {
   watch: {
     selectedList: {
       handler: function (newVal) {
-        if (newVal.length == this.listData.length) {
-          this.selectedAll = true
-        } else {
+        if (newVal.length == 0) {
           this.selectedAll = false
         }
         this.$emit('update:modelValue', newVal)
@@ -410,16 +405,9 @@ export default {
     listData: {
       handler: function (newVal) {
         if (newVal.length == 0) {
+          this.selectedList = []
           this.selectedAll = false
         } else {
-          // tìm ra phần tử trong listData mà có id trùng với phần tử trong selected_list
-          var rs = this.selectedList.filter((item) => {
-            return newVal.some(
-              (item2) => item2[this.primaryKey] == item[this.primaryKey]
-            )
-          })
-          // nếu rs.length == listData.length thì selectedAll = true
-          this.selectedAll = rs.length == newVal.length
           if (this.isFocusFirstRow) {
             this.$nextTick(() => {
               this.focusRow = this.listData[0]
@@ -432,34 +420,6 @@ export default {
     },
   },
   methods: {
-    /**
-     * @description:Thu
-     * @param: {any}
-     * @return: {any}
-     * @author: NguyetKTB 30/06/2023
-     */
-    checkAll() {
-      this.selectedAll = !this.selectedAll
-      // nếu selectedAll = true thì add tất cả các phần tử trong listData vào selected_list
-      if (this.selectedAll) {
-        // nếu phần tử nào chưa có trong selected_list thì add vào
-        var result = this.listData.filter(
-          (item) => !this.selectedList.includes(item)
-        )
-        this.selectedList = this.selectedList.concat(result)
-      } else {
-        // tìm ra các phần tử trong listData mà có id trùng với phần tử trong selected_list
-        var rs = this.selectedList.filter((item) => {
-          return this.listData.some(
-            (item2) => item2[this.primaryKey] == item[this.primaryKey]
-          )
-        })  
-        // loại bỏ các phần tử trong selected_list có id trùng với phần tử trong listData
-        this.selectedList = this.selectedList.filter(
-          (item) => !rs.includes(item)
-        )
-      }
-    },
     /**
      * @description: Thực hiện xử lí action trong row của table
      * @param: {any}
@@ -777,7 +737,7 @@ tbody tr.item--active .row-action {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 10px;
   background-color: #fff;
   width: 30px;
   height: 30px;
@@ -786,11 +746,6 @@ tbody tr.item--active .row-action {
 }
 .icon--action .ms-icon {
   margin: 0px !important;
-}
-.row-action .ms-36 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @import url(@/css/components/table.css);

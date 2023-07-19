@@ -15,12 +15,15 @@
   flex-direction: column;
   font-size: 13px;
 }
+
 .combobox .combobox__label {
   margin-bottom: 8px;
 }
-.combobox .combobox-group{
+
+.combobox .combobox-group {
   margin-bottom: 2px;
 }
+
 .combobox__icon {
   display: flex;
   align-items: center;
@@ -89,7 +92,7 @@
   width: 100%;
   top: calc(100% + 2px);
   margin: 0;
-  padding: 0px 0px 0px 4px;
+  padding: 4px;
   font-size: 13px;
   /* display: none; */
 }
@@ -183,18 +186,12 @@
   border: 1px solid #ff0000;
 }
 
-/* .combobox-data--main .combobox-item.combobox-item--active {
-  background-color: #8ab8dd;
-} */
 
 .combobox-data--main .combobox-item:hover,
-.combobox-data--main .combobox-item.combobox-item--active  {
+.combobox-data--main .combobox-item.combobox-item--active {
   background-color: #c7e0f5;
 }
-
-.combobox-data::-webkit-scrollbar-track {
-  margin-top: 36px;
-}
-.combobox-data--main{
+ 
+.combobox-data--main {
   max-height: 150px;
 }

@@ -36,7 +36,9 @@
       </div>
       <div
         class="combobox-data"
+        ref="comboboxDataMain"
         v-if="isShowComboboxData && dataFilter.length > 0"
+        :style="comboboxStyle"
       >
         <div class="combobox-data--header" tabindex="-1" v-if="containHeader">
           <div class="combobox-item">
@@ -50,7 +52,6 @@
             </div>
           </div>
         </div>
-
         <div class="combobox-data--main">
           <div
             class="combobox-item"
@@ -89,10 +90,10 @@
 
 <script>
 /* eslint-disable */
-import vClickOutside from "click-outside-vue3";
-import _ from "lodash";
+import vClickOutside from 'click-outside-vue3'
+import _ from 'lodash'
 export default {
-  name: "MISACombobox",
+  name: 'MISACombobox',
   components: {},
   directives: {
     clickOutside: vClickOutside.directive,
@@ -100,27 +101,27 @@ export default {
   props: {
     name: {
       type: String,
-      default: "",
+      default: '',
     },
     id: {
       type: String,
-      default: "",
+      default: '',
     },
     primaryKey: {
       type: String,
-      default: "",
+      default: '',
     },
     inputType: {
       type: String,
-      default: "",
+      default: '',
     },
     inputPlaceholder: {
       type: String,
-      default: "",
+      default: '',
     },
     inputClass: {
       type: String,
-      default: "",
+      default: '',
     },
     data: {
       type: Array,
@@ -132,15 +133,15 @@ export default {
     },
     iconLeft: {
       type: String,
-      default: "",
+      default: '',
     },
     iconRight: {
       type: String,
-      default: "",
+      default: '',
     },
     label: {
       type: String,
-      default: "",
+      default: '',
     },
     required: {
       type: Boolean,
@@ -148,7 +149,7 @@ export default {
     },
     modelValue: {
       type: String,
-      default: "",
+      default: '',
     },
     readonly: {
       type: Boolean,
@@ -160,40 +161,61 @@ export default {
     },
     tempValue: {
       type: String,
-      default: "",
+      default: '',
     },
     containHeader: {
       type: Boolean,
       default: true,
     },
+    comboboxDataVisibleList: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
-      isShowComboboxData: false,
-      isError: false,
-      errorMessage: "",
-      selectedItem: {},
-      keyValueBinding: "",
-      inputValue: "",
-      dataFilter: [],
-      keyAllowSearch: [],
-      indexItemFocus: 0,
-      eventAction: false,
-    };
+      isShowComboboxData: false, // ẩn hiện combobox
+      isError: false, // trạng thái lỗi
+      errorMessage: '', // thông báo lỗi
+      selectedItem: {}, // item được chọn
+      keyValueBinding: '', // key được binding lên giao diện
+      inputValue: '', // giá trị input
+      dataFilter: [], // dữ liệu được lọc
+      keyAllowSearch: [], // key cho phép tìm kiếm
+      indexItemFocus: 0, // vị trí item được focus
+      eventAction: false, // trạng thái sự kiện
+      comboboxStyle: {}, // style của combobox
+    }
   },
   watch: {
+    /**
+     * @description: Hàm theo dõi sự thay đổi của biến ẩn hiện combobox
+     * @param: newVal: giá trị mới
+     * @return: {any}
+     * @author: NguyetKTB 18/07/2023
+     */
+    isShowComboboxData(newVal) {
+      if (newVal) {
+        this.caculatePositionCombobox()
+        window.addEventListener('resize', this.caculatePositionCombobox)
+      } else {
+        window.removeEventListener('resize', this.caculatePositionCombobox)
+      }
+    },
     data: {
       /**
-       * Do cơ chế bất đồng bộ nên phải dùng watch để theo dõi sự thay đổi của data
+       * @description: Do cơ chế bất đồng bộ nên phải dùng watch để theo dõi sự thay đổi của data
        * @param {*} newValue
        * @param {*} oldValue
+       * @return: {any}
+       * @author: NguyetKTB 18/07/2023
        */
       handler: function (newValue, oldValue) {
-        const me = this;
+        const me = this
         if (newValue !== oldValue) {
           // nếu có truyền model vào và selected item chưa được chọn thì sẽ tự động chọn item
-          me.dataFilter = newValue;
-          me.handleSelectedValue();
+          me.dataFilter = newValue
+          me.handleSelectedValue()
         }
       },
       deep: true,
@@ -201,67 +223,76 @@ export default {
 
     modelValue: {
       /**
-       * Do cơ chế bất đồng bộ nên phải dùng watch để theo dõi sự thay đổi của modelValue
+       * @description: Do cơ chế bất đồng bộ nên phải dùng watch để theo dõi sự thay đổi của modelValue
        * @param {*} newValue
        * @param {*} oldValue
+       * @return: {any}
+       * @author: NguyetKTB 18/07/2023
        */
       handler: function (newValue, oldValue) {
-        const me = this;
+        const me = this
         if (newValue !== oldValue) {
-          me.handleSelectedValue();
+          me.handleSelectedValue()
         }
       },
       deep: true,
     },
   },
   methods: {
+    /**
+     * @description: Hàm xử lý khi người dùng chọn item của combobox
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 05/05/2023
+     */
     handleSelectedValue() {
-      let me = this;
+      let me = this
       if (me.dataFilter.length === 0) {
-        return;
+        return
       }
-      var findValue = {};
+      var findValue = {} // giá trị được chọn
       if (me.eventAction) {
-        me.eventAction = false;
-        findValue = me.selectedItem;
+        // nếu có sự kiện thì sẽ lấy giá trị được chọn từ sự kiện
+        me.eventAction = false
+        findValue = me.selectedItem
       } else {
         if (me.modelValue) {
           for (let i = 0; i < me.dataFilter.length; i++) {
             if (me.dataFilter[i][me.primaryKey] === me.modelValue) {
-              findValue = me.dataFilter[i];
-              me.indexItemFocus = i;
-              break;
+              findValue = me.dataFilter[i]
+              me.indexItemFocus = i
+              break
             }
           }
         }
       }
       me.$nextTick(() => {
-        let valueBinding = me.column.find((item) => item.isBinding);
+        let valueBinding = me.column.find((item) => item.isBinding)
         if (valueBinding) {
-          me.keyValueBinding = valueBinding["valueBinding"];
-          let keyBinding = findValue[me.keyValueBinding];
+          me.keyValueBinding = valueBinding['valueBinding']
+          let keyBinding = findValue[me.keyValueBinding]
           if (keyBinding != undefined) {
-            me.inputValue = keyBinding;
+            me.inputValue = keyBinding
           } else {
             // if (this.required && this.label) {
             //   this.isError = true;
             //   this.errorMessage = this.label + " không tồn tại";
             // }
-            me.indexItemFocus = 0;
+            me.indexItemFocus = 0
           }
         }
-        me.keyAllowSearch = me.column.filter((item) => item.isSearching); // danh sách các cột cho phép tìm kiếm
-      });
+        me.keyAllowSearch = me.column.filter((item) => item.isSearching) // danh sách các cột cho phép tìm kiếm
+      })
     },
     /**
      * @description: Hàm xử lý khi người dùng nhấn bàn phím khi đang focus vào combobox
-     * @param: {any}
+     * @param: event: sự kiện keydown
      * @return: {any}
      * @author: NguyetKTB 07/05/2023
      */
     onHandleSelectItem(event) {
       const me = this,
-        keyCodePress = event.keyCode;
+        keyCodePress = event.keyCode
       try {
         // th1: nếu combobox chưa hiển thị list mà nhấn phím lên xuống thì hiển thị list
         if (
@@ -269,15 +300,15 @@ export default {
           (keyCodePress == me.$msEnum.KEY_CODE.ArrowUp ||
             keyCodePress == me.$msEnum.KEY_CODE.ArrowDown)
         ) {
-          event.preventDefault();
-          me.showComboboxData();
-          return;
+          event.preventDefault()
+          me.showComboboxData()
+          return
         }
 
         // th2: nếu người dùng bấm tab thì ẩn combobox
         if (keyCodePress == me.$msEnum.KEY_CODE.Tab) {
-          me.hideComboboxData();
-          return;
+          me.hideComboboxData()
+          return
         }
 
         // th3: nếu list đang hiển thị mà người dùng bấm esc thì ẩn combobox
@@ -285,69 +316,88 @@ export default {
           keyCodePress == me.$msEnum.KEY_CODE.Escape &&
           me.isShowComboboxData
         ) {
-          me.hideComboboxData();
-          return;
+          me.hideComboboxData()
+          return
         }
 
         if (me.isShowComboboxData && me.dataFilter.length > 0) {
           // th4: nếu list đang hiển thị thì xử lí các phím lên xuống có scroll
           if (keyCodePress == me.$msEnum.KEY_CODE.ArrowUp) {
-            event.preventDefault();
+            event.preventDefault()
             me.indexItemFocus =
               me.indexItemFocus === 0
                 ? me.dataFilter.length - 1
-                : me.indexItemFocus - 1;
-            me.handleScroll(me.indexItemFocus - 1);
+                : me.indexItemFocus - 1
+            me.handleScroll(me.indexItemFocus - 1)
             // hiển thị giá trị của item đang focus vào input
             this.inputValue =
-              this.dataFilter[this.indexItemFocus][this.keyValueBinding];
-            return;
+              this.dataFilter[this.indexItemFocus][this.keyValueBinding]
+            return
           }
           if (keyCodePress == me.$msEnum.KEY_CODE.ArrowDown) {
-            event.preventDefault();
+            event.preventDefault()
             me.indexItemFocus =
               me.indexItemFocus === me.dataFilter.length - 1
                 ? 0
-                : me.indexItemFocus + 1;
-            me.handleScroll(me.indexItemFocus + 1);
+                : me.indexItemFocus + 1
+            me.handleScroll(me.indexItemFocus + 1)
             this.inputValue =
-              this.dataFilter[this.indexItemFocus][this.keyValueBinding];
-            return;
+              this.dataFilter[this.indexItemFocus][this.keyValueBinding]
+            return
           }
           // th5: nếu list đang hiển thị thì xử lí các phím enter, space
           if (keyCodePress == me.$msEnum.KEY_CODE.Enter) {
-            event.preventDefault();
+            event.preventDefault()
             me.selectItem(
               this.dataFilter[this.indexItemFocus],
               this.indexItemFocus
-            );
-            return;
+            )
+            return
           }
         }
-
         // th4: nếu list đang hiển thị thì xử lí các phím lên xuống có scroll
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
 
     /**
      * @description: Hàm xử lý scroll tới item được chọn
-     * @param: {any}
+     * @param: indexItemFocus: vị trí item được chọn
      * @return: {any}
      * @author: NguyetKTB 11/05/2023
      */
     handleScroll(indexItemFocus) {
       try {
         this.$refs.comboboxData
-          .querySelectorAll(".combobox-item")
+          .querySelectorAll('.combobox-item')
           [indexItemFocus].scrollIntoView({
-            behavior: "instant",
-            block: "center",
-            inline: "nearest",
-          });
+            behavior: 'instant',
+            block: 'center',
+            inline: 'nearest',
+          })
       } catch (error) {
-        console.log(error);
+        console.log(error)
+      }
+    },
+    /**
+     * @description: Hàm xử lý tính toán vị trí combobox
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 18/07/2023
+     */
+    caculatePositionCombobox() {
+      if (!this.isShowComboboxData) return
+      const comboboxContainer = this.$refs['comboboxData']
+      if (comboboxContainer) {
+        const comboboxRect = comboboxContainer.getBoundingClientRect()
+        const comboboxStyle = {
+          position: 'fixed',
+          top: `${comboboxRect.top + comboboxRect.height}px`,
+          left: `${comboboxRect.left}px`,
+          width: `430px`,
+        }
+        this.comboboxStyle = comboboxStyle
       }
     },
     /**
@@ -357,34 +407,35 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     showComboboxData() {
-      const me = this;
+      const me = this
+      me.caculatePositionCombobox()
       try {
         if (!me.inputValue && me.dataFilter.length == 0) {
-          me.dataFilter = me.data;
+          me.dataFilter = me.data
         }
-        me.isShowComboboxData = true;
+        me.isShowComboboxData = true
         me.$nextTick(() => {
-          let parent = me.$el.querySelector(".combobox-data");
+          let parent = me.$el.querySelector('.combobox-data')
           if (parent) {
-            let comboboxElement = parent.querySelectorAll(".combobox-item");
+            let comboboxElement = parent.querySelectorAll('.combobox-item')
             for (let index = 0; index < comboboxElement.length; index++) {
               if (
                 comboboxElement[index].classList.contains(
-                  "combobox-item--active"
+                  'combobox-item--active'
                 )
               ) {
                 comboboxElement[index].scrollIntoView({
-                  behavior: "instant",
-                  block: "center",
-                  inline: "nearest",
-                });
-                break;
+                  behavior: 'instant',
+                  block: 'center',
+                  inline: 'nearest',
+                })
+                break
               }
             }
           }
-        });
+        })
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     /**
@@ -394,7 +445,7 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     hideComboboxData() {
-      this.isShowComboboxData = false;
+      this.isShowComboboxData = false
     },
     /**
      * @description: Hàm xử lí khi người dùng click item combobox
@@ -403,14 +454,14 @@ export default {
      * @author: NguyetKTB 01/05/2023
      */
     selectItem(item, index) {
-      this.selectedItem = item;
-      this.removeError();
-      this.indexItemFocus = index;
-      this.inputValue = item[this.keyValueBinding];
-      this.$emit("update:modelValue", item[this.primaryKey]);
-      this.eventAction = true;
-      this.$emit("selectedItem", item);
-      this.hideComboboxData();
+      this.selectedItem = item
+      this.removeError()
+      this.indexItemFocus = index
+      this.inputValue = item[this.keyValueBinding]
+      this.$emit('update:modelValue', item[this.primaryKey])
+      this.eventAction = true
+      this.$emit('selectedItem', item)
+      this.hideComboboxData()
     },
     /**
      * @description: Hàm xử lí khi người dùng nhập vào ô input combobox
@@ -419,43 +470,47 @@ export default {
      * @author: NguyetKTB 02/05/2023
      */
     onInputCombobox: _.debounce(function (value) {
-      const me = this;
-      me.inputValue = value;
-      me.removeError();
+      const me = this
+      me.inputValue = value
+      me.removeError()
       if (value) {
         me.dataFilter = me.data.filter((item) =>
           me.keyAllowSearch.some((key) =>
             item[key.key].toLowerCase().includes(value.toLowerCase())
           )
-        );
+        )
       } else {
-        me.dataFilter = me.data;
+        me.dataFilter = me.data
       }
-      if (value == "" || me.dataFilter.length == 0) {
-        me.$emit("selectedItem", {});
+      if (value == '' || me.dataFilter.length == 0) {
+        me.$emit('selectedItem', {})
       }
       if (!me.isShowComboboxData) {
-        me.showComboboxData();
+        me.showComboboxData()
       }
     }, 100),
 
     /**
      * @description: Hàm xử lí khi blur khỏi ô input combobox
-     * @param: {any}
+     * @param: {value}: giá trị người dùng nhập vào
      * @return: {any}
      * @author: NguyetKTB 11/05/2023
      */
     onBlurCombobox(value) {
-      const me = this;
+      const me = this
       if (me.isValidate) {
         if (me.selectedItem == {}) {
-          me.isError = true;
-          me.errorMessage = me.$msResource.VALIDATE.Invalid.format(me.label);
-        } else if (value == "") {
-          me.isError = true;
-          me.errorMessage = me.$msResource.VALIDATE.Required.format(me.label);
-        } else if (!me.modelValue && value != "") {
-          me.inputValue = "";
+          me.isError = true
+          me.errorMessage = me.$msResource.VALIDATE.Invalid.format(
+            me.label ? me.label : 'Thông tin'
+          )
+        } else if (value == '') {
+          me.isError = true
+          me.errorMessage = me.$msResource.VALIDATE.Required.format(
+            me.label ? me.label : 'Thông tin'
+          )
+        } else if (!me.modelValue && value != '') {
+          me.inputValue = ''
         }
       }
     },
@@ -467,11 +522,11 @@ export default {
      * @author: NguyetKTB 11/05/2023
      */
     removeError() {
-      this.isError = false;
-      this.errorMessage = "";
+      this.isError = false
+      this.errorMessage = ''
     },
   },
-};
+}
 </script>
 
 <style scoped>

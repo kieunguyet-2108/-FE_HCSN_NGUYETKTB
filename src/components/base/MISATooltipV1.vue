@@ -36,7 +36,7 @@ export default {
     return {
       isShow: false,
       isMouseDown: false,
-    };
+    }
   },
   methods: {
     /**
@@ -46,8 +46,8 @@ export default {
      * @author: NguyetKTB 20/05/2023
      */
     onMouseLeave() {
-      this.isShow = false;
-      this.isMouseDown = false;
+      this.isShow = false
+      this.isMouseDown = false
     },
     /**
      * @description: Thực hiện ẩn tooltip khi click vào và set lại giá trị isMouseDown = true để không cho phép hiển thị tooltip khi hover vào
@@ -56,8 +56,8 @@ export default {
      * @author: NguyetKTB 20/05/2023
      */
     onMouseDown() {
-      this.isShow = false;
-      this.isMouseDown = true;
+      this.isShow = false
+      this.isMouseDown = true
     },
 
     /**
@@ -69,30 +69,30 @@ export default {
     onMouseOver(event) {
       if (!this.isMouseDown) {
         // nếu isMouseDown là false thì  cho phép hiển thị tooltip
-        this.isShow = true;
+        this.isShow = true
         // lấy tọa độ của chuột
-        const { clientX, clientY } = event;
-        const tooltip = this.$refs.tooltip;
+        const { clientX, clientY } = event
+        const tooltip = this.$refs.tooltip
         if (tooltip) {
           // tạo tooltip ở dưới vị trí của chuột
-          tooltip.style.top = clientY + this.top + "px";
-          tooltip.style.left = clientX + this.left + "px";
+          tooltip.style.top = clientY + this.top + 'px'
+          tooltip.style.left = clientX + this.left + 'px'
           // nếu tooltip bị tràn ra ngoài màn hình thì đưa về trở về vị trí ban đầu
           if (tooltip.getBoundingClientRect().right > window.innerWidth) {
-            tooltip.style.left = clientX - tooltip.offsetWidth + "px";
+            tooltip.style.left = clientX - tooltip.offsetWidth + 'px'
           }
           if (tooltip.getBoundingClientRect().bottom > window.innerHeight) {
-            tooltip.style.top = clientY - tooltip.offsetHeight + "px";
+            tooltip.style.top = clientY - tooltip.offsetHeight + 'px'
           }
         }
       }
     },
   },
-};
+}
 </script>
 <style scoped lang="css">
 .ms-tooltip__text {
-  z-index: 9999;
+  z-index: 999999;
   display: none;
   text-align: center;
   position: fixed;
@@ -107,12 +107,16 @@ export default {
   box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
   border-radius: 4px;
   background-color: #4f4f4f;
-  width: fit-content;
   max-width: 250px;
   white-space: normal;
 }
 .ms-tooltip__text.show {
+  position: fixed;
   display: block;
   opacity: 0.9;
+}
+.ms-tooltip{
+  cursor: pointer;
+  z-index: 999999;
 }
 </style>
