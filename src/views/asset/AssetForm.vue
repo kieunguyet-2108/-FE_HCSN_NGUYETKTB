@@ -190,7 +190,7 @@
                   ></MISANumberPickerV1>
                 </div>
                 <div class="form__group">
-                  <MISANumberPicker
+                  <MISANumberPickerV1
                     ref="tracked_year"
                     inputType="text"
                     label="Năm theo dõi"
@@ -200,7 +200,7 @@
                     :disabled="true"
                     :isAllowFormatter="false"
                     v-model="assetItem.tracked_year"
-                  ></MISANumberPicker>
+                  ></MISANumberPickerV1>
                 </div>
               </div>
             </div>

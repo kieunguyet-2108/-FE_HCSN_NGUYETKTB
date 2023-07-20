@@ -223,22 +223,18 @@ export default {
      * @author: NguyetKTB 28/06/2023
      */
     handleCondition(assetList) {
-      let tempAssetList = []
-      console.log(this.listData)
-      assetList.forEach((asset) => {
-        tempAssetList.push(asset.fixed_asset_id)
-      })
+      let tempAssetList = [...assetList.map((x) => x.fixed_asset_id)]
       this.listData.forEach((asset) => {
         if (asset.action == null) {
           tempAssetList.push(asset.fixed_asset_id)
         } else if (asset.action == this.$msEnum.MS_ACTION_TYPE.Delete) {
-          // loại bỏ ra khỏi tempAssetList
           tempAssetList = tempAssetList.filter(
             (item) => item != asset.fixed_asset_id
           )
+        }else{
+          tempAssetList.push(asset.fixed_asset_id)
         }
       })
-      console.log(tempAssetList)
       return tempAssetList
     },
     /**

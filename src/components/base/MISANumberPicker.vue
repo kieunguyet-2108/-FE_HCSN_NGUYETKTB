@@ -106,6 +106,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    maxLength: {
+      type: Number,
+      default: 15,
+    },
   },
   data() {
     return {
@@ -174,6 +178,10 @@ export default {
         if (value === "") {
           self.$emit("update:modelValue", "0");
           return;
+        }
+        // nếu người dùng nhập quá độ dài cho phép thì loại bỏ ký tự vừa nhập vào
+        if (value.length > self.maxLength) {
+          event.target.value = value.substring(0, value.length - 1);
         }
         // kiểm tra nếu người dùng nhập dấu ','
         if (self.isAllowDecimal) {

@@ -91,32 +91,6 @@ export default {
 }
 </script>
 <style scoped lang="css">
-.ms-tooltip__text {
-  z-index: 999999;
-  display: none;
-  text-align: center;
-  position: fixed;
-  pointer-events: none;
-  padding: 4px 8px;
-  opacity: 0;
-  line-height: 1.5;
-  font-weight: 400;
-  font-size: 14px;
-  font-family: inherit;
-  color: white;
-  box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
-  border-radius: 4px;
-  background-color: #4f4f4f;
-  max-width: 250px;
-  white-space: normal;
-}
-.ms-tooltip__text.show {
-  position: fixed;
-  display: block;
-  opacity: 0.9;
-}
-.ms-tooltip{
-  cursor: pointer;
-  z-index: 999999;
-}
+
+@import url(@/css/components/tooltip.css);
 </style>

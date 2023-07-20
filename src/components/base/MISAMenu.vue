@@ -47,7 +47,7 @@ export default {
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0 0 2px 0 rgba(77, 74, 74, 0.2);
-  z-index: 100;
+  z-index: 1000000;
   overflow: hidden;
 }
 .context__menu__item {

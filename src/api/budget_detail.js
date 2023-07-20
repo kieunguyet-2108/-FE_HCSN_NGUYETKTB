@@ -2,8 +2,8 @@ const URL_BUDGET_DETAIL = "api/v1/BudgetDetails";
 
 export default (axios) => ({
   /**
-   * @description: Call api lấy ra tất cả thông tin nhóm tài sản
-   * @param: {any}
+   * @description: Gọi api lấy ra danh sách nguồn chi phí chi tiết theo chứng từ và tài sản
+   * @param: {assetId}: id tài sản, {voucherId}: id chứng từ
    * @return: {any}
    * @author: NguyetKTB 19/05/2023
    */

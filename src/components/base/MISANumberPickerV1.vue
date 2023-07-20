@@ -188,6 +188,7 @@ export default {
           self.$emit("update:modelValue", 0);
           return;
         }
+        // nếu người dùng nhập quá độ dài cho phép thì loại bỏ ký tự vừa nhập vào
         // kiểm tra nếu người dùng nhập dấu ','
         if (self.isAllowDecimal) {
           if (event.data === ",") {

@@ -91,6 +91,7 @@
             :listData="listVoucher"
             :listColumn="voucherColumns"
             @delete="handleAction"
+            @add="handleAction"
             @edit="handleAction"
             @clickRow="handleClickRow"
             primaryKey="voucher_id"
@@ -103,6 +104,7 @@
             @changePaging="changePaging"
             @changeDropdown="changeDropdown"
             :isFocusFirstRow="true"
+            :menuOptions="menuOptions"
           ></MISATable>
           <MISALoading
             v-if="isLoadingVoucher"
@@ -267,6 +269,20 @@ export default {
       box1Flex: 1,
       box2Flex: 1,
       isResizing: false,
+      menuOptions: [
+        {
+          text: 'Thêm',
+          action: this.$msEnum.MS_ACTION.Add,
+        },
+        {
+          text: 'Sửa',
+          action: this.$msEnum.MS_ACTION.Edit,
+        },
+        {
+          text: 'Xóa',
+          action: this.$msEnum.MS_ACTION.Delete,
+        },
+      ],
     }
   },
   async created() {
@@ -380,29 +396,11 @@ export default {
       this.box2Flex -= (deltaY / containerHeight) * totalFlex
 
       // nếu box 2 có chiều cao gần bằng container thì ẩn box 1
-      if (this.box2Flex > 2) {
-        this.assetStyle = {
-          flex: this.box2Flex,
-        }
-        this.vourcherStyle = {
-          display: 'none',
-        }
+      this.vourcherStyle = {
+        flex: this.box1Flex,
       }
-      //  else if (this.box1Flex > 2) {
-      //   this.vourcherStyle = {
-      //     flex: this.box1Flex,
-      //   }
-      //   this.assetStyle = {
-      //     display: 'none',
-      //   }
-      // }
-      else {
-        this.vourcherStyle = {
-          flex: this.box1Flex,
-        }
-        this.assetStyle = {
-          flex: this.box2Flex,
-        }
+      this.assetStyle = {
+        flex: this.box2Flex,
       }
       this.startY = e.clientY
     },
@@ -659,24 +657,23 @@ export default {
      * @return: {any}
      * @author: NguyetKTB 19/07/2023
      */
-    updateVoucher(voucher) {
+    async updateVoucher(voucher) {
       const me = this
-      if (voucher > 0) {
+      if (voucher != null) {
         me.hideModal()
         me.listVoucher.splice(me.voucherIndex, 1, voucher)
         me.showPopup(
           me.$msResource.POPUP_MESSAGE.Msg_Edit_Success,
           me.$msEnum.MS_POPUP_MODE.Success
         )
-        me.loadData()
       } else {
         me.hideModal()
         me.showPopup(
           me.$msResource.POPUP_MESSAGE.Msg_Edit_Failed,
           me.$msEnum.MS_POPUP_MODE.Error
         )
-        me.loadData()
       }
+      me.loadData()
     },
     /**
      * @description: Thực hiện hiển thị form thêm mới chứng từ
@@ -811,13 +808,16 @@ export default {
 .content-bottom {
   background-color: #fff;
   flex: 2;
+  overflow: hidden;
 }
 .content-bottom__filter {
   display: flex;
   justify-content: space-between;
   padding: 10px 15px 10px 15px;
+  overflow: hidden;
 }
 .content-bottom__filter .input-group {
+  overflow: hidden;
   width: 300px;
 }
 .input__field.flex-1 {
@@ -836,6 +836,10 @@ export default {
   flex: 1;
   z-index: 999;
 }
+.content-bottom__sub {
+  background-color: #fff;
+  overflow: hidden;
+}
 .content-bottom__sub .content-bottom__filter {
   padding: 0px 15px 0px 15px !important;
 }
@@ -848,6 +852,8 @@ export default {
   display: flex;
   justify-content: center;
   height: 1px;
+  position: fixed;
+  left: 57%;
 }
 .handler img {
   width: 15px;
@@ -856,6 +862,7 @@ export default {
   top: -8px;
   z-index: 1000;
   cursor: ns-resize;
+  user-select: none;
 }
 .container {
   display: flex;

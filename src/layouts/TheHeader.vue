@@ -113,7 +113,7 @@ export default {
      */
     async logout() {
       await this.$store.dispatch('removeToken')
-      this.$router.push('/user/login')
+      await this.$router.push('/user/login')
     },
   },
 }

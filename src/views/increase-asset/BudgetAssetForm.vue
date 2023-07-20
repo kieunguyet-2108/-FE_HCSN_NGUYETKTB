@@ -433,12 +433,16 @@ export default {
         if (findItem) {
           if (
             findItem.budget_category_id == item.budget_category_id &&
-            findItem.budget_value == item.budget_value
+            findItem.budget_value == item.budget_value && findItem.action == null
           ) {
             noChangeList.push(item)
           }
         }
       })
+      console.log('addedList', addedList);
+      console.log('editList', editList);
+      console.log('deletedList', deletedList);
+      console.log('noChangeList', noChangeList);
       // gộp 3 danh sách lại
       return [...addedList, ...editList, ...deletedList, ...noChangeList]
     },

@@ -2,7 +2,7 @@ const URL_BUDGET_CATEGORY = "api/v1/BudgetCategories";
 
 export default (axios) => ({
   /**
-   * @description: Call api lấy ra tất cả thông tin nhóm tài sản
+   * @description: Call api lấy ra thông tin loại chi phí
    * @param: {any}
    * @return: {any}
    * @author: NguyetKTB 19/05/2023

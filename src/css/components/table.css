@@ -53,10 +53,12 @@
     font-weight: 500;
     margin-top: 10rem;
 }
-tbody tr{
+
+tbody tr {
     outline: none;
     user-select: none;
 }
+
 tfoot tr:first-child {
     background-color: #f5f5f5;
     border-bottom: 1px solid #e9e9e9;
@@ -101,10 +103,11 @@ tbody tr td {
     opacity: 1;
 }
 
-table tr{
+table tr {
     cursor: pointer;
     user-select: none;
 }
+
 /* style for action row */
 
 .row-action {
@@ -121,4 +124,124 @@ table tr{
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+.row-action-dynamic {
+    position: absolute;
+    right: 10px;
+    /* display: flex; */
+    display: none;
+    align-items: center;
+    top: calc(50% - 15px);
+    overflow: hidden;
+    gap: 10px;
+}
+
+.table-content tbody tr:hover .row-action-dynamic {
+    display: flex;
+}
+
+.table-content tbody tr.item--active .row-action-dynamic {
+    display: flex;
+}
+
+.table__cell {
+    position: relative;
+}
+
+#table-data tbody tr td span {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+.pagination__content {
+    display: flex;
+    gap: 10px;
+}
+
+.total-record {
+    display: flex;
+    align-items: center;
+}
+
+.table__footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 9;
+    background-color: #fff;
+}
+
+.table__footer tr {
+    height: 40px;
+}
+
+tbody.no-data tr:hover {
+    background-color: #fff;
+}
+
+tbody.no-data tr td {
+    border-bottom: none;
+}
+
+tbody.no-data tr td div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* tfoot {
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.16);
+    } */
+tbody tr.item--active {
+    background-color: #9dddec;
+}
+
+tbody tr.item--active .row-action {
+    opacity: 1;
+}
+
+.message-__no-data {
+    font-size: 20px;
+    color: #1aa4c8;
+    font-weight: bold;
+    text-align: center;
+}
+
+.table__pagination {
+    height: 40px;
+    background-color: #fafbfc;
+    border-radius: 0px 0px 4px 4px;
+    z-index: 10;
+    padding: 5px 15px;
+    border-top: 1px solid #e9e9e9;
+}
+
+.voucher_code--color-blue {
+    color: #0f68ee;
+}
+
+.icon--action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.icon--action .ms-icon {
+    margin: 0px !important;
+}
+
+.row-action .ms-36 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

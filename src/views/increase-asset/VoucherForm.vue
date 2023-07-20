@@ -366,6 +366,7 @@ export default {
       const me = this
       const fixed_asset_item = me.tableData.find((x) => x.fixed_asset_id == id)
       // set lại thông tin tài sản
+      console.log("item", item);
       fixed_asset_item.budget_detail = item
       // đóng form
       me.budgetInfo.isShowBudgetAssetForm = false
@@ -593,8 +594,11 @@ export default {
         } else if (me.formMode == me.$msEnum.FORM_MODE.Edit) {
           // thực hiện lưu dữ liệu
           var voucher = await me.updateVoucher()
-          // thực hiện chuyển trang
-          me.$emit('updateVoucher', voucher)
+          if (voucher == null) {
+            me.$emit('updateVoucher', null)
+          } else {
+            me.$emit('updateVoucher', this.voucherInfo)
+          }
         }
       }
     },
@@ -727,25 +731,22 @@ export default {
       me.errorMessages = errors
       if (errors.length > 0) return false
       else {
-        let isValid = true
-        if (me.tableData.length == 0) {
-          isValid = false
-        } else {
-          me.tableData.forEach((item) => {
-            if (item.action == me.$msEnum.MS_ACTION_TYPE.Delete) {
-              isValid = false
-            } else {
-              isValid = true
-            }
-          })
-        }
-        if (!isValid) {
+        let tempItems = []
+        me.tableData.forEach((item) => {
+          if (
+            item.action != me.$msEnum.MS_ACTION_TYPE.Delete ||
+            item.action == null
+          ) {
+            tempItems.push(item)
+          }
+        })
+        if (me.tableData.length == 0 || tempItems.length == 0) {
           errors.push({
             field: '',
             content: 'Phải chọn ít nhất một tài sản.',
           })
+          return false
         }
-        return isValid
       }
       return true
     },
@@ -779,7 +780,7 @@ export default {
                 })
                 me.$nextTick(() => {
                   // focus vào control lỗi đầu tiên
-                  me.focusFirstControl(me.$el.querySelector('.validate-error'))
+                  me.focusFirstControl(me.$el.nextElementSibling.querySelector('.validate-error'))
                 })
               },
             },
@@ -921,7 +922,7 @@ export default {
      * @return: {any}
      * @author: NguyetKTB 11/05/2023
      */
-     processUnfocusLastControl(e, fn) {
+    processUnfocusLastControl(e, fn) {
       if (e.which === 13 && e.target == document.activeElement) return
       if (e.which === 9 && !e.shiftKey) {
         let cur = e.target
@@ -961,7 +962,7 @@ export default {
           'button:not([disabled]):not([tabindex="-1"])',
           'a:not([disabled]):not([tabindex="-1"])',
         ].join(', ')
-      const items = obj.querySelectorAll(selector);
+      const items = obj.querySelectorAll(selector)
       if (items.length > 0) {
         for (let i = 0; i < items.length; i++) {
           if (items[i].offsetParent !== null) {

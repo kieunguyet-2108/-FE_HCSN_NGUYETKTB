@@ -222,17 +222,17 @@ const vourcherColumns = [
     key: 'description',
     name: 'Nội dung',
     columnType: msEnum.COLUMN_TYPE.Text,
-    columnWidth: '350px',
-    maxColumnWidth: '350px',
-    minColumnWidth: '350px',
+    columnWidth: '400px',
+    maxColumnWidth: '400px',
+    minColumnWidth: '400px',
     type: msEnum.MS_FIELD_TYPE.String,
   },
   {
     key: 'action',
     name: '',
-    columnWidth: '110px',
-    maxColumnWidth: '110px',
-    minColumnWidth: '110px',
+    columnWidth: '100px',
+    maxColumnWidth: '100px',
+    minColumnWidth: '100px',
     type: 'action',
     actionIcons: [
       {

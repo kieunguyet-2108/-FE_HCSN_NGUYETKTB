@@ -172,7 +172,7 @@ export default {
       pageNumber: 1,
       pageSize: 10,
       totalRecord: 0,
-      pagingOptions:column.pagingOptions,
+      pagingOptions: column.pagingOptions,
       summary: [
         {
           field: 'quantity',
@@ -224,6 +224,7 @@ export default {
      */
     filter() {
       let tmpFilter = []
+      // nếu combobox ở department thay đổi thì thêm điều kiện lọc theo department
       if (!_.isEmpty(this.filterObj.departmentFilter)) {
         tmpFilter.push({
           field: 'department_id',
@@ -232,6 +233,7 @@ export default {
           operators: this.$msEnum.MS_FILTER_OPERATOR.And,
         })
       }
+      // nếu combobox ở category thay đổi thì thêm điều kiện lọc theo category
       if (!_.isEmpty(this.filterObj.categoryFilter)) {
         tmpFilter.push({
           field: 'fixed_asset_category_id',
@@ -240,6 +242,7 @@ export default {
           operators: this.$msEnum.MS_FILTER_OPERATOR.And,
         })
       }
+      // nếu text search thay đổi thì thêm điều kiện lọc theo text search
       if (this.filterObj.textSearchFilter) {
         tmpFilter.push({
           field: 'fixed_asset_name',
@@ -267,10 +270,22 @@ export default {
       this.pageNumber = 1
       this.getFixedAssetByPaging(this.pageNumber, this.pageSize)
     }, 500),
+    /**
+     * @description: Thực hiện xử lí khi có sự thay đổi của các trường lọc
+     * @param: {any}
+     * @return: {any} totalRecord
+     * @author: NguyetKTB 25/05/2023
+     */
     'filterObj.departmentFilter': function () {
       this.pageNumber = 1
       this.getFixedAssetByPaging(this.pageNumber, this.pageSize)
     },
+    /**
+     * @description: Thực hiện xử lí khi có sự thay đổi của các trường lọc
+     * @param: {any}
+     * @return: {any} totalRecord
+     * @author: NguyetKTB 25/05/2023
+     */
     'filterObj.categoryFilter': function () {
       this.pageNumber = 1
       this.getFixedAssetByPaging(this.pageNumber, this.pageSize)
@@ -279,7 +294,7 @@ export default {
   methods: {
     /**
      * @description: Thực hiện nhảy tới component tùy thuộc vào action
-     * @param: {any}
+     * @param: {action, dataRow}: action: hành động, dataRow: dữ liệu của dòng được chọn
      * @return: {any}
      * @author: NguyetKTB 21/06/2023
      */
@@ -308,7 +323,7 @@ export default {
     },
     /**
      * @description: Thực hiện xử lí phím tắt trên trang chủ
-     * @param: {any}
+     * @param: {event}: sự kiện keydown
      * @return: {any}
      * @author: NguyetKTB 10/06/2023
      */
@@ -345,7 +360,7 @@ export default {
         switch (event.keyCode) {
           case me.$msEnum.KEY_CODE.A: // thêm mới: Ctrl + Alt + A
             event.preventDefault()
-            me.showFormModal()
+            me.handleAction(this.$msEnum.MS_ACTION.Add)
             break
           default:
             break
@@ -354,7 +369,7 @@ export default {
     },
     /**
      * @description: Thực hiện load lại data khi người dùng click paging dưới table
-     * @param: {any}
+     * @param: {pageNumber}: số trang cần load
      * @return: {any}
      * @author: NguyetKTB 25/05/2023
      */
@@ -364,7 +379,7 @@ export default {
     },
     /**
      * @description: thực hiện load lại data khi người dùng thay đổi dropdown trên filter
-     * @param: {any}
+     * @param: {value}: giá trị của dropdown
      * @return: {any}
      * @author: NguyetKTB 25/05/2023
      */
@@ -376,7 +391,7 @@ export default {
 
     /**
      * @description: Hàm thực hiện xử lí gọi api lấy dữ liệu theo paging và filter
-     * @param: {any}
+     * @param: {pageNumber, pageSize}: số trang, số bản ghi trên 1 trang
      * @return: {any}
      * @author: NguyetKTB 21/05/2023
      */

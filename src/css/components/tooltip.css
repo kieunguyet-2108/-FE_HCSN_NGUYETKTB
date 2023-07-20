@@ -1,25 +1,27 @@
-.tooltip-element {
-    font-size: 13px;
-    /* min-width: 100px; */
-    background-color: #fff;
-    color: black;
+.ms-tooltip__text {
+    display: none;
     text-align: center;
-    padding: 8px;
-    z-index: 10;
-    transition: opacity 0.3s;
-    position: absolute;
+    position: fixed;
+    pointer-events: none;
+    padding: 4px 8px;
     opacity: 0;
-    visibility: hidden;
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: inherit;
+    color: white;
+    box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
     border-radius: 4px;
     background-color: #4f4f4f;
-    color: #fff;
-    min-width: 60px;
-}
-.tooltip{
-    position: relative;
-}
-.tooltip:hover .tooltip-element{
-    visibility: visible;
-    opacity: 1;
-}
-
+    max-width: 250px;
+    white-space: normal;
+    z-index: 9999999;
+  }
+  .ms-tooltip__text.show {
+    position: fixed;
+    display: block;
+    opacity: 0.9;
+  }
+  .ms-tooltip{
+    cursor: pointer;
+  }

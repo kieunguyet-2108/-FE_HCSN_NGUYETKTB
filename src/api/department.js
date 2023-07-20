@@ -2,7 +2,7 @@ const URL_DEPARTMENT = 'api/v1/Departments';
 
 export default (axios) => ({
     /**
-     * @description: Thực hiện call api lấy ra tất cả thông tin phòng ban
+     * @description: Gọi api lấy ra thông tin phòng ban
      * @param: {any} 
      * @return: {any} 
      * @author: NguyetKTB 19/05/2023
@@ -16,8 +16,8 @@ export default (axios) => ({
         }
     },
     /**
-     * @description: Lấy ra thông tin phòng ban theo id
-     * @param: {any} 
+     * @description: Gọi api lấy ra thông tin phòng ban theo id
+     * @param: {id}: id phòng ban
      * @return: {any} 
      * @author: NguyetKTB 31/05/2023
      */

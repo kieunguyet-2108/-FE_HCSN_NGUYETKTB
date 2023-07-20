@@ -162,14 +162,15 @@
                 :content="
                   asset[item.key] != null
                     ? formatDataByType(asset[item.key], item.columnType)
-                    : 0
+                    : (item.columnType == this.$msEnum.COLUMN_TYPE.Text ? '' : 0)
+                        
                 "
               >
                 <span
                   v-html="
                     asset[item.key] != null
                       ? formatDataByType(asset[item.key], item.columnType)
-                      : 0
+                      : (item.columnType == this.$msEnum.COLUMN_TYPE.Text ? '' : 0)
                   "
                 ></span>
               </MISATooltipV1>
@@ -391,12 +392,8 @@ export default {
   },
   watch: {
     selectedList: {
-      handler: function (newVal) {
-        if (newVal.length == this.listData.length) {
-          this.selectedAll = true
-        } else {
-          this.selectedAll = false
-        }
+      handler: async function (newVal) {
+        this.selectedAll = await this.handleItemInSelectedList(newVal)
         this.$emit('update:modelValue', newVal)
       },
       deep: true,
@@ -408,18 +405,20 @@ export default {
       deep: true,
     },
     listData: {
-      handler: function (newVal) {
+      handler: async function (newVal) {
         if (newVal.length == 0) {
           this.selectedAll = false
         } else {
           // tìm ra phần tử trong listData mà có id trùng với phần tử trong selected_list
-          var rs = this.selectedList.filter((item) => {
-            return newVal.some(
-              (item2) => item2[this.primaryKey] == item[this.primaryKey]
-            )
-          })
+          // var rs = this.selectedList.filter((item) => {
+          //   return newVal.some(
+          //     (item2) => item2[this.primaryKey] == item[this.primaryKey]
+          //   )
+          // })
           // nếu rs.length == listData.length thì selectedAll = true
-          this.selectedAll = rs.length == newVal.length
+          this.selectedAll = await this.handleItemInSelectedList(
+            this.selectedList
+          )
           if (this.isFocusFirstRow) {
             this.$nextTick(() => {
               this.focusRow = this.listData[0]
@@ -453,12 +452,28 @@ export default {
           return this.listData.some(
             (item2) => item2[this.primaryKey] == item[this.primaryKey]
           )
-        })  
+        })
         // loại bỏ các phần tử trong selected_list có id trùng với phần tử trong listData
         this.selectedList = this.selectedList.filter(
           (item) => !rs.includes(item)
         )
       }
+    },
+    /**
+     * @description: Thực hiện xử lí kiểm tra xem list data có tồn tại trong selected_list hay không
+     * @param: {any}
+     * @return: {any}
+     * @author: NguyetKTB 20/07/2023
+     */
+    async handleItemInSelectedList(items) {
+      // tìm ra phần tử trong listData mà có id trùng với phần tử trong selected_list
+      var rs = items.filter((item) => {
+        return this.listData.some(
+          (item2) => item2[this.primaryKey] == item[this.primaryKey]
+        )
+      })
+      // nếu rs.length == listData.length thì selectedAll = true
+      return rs.length == this.listData.length
     },
     /**
      * @description: Thực hiện xử lí action trong row của table
@@ -601,6 +616,11 @@ export default {
               timeZone: 'Asia/Ho_Chi_Minh',
             })
           }
+        case me.$msEnum.COLUMN_TYPE.Text:
+          if (data == null) {
+            return ''
+          }
+          return data
         default:
           return data
       }
@@ -692,107 +712,6 @@ export default {
 </script>
     
   <style>
-.row-action-dynamic {
-  position: absolute;
-  right: 10px;
-  /* display: flex; */
-  display: none;
-  align-items: center;
-  top: calc(50% - 15px);
-  overflow: hidden;
-  gap: 10px;
-}
-.table-content tbody tr:hover .row-action-dynamic {
-  display: flex;
-}
-.table-content tbody tr.item--active .row-action-dynamic {
-  display: flex;
-}
-.table__cell {
-  position: relative;
-}
-#table-data tbody tr td span {
-  display: block;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden !important;
-  text-overflow: ellipsis;
-}
-.pagination__content {
-  display: flex;
-  gap: 10px;
-}
-.total-record {
-  display: flex;
-  align-items: center;
-}
-.table__footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 9;
-  background-color: #fff;
-}
-.table__footer tr {
-  height: 40px;
-}
-tbody.no-data tr:hover {
-  background-color: #fff;
-}
-tbody.no-data tr td {
-  border-bottom: none;
-}
-tbody.no-data tr td div:first-child {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-/* tfoot {
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.16);
-  } */
-tbody tr.item--active {
-  background-color: #9dddec;
-}
-tbody tr.item--active .row-action {
-  opacity: 1;
-}
-.message-__no-data {
-  font-size: 20px;
-  color: #1aa4c8;
-  font-weight: bold;
-  text-align: center;
-}
-.table__pagination {
-  height: 40px;
-  background-color: #fafbfc;
-  border-radius: 0px 0px 4px 4px;
-  z-index: 10;
-  padding: 5px 15px;
-  border-top: 1px solid #e9e9e9;
-}
-.voucher_code--color-blue {
-  color: #0f68ee;
-}
-.icon--action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  background-color: #fff;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.icon--action .ms-icon {
-  margin: 0px !important;
-}
-.row-action .ms-36 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 @import url(@/css/components/table.css);
 @import url(@/css/components/checkbox.css);
 </style>
